@@ -5,7 +5,7 @@ using Ambev.DeveloperEvaluation.Common.Security;
 using Ambev.DeveloperEvaluation.Common.Validation;
 using Ambev.DeveloperEvaluation.IoC;
 using Ambev.DeveloperEvaluation.ORM;
-using Ambev.DeveloperEvaluation.WebApi.Middleware;
+using Ambev.DeveloperEvaluation.WebApi.ExceptionHandlers;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -25,6 +25,12 @@ public class Program
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
+
+            // Microsoft recommends this for .NET latest versions like [.NET 8+]
+            // See GlobalExceptionHandler docs for more info.
+            builder.Services // Be aware, order matters
+                .AddExceptionHandler<ValidationExceptionHandler>()
+                .AddExceptionHandler<GlobalExceptionHandler>();
 
             builder.AddBasicHealthChecks();
             
@@ -53,8 +59,7 @@ public class Program
 
             builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
-            var app = builder.Build();
-            app.UseMiddleware<ValidationExceptionMiddleware>();
+            WebApplication app = builder.Build();
 
             if (app.Environment.IsDevelopment())
             {
@@ -62,6 +67,7 @@ public class Program
                 app.UseSwaggerUI();
             }
 
+            app.UseExceptionHandler("/");
             app.UseHttpsRedirection();
 
             app.UseAuthentication();
