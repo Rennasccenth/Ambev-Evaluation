@@ -74,13 +74,13 @@ public static class HealthChecksExtension
     /// </example>
     public static void UseBasicHealthChecks(this WebApplication app)
     {
-        var livenessOptions = WriteHealtCheckRespose(app, "liveness");
+        var livenessOptions = WriteHealthCheckResponse(app, "liveness");
         app.UseHealthChecks("/health/live", livenessOptions);
 
-        var readinessOptions = WriteHealtCheckRespose(app, "readiness");
+        var readinessOptions = WriteHealthCheckResponse(app, "readiness");
         app.UseHealthChecks("/health/ready", readinessOptions);
 
-        var healthOptions = WriteHealtCheckRespose(app, string.Empty);
+        var healthOptions = WriteHealthCheckResponse(app, string.Empty);
         app.UseHealthChecks("/health", healthOptions);
 
         var logger = app.Services.GetRequiredService<ILogger<HealthCheckService>>();
@@ -97,9 +97,9 @@ public static class HealthChecksExtension
     /// This method configures the following options:
     /// - Filters health checks based on the provided tag.
     /// - Sets specific HTTP status codes for different health states.
-    /// - Configures a custom response writer that generates a JSON with detailed health status information.
+    /// - Configure a custom response writer that generates a JSON with detailed health status information.
     /// </remarks>
-    private static HealthCheckOptions WriteHealtCheckRespose(this WebApplication app, string tag)
+    private static HealthCheckOptions WriteHealthCheckResponse(this WebApplication app, string tag)
     {
         var options = new HealthCheckOptions
         {
