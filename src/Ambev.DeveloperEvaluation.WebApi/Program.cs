@@ -5,10 +5,8 @@ using Ambev.DeveloperEvaluation.Common.Security;
 using Ambev.DeveloperEvaluation.Common.Validation;
 using Ambev.DeveloperEvaluation.IoC;
 using Ambev.DeveloperEvaluation.ORM;
-using Ambev.DeveloperEvaluation.WebApi.ExceptionHandlers;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Serilog;
 
 namespace Ambev.DeveloperEvaluation.WebApi;
 
@@ -18,22 +16,20 @@ public class Program
     {
         try
         {
-            Log.Information("Starting web application");
-
             WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
             builder.AddDefaultLogging();
-
+            
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
 
-            // Microsoft recommends this for .NET latest versions like [.NET 8+]
-            // See GlobalExceptionHandler docs for more info.
-            builder.Services // Be aware, order matters
-                .AddExceptionHandler<ValidationExceptionHandler>()
-                .AddExceptionHandler<GlobalExceptionHandler>();
+            // Todo: To increase development velocity, I'll comment this, since I want to let Exceptions pop out.
+            // // Microsoft recommends this for .NET latest versions like [.NET 8+]
+            // // See GlobalExceptionHandler docs for more info.
+            // builder.Services // Be aware, order matters
+            //     .AddExceptionHandler<ValidationExceptionHandler>()
+            //     .AddExceptionHandler<GlobalExceptionHandler>();
 
             builder.AddBasicHealthChecks();
-            
             builder.Services.AddSwaggerGen();
 
             builder.Services.AddDbContext<DefaultContext>(options =>
@@ -67,7 +63,7 @@ public class Program
                 app.UseSwaggerUI();
             }
 
-            app.UseExceptionHandler("/");
+            // app.UseExceptionHandler("/");
             app.UseHttpsRedirection();
 
             app.UseAuthentication();
@@ -79,13 +75,9 @@ public class Program
 
             app.Run();
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
-            Log.Fatal(ex, "Application terminated unexpectedly");
-        }
-        finally
-        {
-            Log.CloseAndFlush();
+            Console.WriteLine(e);
         }
     }
 }
