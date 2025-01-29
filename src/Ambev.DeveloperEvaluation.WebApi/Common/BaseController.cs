@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using FluentValidation.Results;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Common;
 
@@ -21,6 +22,9 @@ public class BaseController : ControllerBase
 
     protected IActionResult BadRequest(string message) =>
         base.BadRequest(new ApiResponse { Message = message, Success = false });
+
+    protected IActionResult BadRequest(IEnumerable<ValidationFailure> failures) =>
+        base.BadRequest(new ApiResponse(failures));
 
     protected IActionResult NotFound(string message = "Resource not found") =>
         base.NotFound(new ApiResponse { Message = message, Success = false });

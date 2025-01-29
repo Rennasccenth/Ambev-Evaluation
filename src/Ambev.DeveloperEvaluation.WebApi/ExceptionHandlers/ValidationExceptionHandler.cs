@@ -35,13 +35,7 @@ public sealed class ValidationExceptionHandler : IExceptionHandler
         context.Response.ContentType = MediaTypeNames.Application.ProblemJson;
         context.Response.StatusCode = StatusCodes.Status400BadRequest;
 
-        ApiResponse validationFailedResponse = new()
-        {
-            Success = false,
-            Message = "Validation Failed",
-            Errors = validationException.Errors
-                .Select(error => (ValidationErrorDetail)error)
-        };
+        ApiResponse validationFailedResponse = new(validationException.Errors);
 
         return context.Response.WriteAsJsonAsync(validationFailedResponse, DefaultJsonSerializerOptions, cancellationToken);
     }

@@ -12,7 +12,7 @@ public class ValidationErrorDetail
         return new ValidationErrorDetail
         {
             Detail = validationFailure.ErrorMessage,
-            Error = validationFailure.ErrorCode
+            Error = validationFailure.PropertyName
         };
     }
 }

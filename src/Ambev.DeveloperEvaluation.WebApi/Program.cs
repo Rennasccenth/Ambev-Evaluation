@@ -5,6 +5,7 @@ using Ambev.DeveloperEvaluation.Common.Security;
 using Ambev.DeveloperEvaluation.Common.Validation;
 using Ambev.DeveloperEvaluation.IoC;
 using Ambev.DeveloperEvaluation.ORM;
+using Ambev.DeveloperEvaluation.WebApi.ExceptionHandlers;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,8 +26,8 @@ public class Program
             // Todo: To increase development velocity, I'll comment this, since I want to let Exceptions pop out.
             // // Microsoft recommends this for .NET latest versions like [.NET 8+]
             // // See GlobalExceptionHandler docs for more info.
-            // builder.Services // Be aware, order matters
-            //     .AddExceptionHandler<ValidationExceptionHandler>()
+            builder.Services // Be aware, order matters
+                .AddExceptionHandler<ValidationExceptionHandler>();
             //     .AddExceptionHandler<GlobalExceptionHandler>();
 
             builder.AddBasicHealthChecks();
@@ -63,7 +64,7 @@ public class Program
                 app.UseSwaggerUI();
             }
 
-            // app.UseExceptionHandler("/");
+            app.UseExceptionHandler("/");
             app.UseHttpsRedirection();
 
             app.UseAuthentication();
