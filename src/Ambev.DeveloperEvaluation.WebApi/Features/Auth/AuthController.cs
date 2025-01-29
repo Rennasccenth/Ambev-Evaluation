@@ -4,6 +4,9 @@ using AutoMapper;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Auth.AuthenticateUserFeature;
 using Ambev.DeveloperEvaluation.Application.Auth.AuthenticateUser;
+using Ambev.DeveloperEvaluation.Common.Errors;
+using FluentValidation.Results;
+using OneOf;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Auth;
 
@@ -41,19 +44,17 @@ public class AuthController : BaseController
     public async Task<IActionResult> AuthenticateUser([FromBody] AuthenticateUserRequest request, CancellationToken cancellationToken)
     {
         var validator = new AuthenticateUserRequestValidator();
-        var validationResult = await validator.ValidateAsync(request, cancellationToken);
+        ValidationResult? validationResult = await validator.ValidateAsync(request, cancellationToken);
 
         if (!validationResult.IsValid)
-            return BadRequest(validationResult.Errors);
+            return HandleKnownError(ApplicationError.ValidationError(validationResult.Errors));
 
         var command = _mapper.Map<AuthenticateUserCommand>(request);
-        var response = await _mediator.Send(command, cancellationToken);
+        OneOf<AuthenticateUserResult, ApplicationError> response = await _mediator.Send(command, cancellationToken);
 
-        return Ok(new ApiResponseWithData<AuthenticateUserResponse>
-        {
-            Success = true,
-            Message = "User authenticated successfully",
-            Data = _mapper.Map<AuthenticateUserResponse>(response)
-        });
+        return response.Match<IActionResult>(
+            success => Ok(success),
+            error => HandleKnownError(error)
+        );
     }
 }

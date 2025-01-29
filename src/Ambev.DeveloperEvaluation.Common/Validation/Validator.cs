@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using FluentValidation.Results;
 
 namespace Ambev.DeveloperEvaluation.Common.Validation;
 
@@ -13,7 +14,7 @@ public static class Validator
             throw new InvalidOperationException($"No validator found for: {typeof(T).Name}");
         }
 
-        var result = await validator.ValidateAsync(new ValidationContext<T>(instance));
+        ValidationResult? result = await validator.ValidateAsync(new ValidationContext<T>(instance));
 
         if (!result.IsValid)
         {

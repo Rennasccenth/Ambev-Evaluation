@@ -1,4 +1,6 @@
+using Ambev.DeveloperEvaluation.Common.Errors;
 using MediatR;
+using OneOf;
 
 namespace Ambev.DeveloperEvaluation.Application.Auth.AuthenticateUser;
 
@@ -6,7 +8,7 @@ namespace Ambev.DeveloperEvaluation.Application.Auth.AuthenticateUser;
 /// Command for authenticating a user in the system.
 /// Implements IRequest for mediator pattern handling.
 /// </summary>
-public sealed class AuthenticateUserCommand : IRequest<AuthenticateUserResult>
+public sealed class AuthenticateUserCommand : IRequest<OneOf<AuthenticateUserResult, ApplicationError>>
 {
     /// <summary>
     /// Gets or sets the email address for authentication.

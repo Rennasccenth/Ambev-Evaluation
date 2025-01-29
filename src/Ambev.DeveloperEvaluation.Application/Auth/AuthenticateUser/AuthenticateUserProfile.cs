@@ -6,12 +6,12 @@ namespace Ambev.DeveloperEvaluation.Application.Auth.AuthenticateUser;
 /// <summary>
 /// AutoMapper profile for authentication-related mappings
 /// </summary>
-internal sealed class AuthenticateUserProfile : Profile
+public sealed class AuthenticateUserProfile : Profile
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="AuthenticateUserProfile"/> class
     /// </summary>
-    internal AuthenticateUserProfile()
+    public AuthenticateUserProfile()
     {
         CreateMap<User, AuthenticateUserResult>()
             .ForMember(dest => dest.Token, opt => opt.Ignore())
