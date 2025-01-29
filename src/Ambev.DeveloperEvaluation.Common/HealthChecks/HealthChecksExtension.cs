@@ -20,7 +20,7 @@ public static class HealthChecksExtension
     /// <summary>
     /// Adds basic health checks to the <see cref="HealthCheckService"/> in the application's service collection.
     /// </summary>
-    /// <param name="builder">The <see cref="WebApplicationBuilder"/> to add the health checks to.</param>
+    /// <param name="serviceCollection">The <see cref="IServiceCollection"/> to add the health checks to.</param>
     /// <remarks>
     /// This method adds two basic health checks:
     /// <list type="bullet">
@@ -40,9 +40,9 @@ public static class HealthChecksExtension
     /// builder.AddBasicHealthChecks();
     /// </code>
     /// </example>
-    public static void AddBasicHealthChecks(this WebApplicationBuilder builder)
+    public static void AddBasicHealthChecks(this IServiceCollection serviceCollection)
     {
-        builder.Services.AddHealthChecks()
+        serviceCollection.AddHealthChecks()
             .AddCheck("Liveness", () => HealthCheckResult.Healthy(), tags: ["liveness"])
             .AddCheck("Readiness", () => HealthCheckResult.Healthy(), tags: ["readiness"]);
     }

@@ -1,19 +1,17 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Repositories;
-using Ambev.DeveloperEvaluation.ORM;
+using Ambev.DeveloperEvaluation.Domain.Repositories;
 using Ambev.DeveloperEvaluation.ORM.Repositories;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Ambev.DeveloperEvaluation.IoC.ModuleInitializers;
+namespace Ambev.DeveloperEvaluation.ORM;
 
-public class InfrastructureModuleInitializer : IModuleInitializer
+public static class DependencyInjectionResolver
 {
-    public void Initialize(WebApplicationBuilder builder)
+    public static IServiceCollection InstallInfrastructureLayer(this IServiceCollection serviceCollection)
     {
         // Use this instead DI default methods for safer DbContext injection.
-        builder.Services.AddDbContext<DefaultContext>((provider, options) =>
+        serviceCollection.AddDbContext<DefaultContext>((provider, options) =>
         {
             IConfiguration configuration = provider.GetRequiredService<IConfiguration>();
             string? connString = configuration.GetConnectionString(name: "DefaultConnection");
@@ -21,6 +19,8 @@ public class InfrastructureModuleInitializer : IModuleInitializer
 
             options.UseNpgsql(connString);
         });
-        builder.Services.AddScoped<IUserRepository, UserRepository>();
+        serviceCollection.AddScoped<IUserRepository, UserRepository>();
+
+        return serviceCollection;
     }
 }

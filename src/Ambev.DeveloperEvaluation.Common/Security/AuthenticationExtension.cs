@@ -10,11 +10,11 @@ namespace Ambev.DeveloperEvaluation.Common.Security;
 
 public static class AuthenticationExtension
 {
-    public static IServiceCollection AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddJwtAuthentication(this IServiceCollection services)
     {
         services.RegisterOption<JwtSettings>(JwtSettings.SectionName);
         services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
-
+        // TODO: WIP testing it later. The project was broken in few places before reach this path.
         // var secretKey = configuration["Jwt:SecretKey"];
         // ArgumentException.ThrowIfNullOrWhiteSpace(secretKey);
         //
