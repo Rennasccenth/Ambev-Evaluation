@@ -2,6 +2,8 @@ using System.Reflection;
 using Ambev.DeveloperEvaluation.Common.ExceptionHandlers;
 using Ambev.DeveloperEvaluation.Common.HealthChecks;
 using Ambev.DeveloperEvaluation.Common.Security;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Ambev.DeveloperEvaluation.WebApi;
 
@@ -24,13 +26,19 @@ internal static class DependencyInjectionResolver
         serviceCollection.AddEndpointsApiExplorer();
         serviceCollection.AddControllers();
 
-        serviceCollection.AddProblemDetails();
+        serviceCollection.AddProblemDetails(options =>
+        {
+            options.CustomizeProblemDetails = context =>
+            {
+                context.ProblemDetails.Instance = $"{context.HttpContext.Request.Method} {context.HttpContext.Request.Path}";
+                context.ProblemDetails.Extensions.Add("requestId", context.HttpContext.TraceIdentifier);
+                context.ProblemDetails.Extensions.Add("traceId", context.HttpContext.Features.Get<IHttpActivityFeature>()?.Activity.Id);
+            };
+        });
         
         // Microsoft recommends this for .NET latest versions like [.NET 8+]
         // See GlobalExceptionHandler docs for more info.
-        serviceCollection // Be aware, order matters
-            .AddExceptionHandler<ValidationExceptionHandler>()
-            .AddExceptionHandler<GlobalExceptionHandler>();
+        serviceCollection.AddExceptionHandler<GlobalExceptionHandler>();
 
         return serviceCollection;
         
