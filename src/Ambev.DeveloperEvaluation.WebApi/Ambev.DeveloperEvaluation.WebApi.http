@@ -24,10 +24,10 @@ Content-Type: application/json
 #Authorization: Bearer {{auth_token}}
 
 {
-    "username": "new_user",
+    "username": "new_userzadaa",
     "password": "SecurePassword123!",
     "phone": "+5511999999999",
-    "email": "new.user@example.com",
+    "email": "new.user4@example.com",
     "status": 1,
     "role": 2
 }

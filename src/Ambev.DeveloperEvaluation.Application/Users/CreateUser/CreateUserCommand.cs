@@ -5,6 +5,8 @@ namespace Ambev.DeveloperEvaluation.Application.Users.CreateUser;
 
 public sealed class CreateUserCommand : IRequest<CreateUserResult>
 {
+    public required string Firstname { get; init; }
+    public required string Lastname { get; init; }
     public required string City { get; init; }
     public required string Street { get; init; }
     public required int Number { get; init; }

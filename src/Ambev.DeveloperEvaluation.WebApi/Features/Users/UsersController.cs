@@ -9,6 +9,7 @@ using Ambev.DeveloperEvaluation.Application.Users.CreateUser;
 using Ambev.DeveloperEvaluation.Application.Users.GetUser;
 using Ambev.DeveloperEvaluation.Application.Users.DeleteUser;
 using Ambev.DeveloperEvaluation.Common.Errors;
+using FluentValidation;
 using FluentValidation.Results;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Users;
@@ -38,15 +39,19 @@ public class UsersController : BaseController
     /// Creates a new user
     /// </summary>
     /// <param name="request">The user creation request</param>
+    /// <param name="requestValidator"></param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>The created user details</returns>
     [HttpPost]
     [ProducesResponseType(typeof(ApiResponseWithData<CreateUserResponse>), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> CreateUser([FromBody] CreateUserRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> CreateUser(
+        [FromBody] CreateUserRequest request,
+        [FromServices] IValidator<CreateUserRequest> requestValidator,
+        CancellationToken cancellationToken)
     {
-        var validator = new CreateUserRequestValidator();
-        var validationResult = await validator.ValidateAsync(request, cancellationToken);
+        ValidationResult? validationResult = await requestValidator
+            .ValidateAsync(request, cancellationToken);
 
         if (!validationResult.IsValid)
             return HandleKnownError(validationResult.Errors);

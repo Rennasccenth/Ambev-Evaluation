@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using MediatR;
-using FluentValidation;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Common.Security;
+using FluentValidation;
 
 namespace Ambev.DeveloperEvaluation.Application.Users.CreateUser;
 
@@ -40,11 +40,8 @@ public sealed class CreateUserHandler : IRequestHandler<CreateUserCommand, Creat
     /// <returns>The created user details</returns>
     public async Task<CreateUserResult> Handle(CreateUserCommand command, CancellationToken cancellationToken)
     {
-        var validator = new CreateUserCommandValidator();
-        var validationResult = await validator.ValidateAsync(command, cancellationToken);
-
-        if (!validationResult.IsValid)
-            throw new ValidationException(validationResult.Errors);
+        var createUserCommandValidator = new CreateUserCommandValidator();
+        await createUserCommandValidator.ValidateAndThrowAsync(command, cancellationToken);
 
         var existingUser = await _userRepository.GetByEmailAsync(command.Email, cancellationToken);
         if (existingUser != null)

@@ -3,6 +3,7 @@ using Ambev.DeveloperEvaluation.Common.Validation;
 using Ambev.DeveloperEvaluation.Domain.Common;
 using Ambev.DeveloperEvaluation.Domain.Enums;
 using Ambev.DeveloperEvaluation.Domain.Validation;
+using FluentValidation.Results;
 
 namespace Ambev.DeveloperEvaluation.Domain.Entities;
 
@@ -105,8 +106,7 @@ public class User : BaseEntity, IUser
     /// </remarks>
     public ValidationResultDetail Validate()
     {
-        var validator = new UserValidator();
-        var result = validator.Validate(this);
+        ValidationResult? result = new UserValidator().Validate(this);
         return new ValidationResultDetail
         {
             IsValid = result.IsValid,
