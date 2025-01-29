@@ -6,12 +6,12 @@ namespace Ambev.DeveloperEvaluation.Application.Users.GetUser;
 /// <summary>
 /// Profile for mapping between User entity and GetUserResponse
 /// </summary>
-internal sealed class GetUserProfile : Profile
+public sealed class GetUserProfile : Profile
 {
     /// <summary>
     /// Initializes the mappings for GetUser operation
     /// </summary>
-    internal GetUserProfile()
+    public GetUserProfile()
     {
         CreateMap<User, GetUserResult>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))

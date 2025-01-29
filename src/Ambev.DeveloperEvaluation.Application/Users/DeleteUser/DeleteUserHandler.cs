@@ -7,7 +7,7 @@ namespace Ambev.DeveloperEvaluation.Application.Users.DeleteUser;
 /// <summary>
 /// Handler for processing DeleteUserCommand requests
 /// </summary>
-internal sealed class DeleteUserHandler : IRequestHandler<DeleteUserCommand, DeleteUserResponse>
+public sealed class DeleteUserHandler : IRequestHandler<DeleteUserCommand, DeleteUserResponse>
 {
     private readonly IUserRepository _userRepository;
 
@@ -15,8 +15,7 @@ internal sealed class DeleteUserHandler : IRequestHandler<DeleteUserCommand, Del
     /// Initializes a new instance of DeleteUserHandler
     /// </summary>
     /// <param name="userRepository">The user repository</param>
-    /// <param name="validator">The validator for DeleteUserCommand</param>
-    internal DeleteUserHandler(
+    public DeleteUserHandler(
         IUserRepository userRepository)
     {
         _userRepository = userRepository;

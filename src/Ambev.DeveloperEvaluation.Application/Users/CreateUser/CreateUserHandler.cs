@@ -10,7 +10,7 @@ namespace Ambev.DeveloperEvaluation.Application.Users.CreateUser;
 /// <summary>
 /// Handler for processing CreateUserCommand requests
 /// </summary>
-internal sealed class CreateUserHandler : IRequestHandler<CreateUserCommand, CreateUserResult>
+public sealed class CreateUserHandler : IRequestHandler<CreateUserCommand, CreateUserResult>
 {
     private readonly IUserRepository _userRepository;
     private readonly IMapper _mapper;
@@ -22,7 +22,7 @@ internal sealed class CreateUserHandler : IRequestHandler<CreateUserCommand, Cre
     /// <param name="userRepository">The user repository</param>
     /// <param name="mapper">The AutoMapper instance</param>
     /// <param name="validator">The validator for CreateUserCommand</param>
-    internal CreateUserHandler(IUserRepository userRepository, IMapper mapper, IPasswordHasher passwordHasher)
+    public CreateUserHandler(IUserRepository userRepository, IMapper mapper, IPasswordHasher passwordHasher)
     {
         _userRepository = userRepository;
         _mapper = mapper;
