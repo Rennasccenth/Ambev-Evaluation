@@ -1,17 +1,10 @@
-using Ambev.DeveloperEvaluation.Application;
 using Ambev.DeveloperEvaluation.Common.HealthChecks;
 using Ambev.DeveloperEvaluation.Common.Logging;
-using Ambev.DeveloperEvaluation.Common.Security;
-using Ambev.DeveloperEvaluation.Common.Validation;
 using Ambev.DeveloperEvaluation.IoC;
-using Ambev.DeveloperEvaluation.ORM;
-using Ambev.DeveloperEvaluation.WebApi.ExceptionHandlers;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Ambev.DeveloperEvaluation.WebApi;
 
-public class Program
+public static class Program
 {
     public static void Main(string[] args)
     {
@@ -19,42 +12,10 @@ public class Program
         {
             WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
             builder.AddDefaultLogging();
-            
-            builder.Services.AddControllers();
-            builder.Services.AddEndpointsApiExplorer();
 
-            // Todo: To increase development velocity, I'll comment this, since I want to let Exceptions pop out.
-            // // Microsoft recommends this for .NET latest versions like [.NET 8+]
-            // // See GlobalExceptionHandler docs for more info.
-            builder.Services // Be aware, order matters
-                .AddExceptionHandler<ValidationExceptionHandler>();
-            //     .AddExceptionHandler<GlobalExceptionHandler>();
-
-            builder.AddBasicHealthChecks();
-            builder.Services.AddSwaggerGen();
-
-            builder.Services.AddDbContext<DefaultContext>(options =>
-                options.UseNpgsql(
-                    builder.Configuration.GetConnectionString("DefaultConnection"),
-                    b => b.MigrationsAssembly("Ambev.DeveloperEvaluation.ORM")
-                )
-            );
-
-            builder.Services.AddJwtAuthentication(builder.Configuration);
-
-            builder.RegisterDependencies();
-
-            builder.Services.AddAutoMapper(typeof(Program).Assembly, typeof(ApplicationLayer).Assembly);
-
-            builder.Services.AddMediatR(cfg =>
-            {
-                cfg.RegisterServicesFromAssemblies(
-                    typeof(ApplicationLayer).Assembly,
-                    typeof(Program).Assembly
-                );
-            });
-
-            builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+            builder.Services
+                .InstallApiDependencies()
+                .RegisterDependenciesServices();
 
             WebApplication app = builder.Build();
 
@@ -64,7 +25,7 @@ public class Program
                 app.UseSwaggerUI();
             }
 
-            app.UseExceptionHandler("/");
+            app.UseExceptionHandler();
             app.UseHttpsRedirection();
 
             app.UseAuthentication();

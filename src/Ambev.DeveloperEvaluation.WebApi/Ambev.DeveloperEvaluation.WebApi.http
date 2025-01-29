@@ -1,6 +1,49 @@
-@Ambev.DeveloperEvaluation.WebApi_HostAddress = http://localhost:5119
+@host = http://localhost:5119
 
-GET {{Ambev.DeveloperEvaluation.WebApi_HostAddress}}/weatherforecast/
-Accept: application/json
+### Authentication Request
+POST {{host}}/api/Auth
+Content-Type: application/json
+
+{
+    "email": "user@example.com",
+    "password": "your_password"
+}
+
+> {%
+    client.global.set("auth_token", response.body.data.token);
+%}
+
 
 ###
+
+GET http://localhost:5119/api/Users/5216afd6-64d4-41d9-8f6e-0ee7536ad0ad
+
+### Create User Request
+POST {{host}}/api/Users
+Content-Type: application/json
+#Authorization: Bearer {{auth_token}}
+
+{
+    "username": "new_user",
+    "password": "SecurePassword123!",
+    "phone": "+5511999999999",
+    "email": "new.user@example.com",
+    "status": 1,
+    "role": 2
+}
+
+> {%
+    client.global.set("user_id", response.body.data.id);
+%}
+
+
+
+### Get User by ID
+@user_id = d057fe7a-33ae-4de5-bfbd-d5681463040a
+GET {{host}}/api/Users/{{user_id}}
+#Authorization: Bearer {{auth_token}}
+
+
+### Delete User by ID
+DELETE {{host}}/api/Users/{{user_id}}
+#Authorization: Bearer {{auth_token}}

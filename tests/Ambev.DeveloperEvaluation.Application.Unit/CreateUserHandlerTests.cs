@@ -6,9 +6,8 @@ using Ambev.DeveloperEvaluation.Unit.Application.TestData;
 using AutoMapper;
 using FluentAssertions;
 using NSubstitute;
-using Xunit;
 
-namespace Ambev.DeveloperEvaluation.Unit.Application;
+namespace Ambev.DeveloperEvaluation.Application.Unit;
 
 /// <summary>
 /// Contains unit tests for the <see cref="CreateUserHandler"/> class.
