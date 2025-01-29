@@ -5,12 +5,12 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Users.DeleteUser;
 /// <summary>
 /// Validator for DeleteUserRequest
 /// </summary>
-public class DeleteUserRequestValidator : AbstractValidator<DeleteUserRequest>
+internal sealed class DeleteUserRequestValidator : AbstractValidator<DeleteUserRequest>
 {
     /// <summary>
     /// Initializes validation rules for DeleteUserRequest
     /// </summary>
-    public DeleteUserRequestValidator()
+    internal DeleteUserRequestValidator()
     {
         RuleFor(x => x.Id)
             .NotEmpty()

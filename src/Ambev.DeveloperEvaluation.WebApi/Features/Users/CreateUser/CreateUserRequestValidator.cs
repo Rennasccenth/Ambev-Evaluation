@@ -7,7 +7,7 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Users.CreateUser;
 /// <summary>
 /// Validator for CreateUserRequest that defines validation rules for user creation.
 /// </summary>
-public class CreateUserRequestValidator : AbstractValidator<CreateUserRequest>
+internal sealed class CreateUserRequestValidator : AbstractValidator<CreateUserRequest>
 {
     /// <summary>
     /// Initializes a new instance of the CreateUserRequestValidator with defined validation rules.
@@ -21,7 +21,7 @@ public class CreateUserRequestValidator : AbstractValidator<CreateUserRequest>
     /// - Status: Cannot be Unknown
     /// - Role: Cannot be None
     /// </remarks>
-    public CreateUserRequestValidator()
+    internal CreateUserRequestValidator()
     {
         RuleFor(user => user.Email).SetValidator(new EmailValidator());
         RuleFor(user => user.Username).NotEmpty().Length(3, 50);

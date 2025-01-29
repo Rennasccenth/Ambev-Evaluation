@@ -5,7 +5,7 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Users.CreateUser;
 /// <summary>
 /// Represents a request to create a new user in the system.
 /// </summary>
-public class CreateUserRequest
+public sealed class CreateUserRequest
 {
     /// <summary>
     /// Gets or sets the username. Must be unique and contain only valid characters.
