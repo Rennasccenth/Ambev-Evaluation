@@ -2,9 +2,9 @@ using FluentValidation;
 
 namespace Ambev.DeveloperEvaluation.Application.Auth.AuthenticateUser;
 
-internal sealed class AuthenticateUserValidator : AbstractValidator<AuthenticateUserCommand>
+public sealed class AuthenticateUserValidator : AbstractValidator<AuthenticateUserCommand>
 {
-    internal AuthenticateUserValidator()
+    public AuthenticateUserValidator()
     {
         RuleFor(x => x.Email)
             .NotEmpty()

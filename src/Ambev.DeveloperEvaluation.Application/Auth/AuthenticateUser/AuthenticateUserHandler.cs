@@ -1,6 +1,7 @@
 using Ambev.DeveloperEvaluation.Common.Errors;
 using Ambev.DeveloperEvaluation.Common.Security;
 using Ambev.DeveloperEvaluation.Common.Validation;
+using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using Ambev.DeveloperEvaluation.Domain.Specifications;
 using OneOf;
@@ -26,7 +27,7 @@ public sealed class AuthenticateUserHandler : IRequestHandler<AuthenticateUserCo
 
     public async Task<OneOf<AuthenticateUserResult, ApplicationError>> Handle(AuthenticateUserCommand request, CancellationToken cancellationToken)
     {
-        var user = await _userRepository.GetByEmailAsync(request.Email, cancellationToken);
+        User? user = await _userRepository.GetByEmailAsync(request.Email, cancellationToken);
             
         if (user == null || !_passwordHasher.VerifyPassword(request.Password, user.Password))
         {
@@ -36,7 +37,7 @@ public sealed class AuthenticateUserHandler : IRequestHandler<AuthenticateUserCo
         ActiveUserSpecification activeUserSpec = new ();
         if (!activeUserSpec.IsSatisfiedBy(user))
         {
-            return ApplicationError.UnauthorizedAccessError("User is not active");
+            return ApplicationError.UnauthorizedAccessError("User is not active.");
         }
 
         string token = _jwtTokenGenerator.GenerateToken(user);

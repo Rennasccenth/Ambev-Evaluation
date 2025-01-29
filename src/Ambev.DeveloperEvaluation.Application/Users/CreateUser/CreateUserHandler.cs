@@ -21,8 +21,11 @@ public sealed class CreateUserHandler : IRequestHandler<CreateUserCommand, Creat
     /// </summary>
     /// <param name="userRepository">The user repository</param>
     /// <param name="mapper">The AutoMapper instance</param>
-    /// <param name="validator">The validator for CreateUserCommand</param>
-    public CreateUserHandler(IUserRepository userRepository, IMapper mapper, IPasswordHasher passwordHasher)
+    /// <param name="passwordHasher">The password hasher to be used</param>
+    public CreateUserHandler(
+        IUserRepository userRepository,
+        IMapper mapper,
+        IPasswordHasher passwordHasher)
     {
         _userRepository = userRepository;
         _mapper = mapper;
