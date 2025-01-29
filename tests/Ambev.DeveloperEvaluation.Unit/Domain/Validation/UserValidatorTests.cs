@@ -1,6 +1,8 @@
+using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Enums;
 using Ambev.DeveloperEvaluation.Domain.Validation;
 using Ambev.DeveloperEvaluation.Unit.Domain.Entities.TestData;
+using FluentValidation;
 using FluentValidation.TestHelper;
 using Xunit;
 
@@ -13,12 +15,7 @@ namespace Ambev.DeveloperEvaluation.Unit.Domain.Validation;
 /// </summary>
 public class UserValidatorTests
 {
-    private readonly UserValidator _validator;
-
-    public UserValidatorTests()
-    {
-        _validator = new UserValidator();
-    }
+    private static readonly IValidator<User> UserValidator = new UserValidator();
 
     /// <summary>
     /// Tests that validation passes when all user properties are valid.
@@ -38,7 +35,7 @@ public class UserValidatorTests
         var user = UserTestData.GenerateValidUser();
 
         // Act
-        var result = _validator.TestValidate(user);
+        var result = UserValidator.TestValidate(user);
 
         // Assert
         result.ShouldNotHaveAnyValidationErrors();
@@ -63,7 +60,7 @@ public class UserValidatorTests
         user.Username = username;
 
         // Act
-        var result = _validator.TestValidate(user);
+        var result = UserValidator.TestValidate(user);
 
         // Assert
         result.ShouldHaveValidationErrorFor(x => x.Username);
@@ -83,7 +80,7 @@ public class UserValidatorTests
         user.Username = UserTestData.GenerateLongUsername();
 
         // Act
-        var result = _validator.TestValidate(user);
+        var result = UserValidator.TestValidate(user);
 
         // Assert
         result.ShouldHaveValidationErrorFor(x => x.Username);
@@ -106,7 +103,7 @@ public class UserValidatorTests
         user.Email = UserTestData.GenerateInvalidEmail();
 
         // Act
-        var result = _validator.TestValidate(user);
+        var result = UserValidator.TestValidate(user);
 
         // Assert
         result.ShouldHaveValidationErrorFor(x => x.Email);
@@ -131,7 +128,7 @@ public class UserValidatorTests
         user.Password = UserTestData.GenerateInvalidPassword();
 
         // Act
-        var result = _validator.TestValidate(user);
+        var result = UserValidator.TestValidate(user);
 
         // Assert
         result.ShouldHaveValidationErrorFor(x => x.Password);
@@ -154,7 +151,7 @@ public class UserValidatorTests
         user.Phone = UserTestData.GenerateInvalidPhone();
 
         // Act
-        var result = _validator.TestValidate(user);
+        var result = UserValidator.TestValidate(user);
 
         // Assert
         result.ShouldHaveValidationErrorFor(x => x.Phone);
@@ -176,7 +173,7 @@ public class UserValidatorTests
         user.Status = UserStatus.Unknown;
 
         // Act
-        var result = _validator.TestValidate(user);
+        var result = UserValidator.TestValidate(user);
 
         // Assert
         result.ShouldHaveValidationErrorFor(x => x.Status);
@@ -198,7 +195,7 @@ public class UserValidatorTests
         user.Role = UserRole.None;
 
         // Act
-        var result = _validator.TestValidate(user);
+        var result = UserValidator.TestValidate(user);
 
         // Assert
         result.ShouldHaveValidationErrorFor(x => x.Role);

@@ -1,5 +1,6 @@
 using Ambev.DeveloperEvaluation.Domain.Validation;
 using Ambev.DeveloperEvaluation.Unit.Domain.Entities.TestData;
+using FluentValidation;
 using FluentValidation.TestHelper;
 using Xunit;
 
@@ -11,12 +12,7 @@ namespace Ambev.DeveloperEvaluation.Unit.Domain.Validation;
 /// </summary>
 public class EmailValidatorTests
 {
-    private readonly EmailValidator _validator;
-
-    public EmailValidatorTests()
-    {
-        _validator = new EmailValidator();
-    }
+    internal static readonly IValidator<string> EmailValidator = new EmailValidator();
 
     /// <summary>
     /// Tests that validation passes for various valid email formats.
@@ -28,7 +24,7 @@ public class EmailValidatorTests
         var email = UserTestData.GenerateValidEmail();
 
         // Act
-        var result = _validator.TestValidate(email);
+        var result = EmailValidator.TestValidate(email);
 
         // Assert
         result.ShouldNotHaveAnyValidationErrors();
@@ -41,10 +37,10 @@ public class EmailValidatorTests
     public void Given_EmptyEmail_When_Validated_Then_ShouldHaveError()
     {
         // Arrange
-        var email = string.Empty;
+        string emptyEmail = string.Empty;
 
         // Act
-        var result = _validator.TestValidate(email);
+        var result = EmailValidator.TestValidate(emptyEmail);
 
         // Assert
         result.ShouldHaveValidationErrorFor(x => x)
@@ -63,7 +59,7 @@ public class EmailValidatorTests
     public void Given_InvalidEmailFormat_When_Validated_Then_ShouldHaveError(string email)
     {
         // Act
-        var result = _validator.TestValidate(email);
+        var result = EmailValidator.TestValidate(email);
 
         // Assert
         result.ShouldHaveValidationErrorFor(x => x)
@@ -80,7 +76,7 @@ public class EmailValidatorTests
         var email = $"{"a".PadLeft(90, 'a')}@example.com"; // Creates email > 100 chars
 
         // Act
-        var result = _validator.TestValidate(email);
+        var result = EmailValidator.TestValidate(email);
 
         // Assert
         result.ShouldHaveValidationErrorFor(x => x)

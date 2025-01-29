@@ -93,7 +93,9 @@ public class CreateUserHandlerTests
             Phone = "",
             Email = "",
             Status = UserStatus.Unknown,
-            Role = UserRole.None
+            Role = UserRole.None,
+            Firstname = "",
+            Lastname = ""
         }; // Empty command will fail validation
 
         // When
