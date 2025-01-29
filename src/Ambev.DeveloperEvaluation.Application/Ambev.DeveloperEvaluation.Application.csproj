@@ -14,5 +14,12 @@
     <PackageReference Include="MediatR" Version="12.4.1" />
     <PackageReference Include="OneOf" Version="3.0.271" />
   </ItemGroup>
+    
+<!--  Making internal implementations of Application Layer visible Unit tests but hidden from callers.
+      This enable us to hide the implementation details and force the callers to rely on abstractions, which
+      pointing us toward a SOLID approach.   -->
+  <ItemGroup>
+      <InternalsVisibleTo Include="Ambev.DeveloperEvaluation.Application.Unit"/>
+  </ItemGroup>    
 
 </Project>

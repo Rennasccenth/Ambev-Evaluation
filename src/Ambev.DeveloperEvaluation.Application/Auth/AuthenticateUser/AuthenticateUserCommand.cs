@@ -6,7 +6,7 @@ namespace Ambev.DeveloperEvaluation.Application.Auth.AuthenticateUser;
 /// Command for authenticating a user in the system.
 /// Implements IRequest for mediator pattern handling.
 /// </summary>
-public class AuthenticateUserCommand : IRequest<AuthenticateUserResult>
+public sealed class AuthenticateUserCommand : IRequest<AuthenticateUserResult>
 {
     /// <summary>
     /// Gets or sets the email address for authentication.

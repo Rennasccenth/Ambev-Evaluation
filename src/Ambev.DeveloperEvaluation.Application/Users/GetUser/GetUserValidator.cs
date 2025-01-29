@@ -5,12 +5,12 @@ namespace Ambev.DeveloperEvaluation.Application.Users.GetUser;
 /// <summary>
 /// Validator for GetUserCommand
 /// </summary>
-public class GetUserValidator : AbstractValidator<GetUserCommand>
+internal sealed class GetUserValidator : AbstractValidator<GetUserCommand>
 {
     /// <summary>
     /// Initializes validation rules for GetUserCommand
     /// </summary>
-    public GetUserValidator()
+    internal GetUserValidator()
     {
         RuleFor(x => x.Id)
             .NotEmpty()

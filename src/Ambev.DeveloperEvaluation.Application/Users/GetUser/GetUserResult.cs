@@ -5,7 +5,7 @@ namespace Ambev.DeveloperEvaluation.Application.Users.GetUser;
 /// <summary>
 /// Response model for GetUser operation
 /// </summary>
-public class GetUserResult
+public sealed class GetUserResult
 {
     /// <summary>
     /// The unique identifier of the user
