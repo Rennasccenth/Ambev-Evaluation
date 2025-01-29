@@ -87,17 +87,4 @@ public static class LoggingExtension
 
         return builder;
     }
-
-    /// <summary>Adds middleware for Swagger documetation generation.</summary>
-    /// <param name="app">The <see cref="WebApplication"/> instance this method extends.</param>
-    /// <returns>The <see cref="WebApplication"/> for Swagger documentation.</returns>
-    public static WebApplication UseDefaultLogging(this WebApplication app)
-    {
-        var logger = app.Services.GetRequiredService<ILogger<Logger>>();
-
-        var mode = Debugger.IsAttached ? "Debug" : "Release";
-        logger.LogInformation("Logging enabled for '{Application}' on '{Environment}' - Mode: {Mode}", app.Environment.ApplicationName, app.Environment.EnvironmentName, mode);
-        return app;
-
-    }
 }
