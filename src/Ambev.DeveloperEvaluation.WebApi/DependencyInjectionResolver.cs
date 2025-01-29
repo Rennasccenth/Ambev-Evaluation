@@ -2,6 +2,7 @@ using System.Reflection;
 using Ambev.DeveloperEvaluation.Common.ExceptionHandlers;
 using Ambev.DeveloperEvaluation.Common.HealthChecks;
 using Ambev.DeveloperEvaluation.Common.Security;
+using FluentValidation;
 using Microsoft.AspNetCore.Http.Features;
 
 namespace Ambev.DeveloperEvaluation.WebApi;
@@ -18,6 +19,11 @@ internal static class DependencyInjectionResolver
 
         // Register Mapping Profiles from API layer
         serviceCollection.AddAutoMapper(Assembly.GetExecutingAssembly());
+
+        // Register All AbstractValidators in current Layer
+        serviceCollection.AddValidatorsFromAssembly(
+            assembly: Assembly.GetExecutingAssembly(),
+            includeInternalTypes: true);
 
         // Configure JWT related Stuff
         serviceCollection.AddJwtAuthentication();
