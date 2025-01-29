@@ -1,8 +1,9 @@
+using Ambev.DeveloperEvaluation.Application.Unit.TestData;
 using Ambev.DeveloperEvaluation.Application.Users.CreateUser;
 using Ambev.DeveloperEvaluation.Common.Security;
 using Ambev.DeveloperEvaluation.Domain.Entities;
+using Ambev.DeveloperEvaluation.Domain.Enums;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
-using Ambev.DeveloperEvaluation.Unit.Application.TestData;
 using AutoMapper;
 using FluentAssertions;
 using NSubstitute;
@@ -79,7 +80,21 @@ public class CreateUserHandlerTests
     public async Task Handle_InvalidRequest_ThrowsValidationException()
     {
         // Given
-        var command = new CreateUserCommand(); // Empty command will fail validation
+        var command = new CreateUserCommand
+        {
+            City = "",
+            Street = "",
+            Number = -50,
+            ZipCode = "",
+            Latitude = "",
+            Longitude = "",
+            Username = "",
+            Password = "",
+            Phone = "",
+            Email = "",
+            Status = UserStatus.Unknown,
+            Role = UserRole.None
+        }; // Empty command will fail validation
 
         // When
         var act = () => _handler.Handle(command, CancellationToken.None);
