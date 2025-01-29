@@ -16,7 +16,7 @@ Content-Type: application/json
 
 ###
 
-GET http://localhost:5119/api/Users/5216afd6-64d4-41d9-8f6e-0ee7536ad0ad
+GET http://localhost:5119/api/Users/5216afd6-64d4-41d9-8f6e-0ee7536350ad
 
 ### Create User Request
 POST {{host}}/api/Users

@@ -3,29 +3,36 @@ using FluentValidation.Results;
 
 namespace Ambev.DeveloperEvaluation.Common.Errors;
 
-public record ApplicationError(string Code, string Message)
+public record ApplicationError
 {
-    public string Code { get; } = Code;
-    public string Message { get; } = Message;
+    protected ApplicationError(string Code, string Message)
+    {
+        this.Code = Code;
+        this.Message = Message;
+    }
+
+    protected ApplicationError(string code)
+    {
+        Code = code;
+        Message = "";
+    }
+
+    public string Code { get; }
+    public string Message { get; }
+
+    public static implicit operator ApplicationError (ValidationFailure validationFailure) => new ValidationError([validationFailure]);
+    public static implicit operator ApplicationError (List<ValidationFailure> validationFailures) => new ValidationError(validationFailures);
+    
+    public static implicit operator ApplicationError (ValidationErrorDetail validationErrorDetail) => new ValidationError([validationErrorDetail]);
+    public static implicit operator ApplicationError (List<ValidationErrorDetail> validationErrorDetails) => new ValidationError(validationErrorDetails);
+
+    public static ValidationError ValidationError(ValidationErrorDetail validationErrorDetail) => validationErrorDetail;
 
     public static BadRequestError BadRequestError(string? message = null) =>
         message is null
             ? new BadRequestError()
             : new BadRequestError(message);
 
-    public static ValidationError ValidationError(string? message = null) =>
-        message is null
-            ? new ValidationError()
-            : new ValidationError(message);
-
-    public static ValidationError ValidationError(IEnumerable<ValidationFailure> validationFailures) 
-        => new(validationFailures);
-
-    public static ValidationError ValidationError(IEnumerable<ValidationErrorDetail> validationErrorDetails) 
-        => new(validationErrorDetails);
-    public static ValidationError ValidationError(ValidationErrorDetail validationErrorDetail) 
-        => new([validationErrorDetail]);
-    
     public static DuplicatedResourceError DuplicatedResourceError(string? message = null) =>
         message is null
             ? new DuplicatedResourceError()

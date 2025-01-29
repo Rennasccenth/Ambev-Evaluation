@@ -30,9 +30,7 @@ public sealed class AuthenticateUserHandler : IRequestHandler<AuthenticateUserCo
             
         if (user == null || !_passwordHasher.VerifyPassword(request.Password, user.Password))
         {
-            return ApplicationError.ValidationError(new ValidationErrorDetail(
-                error: nameof(request.Password),
-                detail: "Password is incorrect."));
+            return ApplicationError.ValidationError(new ValidationErrorDetail(error: nameof(request.Password), detail: "Password is incorrect."));
         }
 
         ActiveUserSpecification activeUserSpec = new ();

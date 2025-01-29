@@ -31,10 +31,21 @@ public class BaseController : ControllerBase
                 Success = true
             });
 
+    /// <summary>
+    /// Resolve the appropriate http response for every known error.
+    /// </summary>
     protected IActionResult HandleKnownError(ApplicationError applicationError)
     {
         return applicationError switch
         {
+            ValidationError validationError => ValidationProblem(new ValidationProblemDetails
+            {
+                Detail =  applicationError.Message,
+                Status =  StatusCodes.Status400BadRequest,
+                Title =  ReasonPhrases.GetReasonPhrase(StatusCodes.Status400BadRequest),
+                Type =  nameof(ValidationError),
+                Errors = validationError.ErrorsDictionary
+            }),
             BadRequestError => Problem(
                 detail: applicationError.Message,
                 statusCode: StatusCodes.Status400BadRequest,
