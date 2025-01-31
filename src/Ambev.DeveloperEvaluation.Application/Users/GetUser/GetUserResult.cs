@@ -2,38 +2,36 @@ using Ambev.DeveloperEvaluation.Domain.Enums;
 
 namespace Ambev.DeveloperEvaluation.Application.Users.GetUser;
 
-/// <summary>
-/// Response model for GetUser operation
-/// </summary>
 public sealed class GetUserResult
 {
-    /// <summary>
-    /// The unique identifier of the user
-    /// </summary>
-    public Guid Id { get; set; }
+    public required Guid Id { get; init; }
+    public required string Email { get; init; }
+    public required string Username { get; init; }
+    public required string Password { get; init; }
+    public required NameDto Name { get; init; }
+    public required AddressDto Address { get; init; }
+    public required string Phone { get; init; }
+    public required UserStatus Status { get; init; }
+    public required UserRole Role { get; init; }
+}
 
-    /// <summary>
-    /// The user's full name
-    /// </summary>
-    public string Name { get; set; } = string.Empty;
+public sealed record AddressDto
+{
+    public required string City { get; init; }
+    public required string Street { get; init; }
+    public required int Number { get; init; }
+    public required string Zipcode { get; init; }
+    public required GeolocationDto Geolocation { get; init; }
+}
 
-    /// <summary>
-    /// The user's email address
-    /// </summary>
-    public string Email { get; set; } = string.Empty;
+public sealed record GeolocationDto
+{
+    public required string Latitude { get; init; }
+    public required string Longitude { get; init; }
+}
 
-    /// <summary>
-    /// The user's phone number
-    /// </summary>
-    public string Phone { get; set; } = string.Empty;   
-
-    /// <summary>
-    /// The user's role in the system
-    /// </summary>
-    public UserRole Role { get; set; }
-
-    /// <summary>
-    /// The current status of the user
-    /// </summary>
-    public UserStatus Status { get; set; }
+public class NameDto
+{
+    public required string Firstname { get; init; }
+    public required string Lastname { get; init; }
 }

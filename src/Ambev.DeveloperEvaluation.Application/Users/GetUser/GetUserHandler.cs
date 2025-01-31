@@ -1,23 +1,17 @@
+using Ambev.DeveloperEvaluation.Common.Errors;
+using Ambev.DeveloperEvaluation.Common.Results;
+using Ambev.DeveloperEvaluation.Domain.Entities;
 using AutoMapper;
 using MediatR;
-using FluentValidation;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 
 namespace Ambev.DeveloperEvaluation.Application.Users.GetUser;
 
-/// <summary>
-/// Handler for processing GetUserCommand requests
-/// </summary>
-public sealed class GetUserHandler : IRequestHandler<GetUserCommand, GetUserResult>
+public sealed class GetUserHandler : IRequestHandler<GetUserCommand, CommandResult<GetUserResult>>
 {
     private readonly IUserRepository _userRepository;
     private readonly IMapper _mapper;
 
-    /// <summary>
-    /// Initializes a new instance of GetUserHandler
-    /// </summary>
-    /// <param name="userRepository">The user repository</param>
-    /// <param name="mapper">The AutoMapper instance</param>
     public GetUserHandler(
         IUserRepository userRepository,
         IMapper mapper)
@@ -26,24 +20,11 @@ public sealed class GetUserHandler : IRequestHandler<GetUserCommand, GetUserResu
         _mapper = mapper;
     }
 
-    /// <summary>
-    /// Handles the GetUserCommand request
-    /// </summary>
-    /// <param name="request">The GetUser command</param>
-    /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>The user details if found</returns>
-    public async Task<GetUserResult> Handle(GetUserCommand request, CancellationToken cancellationToken)
+    public async Task<CommandResult<GetUserResult>> Handle(GetUserCommand request, CancellationToken cancellationToken)
     {
-        var validator = new GetUserValidator();
-        var validationResult = await validator.ValidateAsync(request, cancellationToken);
-
-        if (!validationResult.IsValid)
-            throw new ValidationException(validationResult.Errors);
-
-        var user = await _userRepository.GetByIdAsync(request.Id, cancellationToken);
-        if (user == null)
-            throw new KeyNotFoundException($"User with ID {request.Id} not found");
-
-        return _mapper.Map<GetUserResult>(user);
+        User? foundUser = await _userRepository.GetByIdAsync(request.Id, cancellationToken);
+        if (foundUser is null) 
+            return ApplicationError.NotFoundError($"User with ID {request.Id} wasn't found.");
+        return _mapper.Map<GetUserResult>(foundUser);
     }
 }

@@ -67,32 +67,28 @@ public class UsersController : BaseController
         });
     }
 
-    /// <summary>
-    /// Retrieves a user by their ID
-    /// </summary>
-    /// <param name="id">The unique identifier of the user</param>
-    /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>The user details if found</returns>
     [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(GetUserResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetUser([FromRoute] Guid id, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetUser(
+        [FromRoute] Guid id,
+        [FromServices] IValidator<GetUserRequest> getUserRequestValidator,
+        CancellationToken cancellationToken)
     {
         GetUserRequest request = new () { Id = id };
+        ValidationResult? validationResult = await getUserRequestValidator
+            .ValidateAsync(request, cancellationToken);
 
-        GetUserRequestValidator validator = new();
-        ValidationResult? validationResult = await validator.ValidateAsync(request, cancellationToken);
-
-        if (!validationResult.IsValid)
-            return BadRequest(validationResult.Errors);
+        if (!validationResult.IsValid) return HandleKnownError(validationResult.Errors);
 
         GetUserCommand? command = _mapper.Map<GetUserCommand>(request.Id);
-        GetUserResult result = await _mediator.Send(command, cancellationToken);
+        var result = await _mediator.Send(command, cancellationToken);
 
-        GetUserResponse response = _mapper.Map<GetUserResponse>(result);
-
-        return Ok(response);
+        return result.Match(
+            foundUser => Ok(_mapper.Map<GetUserResponse>(foundUser)),
+            error => HandleKnownError(error)
+        );
     }
 
     /// <summary>

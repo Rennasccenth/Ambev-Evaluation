@@ -1,39 +1,35 @@
-using Ambev.DeveloperEvaluation.Domain.Enums;
-
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Users.GetUser;
 
-/// <summary>
-/// API response model for GetUser operation
-/// </summary>
 public sealed class GetUserResponse
 {
-    /// <summary>
-    /// The unique identifier of the user
-    /// </summary>
-    public Guid Id { get; set; }
+    public Guid Id { get; init; }
+    public string Email { get; init; }
+    public string Username { get; init; }
+    public string Password { get; init; }
+    public NameDto Name { get; init; }
+    public AddressDto Address { get; init; }
+    public string Phone { get; init; }
+    public string Status { get; init; }
+    public string Role { get; init; }
+}
 
-    /// <summary>
-    /// The user's full name
-    /// </summary>
-    public string Name { get; set; } = string.Empty;
+public sealed record AddressDto
+{
+    public string City { get; init; }
+    public string Street { get; init; }
+    public int Number { get; init; }
+    public string Zipcode { get; init; }
+    public GeolocationDto Geolocation { get; init; }
+}
 
-    /// <summary>
-    /// The user's email address
-    /// </summary>
-    public string Email { get; set; } = string.Empty;
+public sealed record GeolocationDto
+{
+    public string Lat { get; init; }
+    public string Long { get; init; }
+}
 
-    /// <summary>
-    /// The user's phone number
-    /// </summary>
-    public string Phone { get; set; } = string.Empty;
-
-    /// <summary>
-    /// The user's role in the system
-    /// </summary>
-    public UserRole Role { get; set; }
-
-    /// <summary>
-    /// The current status of the user
-    /// </summary>
-    public UserStatus Status { get; set; }
+public class NameDto
+{
+    public string Firstname { get; init; }
+    public string Lastname { get; init; }
 }
