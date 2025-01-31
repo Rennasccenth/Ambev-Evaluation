@@ -30,7 +30,7 @@ public class UserTestData
 
     private User.UserBuilder GetUserBuilder => User.GetBuilder(_passwordHasher, _timeProvider, _userValidator);
 
-    private string Password => _passwordHasher.HashPassword(_faker.Internet.Password(8, prefix: "!T3sT"));
+    private string Password => _faker.Internet.Password(8, prefix: "!T3sT");
 
     private string Phone => "+" + string.Join("", Enumerable.Range(0, 13)
         .Select(_ => _faker.Random.Int(0, 9).ToString())
