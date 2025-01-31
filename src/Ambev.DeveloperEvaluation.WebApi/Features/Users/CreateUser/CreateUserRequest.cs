@@ -1,6 +1,4 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Enums;
-
-namespace Ambev.DeveloperEvaluation.WebApi.Features.Users.CreateUser;
+﻿namespace Ambev.DeveloperEvaluation.WebApi.Features.Users.CreateUser;
 
 public sealed class CreateUserRequest
 {
@@ -10,8 +8,8 @@ public sealed class CreateUserRequest
     public string Email { get; set; } = string.Empty;
     public NameDto Name { get; set; } = null!;
     public AddressDto Address { get; set; } = null!;
-    public UserStatus Status { get; set; }
-    public UserRole Role { get; set; }
+    public string Status { get; set; } = "";
+    public string Role { get; set; } = "";
 }
 
 public record NameDto(
@@ -19,16 +17,17 @@ public record NameDto(
     string Lastname
 );
 
-public record AddressDto(
-    string City,
-    string Street,
-    string Number,
-    string Zipcode,
-    GeolocationDto Geolocation
-);
+public record AddressDto
+{
+    public required string City { get; init; }
+    public required string Street { get; init; }
+    public required int Number { get; init; }
+    public required string Zipcode { get; init; }
+    public required GeolocationDto Geolocation { get; init; }
+}
 
-public record GeolocationDto(
-    string Lat,
-    string Long
-);
-
+public record GeolocationDto
+{
+    public required string Lat { get; init; }
+    public required string Long { get; init; }
+}

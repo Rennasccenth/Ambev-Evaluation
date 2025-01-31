@@ -12,9 +12,7 @@ public sealed class CreateUserResponse
     /// </summary>
     public Guid Id { get; set; }
 
-    /// <summary>
-    /// The user's full name
-    /// </summary>
+    // need to add all fields for this guy.
     public string Name { get; set; } = string.Empty;
 
     /// <summary>

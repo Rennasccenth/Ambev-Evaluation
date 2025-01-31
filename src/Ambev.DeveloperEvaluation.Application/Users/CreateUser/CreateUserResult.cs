@@ -1,17 +1,37 @@
-﻿namespace Ambev.DeveloperEvaluation.Application.Users.CreateUser;
+﻿using Ambev.DeveloperEvaluation.Domain.Enums;
 
-/// <summary>
-/// Represents the response returned after successfully creating a new user.
-/// </summary>
-/// <remarks>
-/// This response contains the unique identifier of the newly created user,
-/// which can be used for subsequent operations or reference.
-/// </remarks>
+namespace Ambev.DeveloperEvaluation.Application.Users.CreateUser;
+
 public sealed class CreateUserResult
 {
-    /// <summary>
-    /// Gets or sets the unique identifier of the newly created user.
-    /// </summary>
-    /// <value>A GUID that uniquely identifies the created user in the system.</value>
-    public Guid Id { get; set; }
+    public required Guid Id { get; init; }
+    public required string Email { get; init; }
+    public required string Username { get; init; }
+    public required string Password { get; init; }
+    public required CreatedName Name { get; init; }
+    public required CreatedAddress Address { get; init; }
+    public required string Phone { get; init; }
+    public required UserStatus Status { get; init; }
+    public required UserRole Role { get; init; }
+}
+
+public sealed record CreatedAddress
+{
+    public required string City { get; init; }
+    public required string Street { get; init; }
+    public required int Number { get; init; }
+    public required string Zipcode { get; init; }
+    public required CreatedGeolocation Geolocation { get; init; }
+}
+
+public sealed record CreatedGeolocation
+{
+    public required string Latitude { get; init; }
+    public required string Longitude { get; init; }
+}
+
+public class CreatedName
+{
+    public required string Firstname { get; init; }
+    public required string Lastname { get; init; }
 }

@@ -1,9 +1,10 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Enums;
+﻿using Ambev.DeveloperEvaluation.Common.Results;
+using Ambev.DeveloperEvaluation.Domain.Enums;
 using MediatR;
 
 namespace Ambev.DeveloperEvaluation.Application.Users.CreateUser;
 
-public sealed class CreateUserCommand : IRequest<CreateUserResult>
+public sealed class CreateUserCommand : IRequest<CommandResult<CreateUserResult>>
 {
     public required string Firstname { get; init; }
     public required string Lastname { get; init; }
