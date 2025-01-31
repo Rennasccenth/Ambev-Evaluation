@@ -1,4 +1,5 @@
 using System.Reflection;
+using Ambev.DeveloperEvaluation.WebApi.Common.Converters;
 using Ambev.DeveloperEvaluation.Common.ExceptionHandlers;
 using Ambev.DeveloperEvaluation.Common.HealthChecks;
 using Ambev.DeveloperEvaluation.Common.Security;
@@ -31,7 +32,13 @@ internal static class DependencyInjectionResolver
         serviceCollection.AddJwtAuthentication();
         
         serviceCollection.AddEndpointsApiExplorer();
-        serviceCollection.AddControllers();
+        serviceCollection.AddControllers().AddJsonOptions(options =>
+        {
+            options.JsonSerializerOptions.Converters.Add(new EmailJsonConverter());
+            options.JsonSerializerOptions.Converters.Add(new PhoneJsonConverter());
+            options.JsonSerializerOptions.Converters.Add(new PasswordJsonConverter());
+            options.JsonSerializerOptions.Converters.Add(new AddressJsonConverter());
+        });
 
         serviceCollection.AddProblemDetails(options =>
         {
