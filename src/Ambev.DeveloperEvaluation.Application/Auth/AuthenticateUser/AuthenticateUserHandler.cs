@@ -1,15 +1,15 @@
 using Ambev.DeveloperEvaluation.Common.Errors;
+using Ambev.DeveloperEvaluation.Common.Results;
 using Ambev.DeveloperEvaluation.Common.Security;
 using Ambev.DeveloperEvaluation.Common.Validation;
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using Ambev.DeveloperEvaluation.Domain.Specifications;
-using OneOf;
 using MediatR;
 
 namespace Ambev.DeveloperEvaluation.Application.Auth.AuthenticateUser;
 
-public sealed class AuthenticateUserHandler : IRequestHandler<AuthenticateUserCommand, OneOf<AuthenticateUserResult, ApplicationError>>
+public sealed class AuthenticateUserHandler : IRequestHandler<AuthenticateUserCommand, CommandResult<AuthenticateUserResult>>
 {
     private readonly IUserRepository _userRepository;
     private readonly IPasswordHasher _passwordHasher;
@@ -25,10 +25,10 @@ public sealed class AuthenticateUserHandler : IRequestHandler<AuthenticateUserCo
         _jwtTokenGenerator = jwtTokenGenerator;
     }
 
-    public async Task<OneOf<AuthenticateUserResult, ApplicationError>> Handle(AuthenticateUserCommand request, CancellationToken cancellationToken)
+    public async Task<CommandResult<AuthenticateUserResult>> Handle(AuthenticateUserCommand request, CancellationToken cancellationToken)
     {
         User? user = await _userRepository.GetByEmailAsync(request.Email, cancellationToken);
-            
+
         if (user == null || !_passwordHasher.VerifyPassword(request.Password, user.Password))
         {
             return ApplicationError.ValidationError(new ValidationErrorDetail(error: nameof(request.Password), detail: "Password is incorrect."));
