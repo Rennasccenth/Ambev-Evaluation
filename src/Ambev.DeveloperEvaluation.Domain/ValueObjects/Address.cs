@@ -23,4 +23,7 @@ public sealed record Address
 
     public static implicit operator string(Address address) =>
         $"{address.Street} Num. {address.Number}, {address.ZipCode} - {address.City}";
+
+    public override string ToString() =>
+        $"{Street} Num. {Number}, {ZipCode} - {City}";
 }

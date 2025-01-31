@@ -3,9 +3,9 @@ using Ambev.DeveloperEvaluation.Common.Results;
 using Ambev.DeveloperEvaluation.Common.Security;
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
-using Ambev.DeveloperEvaluation.Domain.Validation;
 using Ambev.DeveloperEvaluation.Domain.ValueObjects;
 using AutoMapper;
+using FluentValidation;
 using MediatR;
 
 namespace Ambev.DeveloperEvaluation.Application.Users.CreateUser;
@@ -16,29 +16,32 @@ public sealed class CreateUserHandler : IRequestHandler<CreateUserCommand, Comma
     private readonly IMapper _mapper;
     private readonly TimeProvider _timeProvider;
     private readonly IPasswordHasher _passwordHasher;
+    private readonly IValidator<User> _userValidator;
 
     public CreateUserHandler(
         IUserRepository userRepository,
         IMapper mapper,
         TimeProvider timeProvider,
-        IPasswordHasher passwordHasher)
+        IPasswordHasher passwordHasher,
+        IValidator<User> userValidator)
     {
         _userRepository = userRepository;
         _mapper = mapper;
         _timeProvider = timeProvider;
         _passwordHasher = passwordHasher;
+        _userValidator = userValidator;
     }
 
     public async Task<CommandResult<CreateUserResult>> Handle(CreateUserCommand command, CancellationToken cancellationToken)
     {
-        User? existingUser = await _userRepository.GetByEmailAsync(command.Email, cancellationToken);
+        User? existingUser = await _userRepository.GetByEmailAsync(command.Email!, cancellationToken);
         if (existingUser is not null) return ApplicationError.DuplicatedResourceError();
 
         var userBuildResult = User
             .GetBuilder(
                 _passwordHasher, 
                 _timeProvider, 
-                new UserValidator())
+                _userValidator)
             .WithEmail(command.Email)
             .WithUsername(command.Username)
             .WithPassword(command.Password)

@@ -1,18 +1,21 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Validation;
+﻿using Ambev.DeveloperEvaluation.Domain.ValueObjects;
 using FluentValidation;
 
 namespace Ambev.DeveloperEvaluation.Application.Users.CreateUser;
 
 public sealed class CreateUserValidator : AbstractValidator<CreateUserCommand>
 {
-    public CreateUserValidator()
+    public CreateUserValidator(
+        IValidator<Email> emailValidator,
+        IValidator<Password> passwordValidator,
+        IValidator<Phone> phoneValidator)
     {
         RuleFor(user => user.Email)
-            .SetValidator(new EmailValidator());
+            .SetValidator(emailValidator);
         RuleFor(user => user.Password)
-            .SetValidator(new PasswordValidator());
+            .SetValidator(passwordValidator);
         RuleFor(user => user.Phone)
-            .SetValidator(new PhoneValidator());
+            .SetValidator(phoneValidator);
 
         RuleFor(user => user.Username).NotEmpty().Length(3, 50);
         RuleFor(user => user.Firstname).NotEmpty().Length(2, 50);

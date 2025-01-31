@@ -1,17 +1,23 @@
-﻿using FluentValidation;
+﻿using Ambev.DeveloperEvaluation.Domain.ValueObjects;
+using FluentValidation;
 
 namespace Ambev.DeveloperEvaluation.Domain.Validation;
 
-public class PasswordValidator : AbstractValidator<string>
+public class PasswordValidator : AbstractValidator<Password>
 {
     public PasswordValidator()
     {
         RuleFor(password => password)
-            .NotEmpty()
-            .MinimumLength(8)
-            .Matches(@"[A-Z]+").WithMessage("Password must contain at least one uppercase letter.")
-            .Matches(@"[a-z]+").WithMessage("Password must contain at least one lowercase letter.")
-            .Matches(@"[0-9]+").WithMessage("Password must contain at least one number.")
-            .Matches(@"[\!\?\*\.\@\#\$\%\^\&\+\=]+").WithMessage("Password must contain at least one special character.");
+            .Custom((password, context) =>
+            {
+                if (password.IsValid)
+                {
+                    return;
+                }
+                foreach (var error in password.ValidationErrors)
+                {
+                    context.AddFailure(error);
+                }
+            });
     }
 }
