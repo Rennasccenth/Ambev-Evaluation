@@ -17,12 +17,12 @@ public partial class User : BaseEntity
     internal User() { }
 
     public string Username { get; internal set; } = null!;
-    public string Email { get; set; } = null!;
+    public Email Email { get; set; } = null!;
     public Address Address { get; set; } = null!;
-    public string Phone { get; set; } = null!;
+    public Phone Phone { get; set; } = null!;
     public string Firstname { get; set; } = null!;
     public string Lastname { get; set; } = null!;
-    public string Password { get; set; } = null!;
+    public Password Password { get; set; } = null!;
     public UserRole Role { get; set; }
     public UserStatus Status { get; set; }
     public DateTime CreatedAt { get; set; }
@@ -43,6 +43,7 @@ public partial class User : BaseEntity
         private readonly TimeProvider _timeProvider;
         private readonly IValidator<User> _userValidator;
         private readonly User _buildingUser;
+        private string HashedPassword { get; set; }
 
         internal UserBuilder(
             IPasswordHasher passwordHasher,
@@ -54,7 +55,7 @@ public partial class User : BaseEntity
             _userValidator = userValidator;
             _buildingUser = new User();
         }
-        public UserBuilder WithEmail(string email)
+        public UserBuilder WithEmail(Email email)
         {
             _buildingUser.Email = email;
             return this;
@@ -64,9 +65,10 @@ public partial class User : BaseEntity
             _buildingUser.Username = username;
             return this;
         }
-        public UserBuilder WithPassword(string password)
+        public UserBuilder WithPassword(Password password)
         {
-            _buildingUser.Password = _passwordHasher.HashPassword(password);
+            HashedPassword = _passwordHasher.HashPassword(password);
+            _buildingUser.Password = password;
             return this;
         }
         public UserBuilder WithFirstname(string firstname)
@@ -89,7 +91,7 @@ public partial class User : BaseEntity
             _buildingUser.Status = status;
             return this;
         }
-        public UserBuilder WithPhone(string phone)
+        public UserBuilder WithPhone(Phone phone)
         {
             _buildingUser.Phone = phone;
             return this;
@@ -105,9 +107,12 @@ public partial class User : BaseEntity
             _buildingUser.CreatedAt = _timeProvider.GetUtcNow().DateTime;
 
             ValidationResult? validationResult = _userValidator.Validate(_buildingUser);
-            if (validationResult.IsValid) return _buildingUser;
+            if (!validationResult.IsValid) return validationResult;
 
-            return validationResult;
+            // Only sets the hashed password once the creating object was validated
+            // because otherwise we will try to validate a hashed password.
+            _buildingUser.Password = HashedPassword;
+            return _buildingUser;
         }
     }
 
