@@ -18,6 +18,11 @@ public static class DependencyInjectionResolver
             ArgumentException.ThrowIfNullOrEmpty(connString);
 
             options.UseNpgsql(connString);
+
+            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") != "Development") return;
+
+            options.EnableDetailedErrors();
+            options.EnableSensitiveDataLogging();
         });
         serviceCollection.AddScoped<IUserRepository, UserRepository>();
 
