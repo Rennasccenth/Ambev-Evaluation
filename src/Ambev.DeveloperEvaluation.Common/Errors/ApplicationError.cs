@@ -5,6 +5,7 @@ namespace Ambev.DeveloperEvaluation.Common.Errors;
 
 public record ApplicationError
 {
+    
     protected ApplicationError(string Code, string Message)
     {
         this.Code = Code;
@@ -22,6 +23,8 @@ public record ApplicationError
 
     public static ValidationError ValidationError(ValidationErrorDetail validationErrorDetail) => validationErrorDetail;
     public static ValidationError ValidationError(ValidationResult validationResult) => new(validationResult.Errors);
+    public static ValidationError ValidationError(ValidationResult[] validationResults) 
+        => new(validationResults.SelectMany(validationResult => validationResult.Errors).ToList());
 
     public static BadRequestError BadRequestError(string? message = null) =>
         message is null
