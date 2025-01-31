@@ -3,7 +3,7 @@ using Ambev.DeveloperEvaluation.Common.ExceptionHandlers;
 using Ambev.DeveloperEvaluation.Common.HealthChecks;
 using Ambev.DeveloperEvaluation.Common.Security;
 using FluentValidation;
-using Microsoft.AspNetCore.Http.Features;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Ambev.DeveloperEvaluation.WebApi;
 
@@ -11,6 +11,8 @@ internal static class DependencyInjectionResolver
 {
     internal static IServiceCollection InstallApiDependencies(this IServiceCollection serviceCollection)
     {
+        serviceCollection.TryAddSingleton(TimeProvider.System);
+
         // Adds HCs
         serviceCollection.AddBasicHealthChecks();
 
@@ -37,7 +39,6 @@ internal static class DependencyInjectionResolver
             {
                 context.ProblemDetails.Instance = $"{context.HttpContext.Request.Method} {context.HttpContext.Request.Path}";
                 context.ProblemDetails.Extensions.Add("requestId", context.HttpContext.TraceIdentifier);
-                context.ProblemDetails.Extensions.Add("traceId", context.HttpContext.Features.Get<IHttpActivityFeature>()?.Activity.Id);
             };
         });
         
