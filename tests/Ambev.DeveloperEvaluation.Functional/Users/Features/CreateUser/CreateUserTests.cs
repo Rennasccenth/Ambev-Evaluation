@@ -1,18 +1,15 @@
 using System.Net;
 using System.Net.Http.Json;
-using System.Text.Json;
-using Ambev.DeveloperEvaluation.WebApi.Features.Users.CreateUser;
 using Ambev.DeveloperEvaluation.WebApi.Features.Users.GetUser;
-using DotNet.Testcontainers;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Xunit;
 
-namespace Ambev.DeveloperEvaluation.Functional.Users.CreateUser;
+namespace Ambev.DeveloperEvaluation.Functional.Users.Features.CreateUser;
 
-public sealed class CreateUserFunctionalTests : BaseFunctionalTest
+public sealed class CreateUserTests : BaseTest
 {
-    public CreateUserFunctionalTests(DeveloperEvaluationWebApplicationFactory webApplicationFactory) 
+    public CreateUserTests(DeveloperEvaluationWebApplicationFactory webApplicationFactory) 
         : base(webApplicationFactory) { }
 
     [Fact(DisplayName = "Get user when it exists should return 200 Ok containing the user response.")]
@@ -23,7 +20,7 @@ public sealed class CreateUserFunctionalTests : BaseFunctionalTest
 
         HttpResponseMessage createUserHttpResponse = await TestServerHttpClient.PostAsJsonAsync(
             requestUri: "api/Users",
-            value: UserBuilder.GetValidUserRequest(),
+            value: TestUserBuilder.GetValidUserRequest(),
             cancellationToken: cancellationTokenSource.Token);
 
         // Act

@@ -3,7 +3,7 @@ using Xunit;
 namespace Ambev.DeveloperEvaluation.Functional;
 
 [Collection(TestHelperConstants.WebApiCollectionName)]
-public class BaseFunctionalTest : IAsyncLifetime
+public class BaseTest : IAsyncLifetime
 {
     /// <summary>
     /// Configured <see cref="HttpClient"/> that points to current running Test Server.
@@ -17,7 +17,7 @@ public class BaseFunctionalTest : IAsyncLifetime
 
     private readonly Func<Task> _restartDatabaseStateAsync;
 
-    protected BaseFunctionalTest(DeveloperEvaluationWebApplicationFactory webApplicationFactory)
+    protected BaseTest(DeveloperEvaluationWebApplicationFactory webApplicationFactory)
     {
         _restartDatabaseStateAsync = webApplicationFactory.ResetDatabaseAsync;
         TestServerHttpClient = webApplicationFactory.CreateClient();

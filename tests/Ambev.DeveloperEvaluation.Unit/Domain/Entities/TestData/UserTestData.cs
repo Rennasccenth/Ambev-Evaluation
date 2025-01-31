@@ -1,3 +1,4 @@
+using System.Globalization;
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Enums;
 using Bogus;
@@ -22,9 +23,17 @@ public static class UserTestData
     /// - Role (Customer or Admin)
     /// </summary>
     private static readonly Faker<User> UserFaker = new Faker<User>()
+        .RuleFor(u => u.Firstname, f => f.Person.FirstName)
+        .RuleFor(u => u.Lastname, f => f.Person.LastName)
         .RuleFor(u => u.Username, f => f.Internet.UserName())
         .RuleFor(u => u.Password, f => $"Test@{f.Random.Number(100, 999)}")
         .RuleFor(u => u.Email, f => f.Internet.Email())
+        .RuleFor(u => u.Address.Number, f => int.Parse(f.Address.BuildingNumber()))
+        .RuleFor(u => u.Address.Street, f => f.Address.StreetAddress())
+        .RuleFor(u => u.Address.City, f => f.Address.City())
+        .RuleFor(u => u.Address.ZipCode, f => f.Address.ZipCode())
+        .RuleFor(u => u.Address.Latitude, f => f.Address.Latitude().ToString(CultureInfo.InvariantCulture))
+        .RuleFor(u => u.Address.Latitude, f => f.Address.Longitude().ToString(CultureInfo.InvariantCulture))
         .RuleFor(u => u.Phone, f => $"+55{f.Random.Number(11, 99)}{f.Random.Number(100000000, 999999999)}")
         .RuleFor(u => u.Status, f => f.PickRandom(UserStatus.Active, UserStatus.Suspended))
         .RuleFor(u => u.Role, f => f.PickRandom(UserRole.Customer, UserRole.Admin));
@@ -38,19 +47,6 @@ public static class UserTestData
     public static User GenerateValidUser()
     {
         return UserFaker.Generate();
-    }
-
-    /// <summary>
-    /// Generates a valid email address using Faker.
-    /// The generated email will:
-    /// - Follow the standard email format (user@domain.com)
-    /// - Have valid characters in both local and domain parts
-    /// - Have a valid TLD
-    /// </summary>
-    /// <returns>A valid email address.</returns>
-    public static string GenerateValidEmail()
-    {
-        return new Faker().Internet.Email();
     }
 
     /// <summary>

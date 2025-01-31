@@ -1,12 +1,71 @@
-using System.Globalization;
 using System.Text.Json;
 using Ambev.DeveloperEvaluation.WebApi.Features.Users.CreateUser;
-using Bogus;
 
 namespace Ambev.DeveloperEvaluation.Functional.Users;
 
-public static class UserBuilder
+public static class TestUserBuilder
 {
+    
+    public static CreateUserRequest GetInvalidUserRequest()
+    {
+        var invalidRequest = """
+                           {
+                             "Username": "XXXXXXXX",
+                             "Password": "XXXXXXXXXXXXX!",
+                             "Phone": "00000000000000",
+                             "Email": "john.doe@example.com",
+                             "Name": {
+                               "Firstname": "John",
+                               "Lastname": "Doe"
+                             },
+                             "Address": {
+                               "City": "São Paulo",
+                               "Street": "Av. Paulista",
+                               "Number": 12,
+                               "Zipcode": "01311-200",
+                               "Geolocation": {
+                                 "Lat": "-23.5631",
+                                 "Long": "-46.6567"
+                               }
+                             },
+                             "Status": "Active",
+                             "Role": "Admin"
+                           }
+                           """;
+
+        return JsonSerializer.Deserialize<CreateUserRequest>(invalidRequest) ?? throw new InvalidOperationException();
+    }
+
+     public static CreateUserRequest GetInvalidUserRequestWithEmptyUsername()
+    {
+        var invalidRequest = """
+                           {
+                             "Username": "",
+                             "Password": "XXXXXXXXXXXXX!",
+                             "Phone": "00000000000000",
+                             "Email": "john.doe@example.com",
+                             "Name": {
+                               "Firstname": "John",
+                               "Lastname": "Doe"
+                             },
+                             "Address": {
+                               "City": "São Paulo",
+                               "Street": "Av. Paulista",
+                               "Number": 12,
+                               "Zipcode": "01311-200",
+                               "Geolocation": {
+                                 "Lat": "-23.5631",
+                                 "Long": "-46.6567"
+                               }
+                             },
+                             "Status": "Active",
+                             "Role": "Admin"
+                           }
+                           """;
+
+        return JsonSerializer.Deserialize<CreateUserRequest>(invalidRequest) ?? throw new InvalidOperationException();
+    }
+
     public static CreateUserRequest GetValidUserRequest()
     {
         // var validFaker = new Faker<CreateUserRequest>("pt_BR")
