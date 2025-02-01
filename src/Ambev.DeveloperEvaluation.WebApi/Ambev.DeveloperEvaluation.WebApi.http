@@ -1,16 +1,16 @@
 @host = http://localhost:5119
 
 ### Authentication Request
-POST {{host}}/api/Auth
+POST {{host}}/api/auth
 Content-Type: application/json
 
 {
-    "email": "user@example.com",
-    "password": "your_password"
+    "email": "rdal_delsxesq3@asdadexamplasde.com",
+    "password": "TestPassword@2025"
 }
 
 > {%
-    client.global.set("auth_token", response.body.data.token);
+    client.global.set("auth_token", response.body.token);
 %}
 
 
@@ -23,8 +23,8 @@ POST {{host}}/api/Users
 Content-Type: application/json
 
 {
-    "email": "randomuseasdsdasdadsd3@asdadexamplasde.com",
-    "username": "randomuser456adasdas",
+    "email": "rdal_delsxesq3@asdadexamplasde.com",
+    "username": "randomuser4adas56adasdas",
     "password": "TestPassword@2025",
     "name": {
         "firstname": "Alice",
