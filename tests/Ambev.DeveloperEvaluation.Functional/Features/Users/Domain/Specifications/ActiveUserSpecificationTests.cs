@@ -4,7 +4,7 @@ using Ambev.DeveloperEvaluation.Domain.Specifications;
 using FluentAssertions;
 using Xunit;
 
-namespace Ambev.DeveloperEvaluation.Functional.Users.Domain.Specifications;
+namespace Ambev.DeveloperEvaluation.Functional.Features.Users.Domain.Specifications;
 
 public sealed class ActiveUserSpecificationTests : BaseTest
 {

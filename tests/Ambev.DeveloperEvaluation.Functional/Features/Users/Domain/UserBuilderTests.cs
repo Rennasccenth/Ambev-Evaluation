@@ -7,7 +7,7 @@ using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
-namespace Ambev.DeveloperEvaluation.Functional.Users.Domain;
+namespace Ambev.DeveloperEvaluation.Functional.Features.Users.Domain;
 
 public sealed class UserBuilderTests : BaseTest
 {

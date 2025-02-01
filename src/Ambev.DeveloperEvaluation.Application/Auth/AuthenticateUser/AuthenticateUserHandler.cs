@@ -28,26 +28,20 @@ public sealed class AuthenticateUserHandler : IRequestHandler<AuthenticateUserCo
     public async Task<CommandResult<AuthenticateUserResult>> Handle(AuthenticateUserCommand request, CancellationToken cancellationToken)
     {
         User? user = await _userRepository.GetByEmailAsync(request.Email, cancellationToken);
-
-        if (user == null || !_passwordHasher.VerifyPassword(request.Password, user.Password))
+        if (user is null || !_passwordHasher.VerifyPassword(request.Password, user.Password))
         {
-            return ApplicationError.ValidationError(new ValidationErrorDetail(error: nameof(request.Password), detail: "Password is incorrect."));
+            // Don't send back any message, we are avoiding leaking info about which field is incorrect.
+            return ApplicationError.UnauthorizedAccessError();
         }
 
-        ActiveUserSpecification activeUserSpec = new ();
+        ActiveUserSpecification activeUserSpec = new();
         if (!activeUserSpec.IsSatisfiedBy(user))
         {
-            return ApplicationError.UnauthorizedAccessError("User is not active.");
+            return ApplicationError.PermissionDeniedError($"The User {user.Email} is not active in the system.");
         }
 
         string token = _jwtTokenGenerator.GenerateToken(user);
 
-        return new AuthenticateUserResult
-        {
-            Token = token,
-            Email = user.Email,
-            Name = user.Username,
-            Role = user.Role.ToString()
-        };
+        return new AuthenticateUserResult { Token = token };
     }
 }

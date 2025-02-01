@@ -4,6 +4,7 @@ using Ambev.DeveloperEvaluation.Common.ExceptionHandlers;
 using Ambev.DeveloperEvaluation.Common.HealthChecks;
 using Ambev.DeveloperEvaluation.Common.Security;
 using FluentValidation;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Ambev.DeveloperEvaluation.WebApi;
@@ -45,7 +46,8 @@ internal static class DependencyInjectionResolver
             options.CustomizeProblemDetails = context =>
             {
                 context.ProblemDetails.Instance = $"{context.HttpContext.Request.Method} {context.HttpContext.Request.Path}";
-                context.ProblemDetails.Extensions.Add("requestId", context.HttpContext.TraceIdentifier);
+                context.ProblemDetails.Extensions.TryAdd("requestId", context.HttpContext.TraceIdentifier);
+                context.ProblemDetails.Extensions.TryAdd("traceId", context.HttpContext.Features.Get<IHttpActivityFeature>()?.Activity.TraceId);
             };
         });
         

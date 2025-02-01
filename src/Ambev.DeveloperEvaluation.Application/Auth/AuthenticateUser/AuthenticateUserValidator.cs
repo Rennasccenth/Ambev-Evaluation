@@ -1,17 +1,18 @@
+using Ambev.DeveloperEvaluation.Domain.ValueObjects;
 using FluentValidation;
 
 namespace Ambev.DeveloperEvaluation.Application.Auth.AuthenticateUser;
 
 public sealed class AuthenticateUserValidator : AbstractValidator<AuthenticateUserCommand>
 {
-    public AuthenticateUserValidator()
+    public AuthenticateUserValidator(
+        IValidator<Email> emailValidator,
+        IValidator<Password> passwordValidator)
     {
         RuleFor(x => x.Email)
-            .NotEmpty()
-            .EmailAddress();
+            .SetValidator(emailValidator);
 
         RuleFor(x => x.Password)
-            .NotEmpty()
-            .MinimumLength(6);
+            .SetValidator(passwordValidator);
     }
 }

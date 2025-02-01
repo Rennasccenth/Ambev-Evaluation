@@ -1,16 +1,16 @@
 @host = http://localhost:5119
 
 ### Authentication Request
-POST {{host}}/api/Auth
+POST {{host}}/api/auth
 Content-Type: application/json
 
 {
-    "email": "user@example.com",
-    "password": "your_password"
+    "email": "bilo@asdadexamplasde.com",
+    "password": "TestPassword@2025"
 }
 
 > {%
-    client.global.set("auth_token", response.body.data.token);
+    client.global.set("auth_token", response.body.token);
 %}
 
 
@@ -19,12 +19,12 @@ Content-Type: application/json
 GET http://localhost:5119/api/Users/5216afd6-64d4-41d9-8f6e-0ee7536350ad
 
 ### Create User Request
-POST {{host}}/api/Users
+POST {{host}}/api/users
 Content-Type: application/json
 
 {
-    "email": "randomuseasdsdasdadsd3@asdadexamplasde.com",
-    "username": "randomuser456adasdas",
+    "email": "bilo@asdadexamplasde.com",
+    "username": "randomuser4adas56adasdas",
     "password": "TestPassword@2025",
     "name": {
         "firstname": "Alice",
@@ -41,7 +41,7 @@ Content-Type: application/json
         }
     },
     "phone": "+5591981023045",
-    "status": "Active",
+    "status": "Inactive",
     "role": "Customer"
 }
 
