@@ -5,7 +5,7 @@ POST {{host}}/api/auth
 Content-Type: application/json
 
 {
-    "email": "rdal_delsxesq3@asdadexamplasde.com",
+    "email": "bilo@asdadexamplasde.com",
     "password": "TestPassword@2025"
 }
 
@@ -19,11 +19,11 @@ Content-Type: application/json
 GET http://localhost:5119/api/Users/5216afd6-64d4-41d9-8f6e-0ee7536350ad
 
 ### Create User Request
-POST {{host}}/api/Users
+POST {{host}}/api/users
 Content-Type: application/json
 
 {
-    "email": "rdal_delsxesq3@asdadexamplasde.com",
+    "email": "bilo@asdadexamplasde.com",
     "username": "randomuser4adas56adasdas",
     "password": "TestPassword@2025",
     "name": {
@@ -41,7 +41,7 @@ Content-Type: application/json
         }
     },
     "phone": "+5591981023045",
-    "status": "Active",
+    "status": "Inactive",
     "role": "Customer"
 }
 

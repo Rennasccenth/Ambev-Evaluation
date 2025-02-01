@@ -39,7 +39,11 @@ public sealed class GlobalExceptionHandler : IExceptionHandler
                 Status = StatusCodes.Status500InternalServerError,
                 Type = exception.GetType().Name,
                 Title = "An unexpected error has occurred.",
-                Detail = exception.Message
+                Detail = exception.Message,
+                Extensions =
+                {
+                    { "traceId", httpContext.Features.Get<IHttpActivityFeature>()?.Activity.TraceId  }
+                }
             }
         });
     }   
