@@ -78,22 +78,18 @@ public class UsersController : BaseController
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteUser(
         [FromRoute] Guid id,
+        [FromServices] IValidator<DeleteUserRequest> deleteUserRequestValidator,
         CancellationToken cancellationToken)
     {
-        var request = new DeleteUserRequest { Id = id };
-        var validator = new DeleteUserRequestValidator();
-        var validationResult = await validator.ValidateAsync(request, cancellationToken);
+        DeleteUserRequest request = new(id);
+        ValidationResult? validationResult = await deleteUserRequestValidator.ValidateAsync(request, cancellationToken);
+        if (!validationResult.IsValid) return HandleKnownError(validationResult.Errors);
 
-        if (!validationResult.IsValid)
-            return BadRequest(validationResult.Errors);
+        var commandResult = await _mediator.Send(_mapper.Map<DeleteUserCommand>(request.Id), cancellationToken);
 
-        var command = _mapper.Map<DeleteUserCommand>(request.Id);
-        await _mediator.Send(command, cancellationToken);
-
-        return Ok(new ApiResponse
-        {
-            Success = true,
-            Message = "User deleted successfully"
-        });
+        return commandResult.Match(
+            _ => NoContent(),
+            error => HandleKnownError(error)
+        );
     }
 }
