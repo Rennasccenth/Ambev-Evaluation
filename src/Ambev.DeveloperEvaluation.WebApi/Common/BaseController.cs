@@ -37,44 +37,44 @@ public class BaseController : ControllerBase
         {
             ValidationError validationError => ValidationProblem(new ValidationProblemDetails
             {
-                Detail =  applicationError.Message,
-                Status =  StatusCodes.Status400BadRequest,
-                Title =  ReasonPhrases.GetReasonPhrase(StatusCodes.Status400BadRequest),
-                Type =  nameof(ValidationError),
+                Detail = validationError.Message,
+                Status = StatusCodes.Status400BadRequest,
+                Title = ReasonPhrases.GetReasonPhrase(StatusCodes.Status400BadRequest),
+                Type = nameof(ValidationError),
                 Errors = validationError.ErrorsDictionary
             }),
-            BadRequestError => Problem(
-                detail: applicationError.Message,
+            BadRequestError badRequestError => Problem(
+                detail: badRequestError.Message,
                 statusCode: StatusCodes.Status400BadRequest,
                 title: ReasonPhrases.GetReasonPhrase(StatusCodes.Status400BadRequest),
                 type: nameof(BadRequestError)
             ),
-            DuplicatedResourceError => Problem(
-                detail: applicationError.Message,
+            DuplicatedResourceError duplicatedResourceError => Problem(
+                detail: duplicatedResourceError.Message,
                 statusCode: StatusCodes.Status409Conflict,
                 title: ReasonPhrases.GetReasonPhrase(StatusCodes.Status409Conflict),
                 type: nameof(DuplicatedResourceError)
             ),
-            InvalidArgumentError => Problem(
-                detail: applicationError.Message,
+            InvalidArgumentError invalidArgumentError => Problem(
+                detail: invalidArgumentError.Message,
                 statusCode: StatusCodes.Status422UnprocessableEntity,
                 title: ReasonPhrases.GetReasonPhrase(StatusCodes.Status422UnprocessableEntity),
                 type: nameof(InvalidArgumentError)
             ),
-            NotFoundError => Problem(
-                detail: applicationError.Message,
+            NotFoundError notFoundError => Problem(
+                detail: notFoundError.Message,
                 statusCode: StatusCodes.Status404NotFound,
                 title: ReasonPhrases.GetReasonPhrase(StatusCodes.Status404NotFound),
                 type: nameof(NotFoundError)
             ),
-            PermissionDeniedError => Problem(
-                detail: applicationError.Message,
+            PermissionDeniedError permissionDeniedError => Problem(
+                detail: permissionDeniedError.Message,
                 statusCode: StatusCodes.Status403Forbidden,
                 title: ReasonPhrases.GetReasonPhrase(StatusCodes.Status403Forbidden),
                 type: nameof(PermissionDeniedError)
             ),
-            UnauthorizedAccessError => Problem(
-                detail: applicationError.Message,
+            UnauthorizedAccessError unauthorizedAccessError => Problem(
+                detail: unauthorizedAccessError.Message,
                 statusCode: StatusCodes.Status401Unauthorized,
                 title: ReasonPhrases.GetReasonPhrase(StatusCodes.Status401Unauthorized),
                 type: nameof(UnauthorizedAccessError)

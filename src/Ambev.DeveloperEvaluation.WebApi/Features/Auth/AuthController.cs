@@ -27,6 +27,7 @@ public class AuthController : BaseController
     [ProducesResponseType(typeof(AuthenticateUserResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> AuthenticateUser(
         [FromBody] AuthenticateUserRequest request,
         [FromServices] IValidator<AuthenticateUserRequest> requestValidator,
