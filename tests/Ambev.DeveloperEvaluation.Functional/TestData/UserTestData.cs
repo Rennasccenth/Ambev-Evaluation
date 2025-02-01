@@ -28,7 +28,8 @@ public class UserTestData : ICollectionFixture<DeveloperEvaluationWebApplication
 
     private User.UserBuilder GetUserBuilder => User.GetBuilder(_passwordHasher, _timeProvider, _userValidator);
 
-    private string Password => _faker.Internet.Password(8, prefix: "!T3sT");
+    internal string Email => _faker.Person.Email;
+    internal string Password => _faker.Internet.Password(8, prefix: "!T3sT");
 
     private string Phone => $"+{_faker.Random.Int(1, 9)}{_faker.Random.Number(100000000, 999999999)}";
 
@@ -49,7 +50,7 @@ public class UserTestData : ICollectionFixture<DeveloperEvaluationWebApplication
         return GetUserBuilder
             .WithFirstname(firstname ?? _faker.Person.FirstName)
             .WithLastname(lastname ?? _faker.Person.LastName)
-            .WithEmail(email ?? _faker.Person.Email)
+            .WithEmail(email ?? Email)
             .WithUsername(username ?? _faker.Person.UserName)
             .WithPassword(password ?? Password)
             .WithPhone(phone ?? Phone)

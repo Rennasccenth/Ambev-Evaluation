@@ -1,11 +1,13 @@
 using System.Net;
 using System.Net.Http.Json;
+using Ambev.DeveloperEvaluation.Domain.Enums;
+using Ambev.DeveloperEvaluation.WebApi.Features.Users.CreateUser;
 using Ambev.DeveloperEvaluation.WebApi.Features.Users.GetUser;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Xunit;
 
-namespace Ambev.DeveloperEvaluation.Functional.Users.Features.CreateUser;
+namespace Ambev.DeveloperEvaluation.Functional.Features.Users.Features;
 
 public sealed class CreateUserTests : BaseTest
 {
@@ -19,7 +21,7 @@ public sealed class CreateUserTests : BaseTest
         CancellationTokenSource cancellationTokenSource = new();
 
         HttpResponseMessage createUserHttpResponse = await TestServerHttpClient.PostAsJsonAsync(
-            requestUri: "api/Users",
+            requestUri: "api/users",
             value: TestUserBuilder.GetValidUserRequest(),
             cancellationToken: cancellationTokenSource.Token);
 
@@ -46,7 +48,7 @@ public sealed class CreateUserTests : BaseTest
         CancellationTokenSource cancellationTokenSource = new();
 
         // Act
-        HttpResponseMessage response = await TestServerHttpClient.GetAsync($"api/Users/{Guid.NewGuid()}", cancellationTokenSource.Token);        
+        HttpResponseMessage response = await TestServerHttpClient.GetAsync($"api/users/{Guid.NewGuid()}", cancellationTokenSource.Token);        
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);

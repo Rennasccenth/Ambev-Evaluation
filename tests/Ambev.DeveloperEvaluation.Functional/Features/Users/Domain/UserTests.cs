@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Time.Testing;
 using Xunit;
 
-namespace Ambev.DeveloperEvaluation.Functional.Users.Domain;
+namespace Ambev.DeveloperEvaluation.Functional.Features.Users.Domain;
 
 public sealed class UserTests : BaseTest
 {

@@ -1,5 +1,6 @@
 using Ambev.DeveloperEvaluation.Domain.ValueObjects;
 using FluentValidation;
+using FluentValidation.Results;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Auth.AuthenticateUser;
 
@@ -10,9 +11,25 @@ public class AuthenticateUserRequestValidator : AbstractValidator<AuthenticateUs
         IValidator<Password> passwordValidator)
     {
         RuleFor(x => x.Email)
-            .SetValidator(emailValidator);
+            .Custom((email, context) =>
+            {
+                Email emailObj = email;
+                ValidationResult validationResult = emailValidator.Validate(emailObj);
+                foreach (ValidationFailure? failure in validationResult.Errors)
+                {
+                    context.AddFailure(failure);
+                }
+            });
 
         RuleFor(x => x.Password)
-            .SetValidator(passwordValidator);
+            .Custom((password, context) =>
+            {
+                Password passwordObj = password;
+                ValidationResult validationResult = passwordValidator.Validate(passwordObj);
+                foreach (ValidationFailure? failure in validationResult.Errors)
+                {
+                    context.AddFailure(failure);
+                }
+            });
     }
 }
