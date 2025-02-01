@@ -24,7 +24,7 @@ public partial class User : BaseEntity
     public string Lastname { get; set; } = null!;
     public Password Password { get; set; } = null!;
     public UserRole Role { get; set; }
-    public UserStatus Status { get; set; }
+    public UserStatus Status { get; private set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
 
@@ -43,7 +43,7 @@ public partial class User : BaseEntity
         private readonly TimeProvider _timeProvider;
         private readonly IValidator<User> _userValidator;
         private readonly User _buildingUser;
-        private string HashedPassword { get; set; }
+        private string HashedPassword { get; set; } = "";
 
         internal UserBuilder(
             IPasswordHasher passwordHasher,
@@ -112,6 +112,15 @@ public partial class User : BaseEntity
             // Only sets the hashed password once the creating object was validated
             // because otherwise we will try to validate a hashed password.
             _buildingUser.Password = HashedPassword;
+            return _buildingUser;
+        }
+
+        /// <summary>
+        /// Dumps the internal building <see cref="User"/> instance, without any validation. 
+        /// </summary>
+        /// <returns>Unvalidated <see cref="User"/></returns>
+        public User Dump()
+        {
             return _buildingUser;
         }
     }

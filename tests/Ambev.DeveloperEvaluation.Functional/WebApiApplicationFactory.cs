@@ -1,23 +1,16 @@
 using System.Data.Common;
-using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.ORM;
 using Ambev.DeveloperEvaluation.WebApi;
-using DotNet.Testcontainers;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Time.Testing;
 using Respawn;
-using Serilog;
 using Testcontainers.PostgreSql;
 using Xunit;
-using Xunit.Abstractions;
-using Xunit.Sdk;
-using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace Ambev.DeveloperEvaluation.Functional;
 
@@ -55,16 +48,18 @@ public sealed class DeveloperEvaluationWebApplicationFactory
             collection
                 .RemoveAll<TimeProvider>()
                 .AddSingleton<TimeProvider>(new FakeTimeProvider(DateTimeOffset.UtcNow));
-            
+
             // Replace the current Context by pointing it to a PostgreSQL Container instance.
             collection.RemoveAll<DbContextOptions<DefaultContext>>()
-                .AddDbContext<DefaultContext>(optionsBuilder =>
+                .AddDbContextPool<DefaultContext>(optionsBuilder =>
                 {
                     optionsBuilder.UseNpgsql(_postgreSqlContainer.GetConnectionString(), psqlOptions =>
                     {
                         psqlOptions.CommandTimeout(3);
                         psqlOptions.EnableRetryOnFailure(2);
                     });
+                    optionsBuilder.EnableDetailedErrors();
+                    optionsBuilder.EnableSensitiveDataLogging();
                 });
         });
     }
@@ -89,11 +84,11 @@ public sealed class DeveloperEvaluationWebApplicationFactory
             .GetRequiredService<DefaultContext>();
         _dbConnection = dbContext.Database.GetDbConnection();
 
-        await RunMigrationsOnDbContextAsync(dbContext);
+        await EnsureAllTablesExists(dbContext);
         await InitializeRespawnerAsync(_dbConnection);
     }
 
-    private async Task RunMigrationsOnDbContextAsync(DefaultContext dbContext)
+    private async Task EnsureAllTablesExists(DefaultContext dbContext)
     {
         await dbContext.Database.EnsureCreatedAsync();
     }

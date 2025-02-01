@@ -20,11 +20,9 @@ public sealed partial class Email
 
     private bool Validate()
     {
-        if (string.IsNullOrWhiteSpace(_address))
-            return false;
-
-        Regex regex = MyRegex();
-        return regex.IsMatch(_address);
+        if (string.IsNullOrWhiteSpace(_address)) return false;
+        if (_address.Length > 100) return false;
+        return MyRegex().IsMatch(_address);
     }
 
     [GeneratedRegex(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")]

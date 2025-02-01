@@ -1,6 +1,8 @@
 using Ambev.DeveloperEvaluation.Common.Security;
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Enums;
+using Ambev.DeveloperEvaluation.Domain.ValueObjects;
+using Ambev.DeveloperEvaluation.Functional.TestCollections;
 using Bogus;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,12 +10,8 @@ using Xunit;
 
 namespace Ambev.DeveloperEvaluation.Functional.TestData;
 
-
-/// <summary>
-/// Generates User testing data by consuming the real services registered in DI container, avoiding de-sync registration problems.
-/// </summary>
-[Collection(TestHelperConstants.WebApiCollectionName)]
-public class UserTestData
+[Collection(PerCollectionFixture.CollectionName)]
+public class UserTestData : ICollectionFixture<DeveloperEvaluationWebApplicationFactory>
 {
     private readonly IPasswordHasher _passwordHasher;
     private readonly TimeProvider _timeProvider;
@@ -32,93 +30,65 @@ public class UserTestData
 
     private string Password => _faker.Internet.Password(8, prefix: "!T3sT");
 
-    private string Phone => "+" + string.Join("", Enumerable.Range(0, 13)
-        .Select(_ => _faker.Random.Int(0, 9).ToString())
-        .ToArray());
+    private string Phone => $"+{_faker.Random.Int(1, 9)}{_faker.Random.Number(100000000, 999999999)}";
 
-    public User BasicUser(UserStatus? status = null, UserRole? role = null)
+    /// <summary>
+    /// Returns a user, without validating the properties.
+    /// </summary>
+    public User DumpUser(
+        string? username = null,
+        Password? password = null,
+        string? firstname = null,
+        string? lastname = null,
+        Phone? phone = null,
+        Email? email = null,
+        Address? address = null,
+        UserStatus? status = null,
+        UserRole? role = null)
     {
-        var builderResult = GetUserBuilder
-            .WithFirstname(_faker.Person.FirstName)
-            .WithLastname(_faker.Person.LastName)
-            .WithEmail(_faker.Person.Email)
-            .WithUsername(_faker.Person.UserName)
-            .WithPassword(Password)
-            .WithPhone(Phone)
+        return GetUserBuilder
+            .WithFirstname(firstname ?? _faker.Person.FirstName)
+            .WithLastname(lastname ?? _faker.Person.LastName)
+            .WithEmail(email ?? _faker.Person.Email)
+            .WithUsername(username ?? _faker.Person.UserName)
+            .WithPassword(password ?? Password)
+            .WithPhone(phone ?? Phone)
             .WithStatus(status ?? _faker.PickRandom<UserStatus>())
             .WithRole(role ?? _faker.PickRandom<UserRole>())
-            .WithAddress(AddressTestData.AddressFaker)
+            .WithAddress(address ?? AddressTestData.AddressFaker)
+            .Dump();
+    }
+
+    /// <summary>
+    /// Returns a simple valid user.
+    /// </summary>
+    /// <exception cref="InvalidDataException"> In case the generated user don't get build,
+    /// due missing test data configuration.</exception>
+    public User ValidatedUser(
+        string? username = null,
+        Password? password = null,
+        string? firstname = null,
+        string? lastname = null,
+        Phone? phone = null,
+        Email? email = null,
+        Address? address = null,
+        UserStatus? status = null,
+        UserRole? role = null)
+    {
+        var builderResult = GetUserBuilder
+            .WithFirstname(firstname ?? _faker.Person.FirstName)
+            .WithLastname(lastname ?? _faker.Person.LastName)
+            .WithEmail(email ?? _faker.Person.Email)
+            .WithUsername(username ?? _faker.Person.UserName)
+            .WithPassword(password ?? Password)
+            .WithPhone(phone ?? Phone)
+            .WithStatus(status ?? _faker.PickRandom<UserStatus>())
+            .WithRole(role ?? _faker.PickRandom<UserRole>())
+            .WithAddress(address ?? AddressTestData.AddressFaker)
             .Build();
 
         return builderResult.IsT0 
             ? builderResult.AsT0 
             : throw new InvalidDataException($"{builderResult}. User test data creation seems to be miss configured.");
     }
-
-    public User BuildWithFaker(Faker<User> userFaker)
-    {
-        User fakeUser = userFaker
-            .Generate();
-        
-        var builderResult = GetUserBuilder
-            .WithFirstname(fakeUser.Firstname)
-            .WithLastname(fakeUser.Lastname)
-            .WithEmail(fakeUser.Email)
-            .WithUsername(fakeUser.Username)
-            .WithPassword(fakeUser.Password)
-            .WithPhone(fakeUser.Phone)
-            .WithStatus(fakeUser.Status)
-            .WithRole(fakeUser.Role)
-            .WithAddress(fakeUser.Address)
-            .Build();
-
-        return builderResult.IsT0 
-            ? builderResult.AsT0 
-            : throw new InvalidDataException($"Either {fakeUser} or {builderResult} are miss configured.");
-    }
-    //
-    // public User ValidUser()
-    // {
-    //     User fakeUser = BaseFaker();
-    //
-    //     var builderResult = GetUserBuilder
-    //         .WithFirstname(fakeUser.Firstname)
-    //         .WithLastname(fakeUser.Lastname)
-    //         .WithEmail(fakeUser.Email)
-    //         .WithUsername(fakeUser.Username)
-    //         .WithPassword(fakeUser.Password)
-    //         .WithPhone(fakeUser.Phone)
-    //         .WithStatus(fakeUser.Status)
-    //         .WithRole(fakeUser.Role)
-    //         .WithAddress(fakeUser.Address)
-    //         .Build();
-    //
-    //     return builderResult.IsT0 
-    //         ? builderResult.AsT0 
-    //         : throw new InvalidDataException($"Either {fakeUser} or {builderResult} are miss configured.");
-    // }
-    //
-    // public User ActiveUser()
-    // {
-    //     var activeUserFaker = BaseFaker()
-    //         .RuleFor(usr => usr.Status, UserStatus.Active);
-    //
-    //     return BuildWithFaker(activeUserFaker);
-    // }
-    //
-    // public User InactiveUser()
-    // {
-    //     var activeUserFaker = BaseFaker()
-    //         .RuleFor(usr => usr.Status, UserStatus.Inactive);
-    //
-    //     return BuildWithFaker(activeUserFaker);
-    // }
-    //
-    // public User UserWithId(Guid id)
-    // {
-    //     var activeUserFaker = BaseFaker()
-    //         .RuleFor(usr => usr.Id, id);
-    //
-    //     return BuildWithFaker(activeUserFaker);
-    // }
 }

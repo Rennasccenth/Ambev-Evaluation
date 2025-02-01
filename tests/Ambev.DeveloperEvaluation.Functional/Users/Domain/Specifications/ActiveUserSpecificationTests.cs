@@ -1,21 +1,15 @@
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Enums;
 using Ambev.DeveloperEvaluation.Domain.Specifications;
-using Ambev.DeveloperEvaluation.Functional.TestData;
 using FluentAssertions;
 using Xunit;
 
-namespace Ambev.DeveloperEvaluation.Functional.Users.Features.Specifications;
+namespace Ambev.DeveloperEvaluation.Functional.Users.Domain.Specifications;
 
 public sealed class ActiveUserSpecificationTests : BaseTest
 {
-    private readonly UserTestData _userTestData;
-
-    public ActiveUserSpecificationTests(DeveloperEvaluationWebApplicationFactory webApplicationFactory)
-        : base(webApplicationFactory)
-    {
-        _userTestData = new UserTestData(webApplicationFactory);
-    }
+    public ActiveUserSpecificationTests(DeveloperEvaluationWebApplicationFactory webApplicationFactory) 
+        : base(webApplicationFactory) { }
 
     [Theory]
     [InlineData(UserStatus.Active, true)]
@@ -25,7 +19,7 @@ public sealed class ActiveUserSpecificationTests : BaseTest
     {
         // Arrange
         ActiveUserSpecification specification = new();
-        User testingUser = _userTestData.BasicUser(status);
+        User testingUser = UserTestData.ValidatedUser(status: status);
 
         // Act
         var result = specification.IsSatisfiedBy(testingUser);
