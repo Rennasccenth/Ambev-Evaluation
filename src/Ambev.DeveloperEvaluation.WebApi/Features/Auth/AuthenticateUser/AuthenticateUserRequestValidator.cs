@@ -1,11 +1,11 @@
 using Ambev.DeveloperEvaluation.Domain.ValueObjects;
 using FluentValidation;
 
-namespace Ambev.DeveloperEvaluation.Application.Auth.AuthenticateUser;
+namespace Ambev.DeveloperEvaluation.WebApi.Features.Auth.AuthenticateUser;
 
-public sealed class AuthenticateUserValidator : AbstractValidator<AuthenticateUserCommand>
+public class AuthenticateUserRequestValidator : AbstractValidator<AuthenticateUserRequest>
 {
-    public AuthenticateUserValidator(
+    public AuthenticateUserRequestValidator(
         IValidator<Email> emailValidator,
         IValidator<Password> passwordValidator)
     {

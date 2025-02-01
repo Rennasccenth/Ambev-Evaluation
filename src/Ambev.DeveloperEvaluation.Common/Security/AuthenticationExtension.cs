@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Ambev.DeveloperEvaluation.Common.Options;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
 namespace Ambev.DeveloperEvaluation.Common.Security;
@@ -14,31 +14,6 @@ public static class AuthenticationExtension
     {
         services.RegisterOption<JwtSettings>(JwtSettings.SectionName);
         services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
-        // TODO: WIP testing it later. The project was broken in few places before reach this path.
-        // var secretKey = configuration["Jwt:SecretKey"];
-        // ArgumentException.ThrowIfNullOrWhiteSpace(secretKey);
-        //
-        // var key = Encoding.ASCII.GetBytes(secretKey);
-        //
-        // services
-        //     .AddAuthentication(x =>
-        //     {
-        //         x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        //         x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        //     })
-        //     .AddJwtBearer(x =>
-        //     {
-        //         x.RequireHttpsMetadata = false;
-        //         x.SaveToken = true;
-        //         x.TokenValidationParameters = new TokenValidationParameters
-        //         {
-        //             ValidateIssuerSigningKey = true,
-        //             IssuerSigningKey = new SymmetricSecurityKey(key),
-        //             ValidateIssuer = false,
-        //             ValidateAudience = false,
-        //             ClockSkew = TimeSpan.Zero
-        //         };
-        //     });
 
         services.AddAuthentication(authenticationOptions =>
         {
@@ -47,21 +22,24 @@ public static class AuthenticationExtension
         }).AddJwtBearer();
 
         services.AddOptions<JwtBearerOptions>()
-            .Configure<IOptions<JwtSettings>>((jwtOptions, jwtSettings) =>
+            .Configure<IOptions<JwtSettings>, IHostEnvironment>((jwtOptions, jwtSettings, hostEnvironment) =>
             {
                 JwtSettings settings = jwtSettings.Value;
-
                 byte[] key = Encoding.UTF8.GetBytes(settings.SecretKey);
 
-                jwtOptions.RequireHttpsMetadata = settings.RequireMetadata;
-                jwtOptions.SaveToken = settings.SaveToken;
+                if (hostEnvironment.IsProduction())
+                {
+                    jwtOptions.RequireHttpsMetadata = true;
+                }
+                jwtOptions.RequireHttpsMetadata = false;
                 jwtOptions.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                    ClockSkew = TimeSpan.Zero
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidAudiences = settings.Audiences,
+                    ValidIssuer = settings.Issuer
                 };
             });
 

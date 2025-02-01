@@ -34,7 +34,7 @@ public sealed class AuthenticateUserHandler : IRequestHandler<AuthenticateUserCo
             return ApplicationError.ValidationError(new ValidationErrorDetail(error: nameof(request.Password), detail: "Password is incorrect."));
         }
 
-        ActiveUserSpecification activeUserSpec = new ();
+        ActiveUserSpecification activeUserSpec = new();
         if (!activeUserSpec.IsSatisfiedBy(user))
         {
             return ApplicationError.UnauthorizedAccessError("User is not active.");
@@ -42,12 +42,6 @@ public sealed class AuthenticateUserHandler : IRequestHandler<AuthenticateUserCo
 
         string token = _jwtTokenGenerator.GenerateToken(user);
 
-        return new AuthenticateUserResult
-        {
-            Token = token,
-            Email = user.Email,
-            Name = user.Username,
-            Role = user.Role.ToString()
-        };
+        return new AuthenticateUserResult { Token = token };
     }
 }

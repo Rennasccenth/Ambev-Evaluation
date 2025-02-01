@@ -2,9 +2,10 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
 using Ambev.DeveloperEvaluation.WebApi.Common;
-using Ambev.DeveloperEvaluation.WebApi.Features.Auth.AuthenticateUserFeature;
 using Ambev.DeveloperEvaluation.Application.Auth.AuthenticateUser;
 using Ambev.DeveloperEvaluation.Common.Results;
+using Ambev.DeveloperEvaluation.WebApi.Features.Auth.AuthenticateUser;
+using FluentValidation;
 using FluentValidation.Results;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Auth;
@@ -23,13 +24,15 @@ public class AuthController : BaseController
     }
 
     [HttpPost]
-    [ProducesResponseType(typeof(ApiResponseWithData<AuthenticateUserResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(AuthenticateUserResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> AuthenticateUser([FromBody] AuthenticateUserRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> AuthenticateUser(
+        [FromBody] AuthenticateUserRequest request,
+        [FromServices] IValidator<AuthenticateUserRequest> requestValidator,
+        CancellationToken cancellationToken)
     {
-        var validator = new AuthenticateUserRequestValidator();
-        ValidationResult? validationResult = await validator.ValidateAsync(request, cancellationToken);
+        ValidationResult? validationResult = await requestValidator.ValidateAsync(request, cancellationToken);
 
         if (!validationResult.IsValid)
             return HandleKnownError(validationResult.Errors);
@@ -38,7 +41,7 @@ public class AuthController : BaseController
         CommandResult<AuthenticateUserResult> commandResultResult = await _mediator.Send(command, cancellationToken);
 
         return commandResultResult.Match<IActionResult>(
-            success => Ok(success),
+            success => Ok(_mapper.Map<AuthenticateUserResponse>(success)),
             error => HandleKnownError(error)
         );
     }
