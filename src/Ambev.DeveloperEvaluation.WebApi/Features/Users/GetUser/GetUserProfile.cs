@@ -3,26 +3,28 @@ using AutoMapper;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Users.GetUser;
 
-/// <summary>
-/// Profile for mapping GetUser feature requests to commands
-/// </summary>
 public sealed class GetUserProfile : Profile
 {
-    /// <summary>
-    /// Initializes the mappings for GetUser feature
-    /// </summary>
     public GetUserProfile()
     {
         CreateMap<Guid, GetUserCommand>()
             .ConstructUsing(id => new GetUserCommand(id));
         
         CreateMap<GetUserResult, GetUserResponse>()
-            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
-            .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
-            .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.Phone))
-            .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.Role))
-            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
-
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(usr => usr.Id))
+            .ForMember(dest => dest.Email, opt => opt.MapFrom(usr => usr.Email))
+            .ForMember(dest => dest.Username, opt => opt.MapFrom(usr => usr.Username))
+            .ForMember(dest => dest.Password, opt => opt.MapFrom(usr => usr.Password))
+            .ForPath(dest => dest.Name.Firstname, opt => opt.MapFrom(usr => usr.Name.Firstname))
+            .ForPath(dest => dest.Name.Lastname, opt => opt.MapFrom(usr => usr.Name.Lastname))
+            .ForPath(dest => dest.Address.City, opt => opt.MapFrom(usr => usr.Address.City))
+            .ForPath(dest => dest.Address.Street, opt => opt.MapFrom(usr => usr.Address.Street))
+            .ForPath(dest => dest.Address.Number, opt => opt.MapFrom(usr => usr.Address.Number))
+            .ForPath(dest => dest.Address.Zipcode, opt => opt.MapFrom(usr => usr.Address.Zipcode))
+            .ForPath(dest => dest.Address.Geolocation.Lat, opt => opt.MapFrom(usr => usr.Address.Geolocation.Latitude))
+            .ForPath(dest => dest.Address.Geolocation.Long, opt => opt.MapFrom(usr => usr.Address.Geolocation.Longitude))
+            .ForMember(dest => dest.Phone, opt => opt.MapFrom(usr => usr.Phone))
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(usr => usr.Status))
+            .ForMember(dest => dest.Role, opt => opt.MapFrom(usr => usr.Role));
     }
 }

@@ -5,12 +5,12 @@ namespace Ambev.DeveloperEvaluation.Application.Users.DeleteUser;
 /// <summary>
 /// Validator for DeleteUserCommand
 /// </summary>
-internal sealed class DeleteUserValidator : AbstractValidator<DeleteUserCommand>
+public sealed class DeleteUserValidator : AbstractValidator<DeleteUserCommand>
 {
     /// <summary>
     /// Initializes validation rules for DeleteUserCommand
     /// </summary>
-    internal DeleteUserValidator()
+    public DeleteUserValidator()
     {
         RuleFor(x => x.Id)
             .NotEmpty()

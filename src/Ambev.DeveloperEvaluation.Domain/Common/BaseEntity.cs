@@ -1,8 +1,9 @@
 ﻿using Ambev.DeveloperEvaluation.Common.Validation;
+using Ambev.DeveloperEvaluation.Domain.Events;
 
 namespace Ambev.DeveloperEvaluation.Domain.Common;
 
-public class BaseEntity : IComparable<BaseEntity>
+public class BaseEntity : IComparable<BaseEntity>, IEventableEntity
 {
     public Guid Id { get; set; }
 
@@ -18,6 +19,13 @@ public class BaseEntity : IComparable<BaseEntity>
             return 1;
         }
 
-        return other!.Id.CompareTo(Id);
+        return other.Id.CompareTo(Id);
     }
+
+    public List<IEvent> DomainEvents { get; } = [];
+
+    protected void AddDomainEvent(IEvent @event)
+    {
+        DomainEvents.Add(@event);
+    } 
 }

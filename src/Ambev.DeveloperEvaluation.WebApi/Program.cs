@@ -4,7 +4,7 @@ using Ambev.DeveloperEvaluation.IoC;
 
 namespace Ambev.DeveloperEvaluation.WebApi;
 
-public static class Program
+public sealed class Program
 {
     public static void Main(string[] args)
     {

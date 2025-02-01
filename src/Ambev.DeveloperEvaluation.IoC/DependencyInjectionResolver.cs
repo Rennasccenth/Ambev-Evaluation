@@ -1,4 +1,5 @@
 ﻿using Ambev.DeveloperEvaluation.Application;
+using Ambev.DeveloperEvaluation.Domain;
 using Ambev.DeveloperEvaluation.ORM;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -13,6 +14,7 @@ public static class DependencyInjectionResolver
     {
         serviceCollection
             .InstallInfrastructureLayer()
-            .InstallApplicationLayer();
+            .InstallApplicationLayer()
+            .RegisterDomainValidators();
     }
 }

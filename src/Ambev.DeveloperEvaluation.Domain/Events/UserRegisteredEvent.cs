@@ -1,14 +1,15 @@
-using Ambev.DeveloperEvaluation.Domain.Entities;
+namespace Ambev.DeveloperEvaluation.Domain.Events;
 
-namespace Ambev.DeveloperEvaluation.Domain.Events
+public sealed record UserRegisteredEvent : IEvent
 {
-    public class UserRegisteredEvent
-    {
-        public User User { get; }
+    public Guid Id { get; }
+    public DateTime DateOccurred { get; }
+    public Guid UserId { get; }
 
-        public UserRegisteredEvent(User user)
-        {
-            User = user;
-        }
+    public UserRegisteredEvent(Guid userId, DateTime dateOccurred)
+    {
+        UserId = userId;
+        DateOccurred = dateOccurred;
+        Id = Guid.NewGuid();
     }
 }

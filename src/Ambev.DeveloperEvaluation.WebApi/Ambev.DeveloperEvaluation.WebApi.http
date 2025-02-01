@@ -21,25 +21,33 @@ GET http://localhost:5119/api/Users/5216afd6-64d4-41d9-8f6e-0ee7536350ad
 ### Create User Request
 POST {{host}}/api/Users
 Content-Type: application/json
-#Authorization: Bearer {{auth_token}}
 
 {
-    "username": "new_user",
-    "password": "SecurePassword123!",
-    "phone": "+5511999999999",
-    "email": "new.user@example.com",
-    "status": 1,
-    "role": 2
+    "email": "randomuseasdsdasdadsd3@asdadexamplasde.com",
+    "username": "randomuser456adasdas",
+    "password": "TestPassword@2025",
+    "name": {
+        "firstname": "Alice",
+        "lastname": "Smith"
+    },
+    "address": {
+        "city": "Testville",
+        "street": "Mockingbird Lane",
+        "number": 123,
+        "zipcode": "12345",
+        "geolocation": {
+            "lat": "37.7749",
+            "long": "-122.4194"
+        }
+    },
+    "phone": "+5591981023045",
+    "status": "Active",
+    "role": "Customer"
 }
-
-> {%
-    client.global.set("user_id", response.body.data.id);
-%}
-
 
 
 ### Get User by ID
-@user_id = d057fe7a-33ae-4de5-bfbd-d5681463040a
+@user_id = 6736ca01-a8a3-4a40-935c-e21fa7fe1747
 GET {{host}}/api/Users/{{user_id}}
 #Authorization: Bearer {{auth_token}}
 

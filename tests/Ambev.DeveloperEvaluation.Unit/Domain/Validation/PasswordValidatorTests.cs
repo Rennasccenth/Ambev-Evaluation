@@ -1,5 +1,6 @@
 using Ambev.DeveloperEvaluation.Domain.Validation;
-using Ambev.DeveloperEvaluation.Unit.Domain.Entities.TestData;
+using Ambev.DeveloperEvaluation.Domain.ValueObjects;
+using Ambev.DeveloperEvaluation.Unit.Domain.TestData;
 using FluentValidation.TestHelper;
 using Xunit;
 
@@ -11,12 +12,7 @@ namespace Ambev.DeveloperEvaluation.Unit.Domain.Validation;
 /// </summary>
 public class PasswordValidatorTests
 {
-    private readonly PasswordValidator _validator;
-
-    public PasswordValidatorTests()
-    {
-        _validator = new PasswordValidator();
-    }
+    private readonly PasswordValidator _validator = new();
 
     /// <summary>
     /// Tests that validation passes for various valid password formats.
@@ -25,7 +21,7 @@ public class PasswordValidatorTests
     public void Given_ValidPassword_When_Validated_Then_ShouldNotHaveErrors()
     {
         // Arrange
-        var password = UserTestData.GenerateValidPassword();
+        Password password = ValueObjectGenerator.Password.Generate();
 
         // Act
         var result = _validator.TestValidate(password);
@@ -41,7 +37,7 @@ public class PasswordValidatorTests
     public void Given_EmptyPassword_When_Validated_Then_ShouldHaveError()
     {
         // Arrange
-        var password = string.Empty;
+        Password password = string.Empty;
 
         // Act
         var result = _validator.TestValidate(password);
@@ -57,7 +53,7 @@ public class PasswordValidatorTests
     [Theory(DisplayName = "Password shorter than minimum length should fail validation")]
     [InlineData("Test@1")] // 6 characters
     [InlineData("Pass#2")] // 7 characters
-    public void Given_PasswordShorterThanMinimum_When_Validated_Then_ShouldHaveError(string password)
+    public void Given_PasswordShorterThanMinimum_When_Validated_Then_ShouldHaveError(Password password)
     {
         // Act
         var result = _validator.TestValidate(password);
@@ -73,14 +69,14 @@ public class PasswordValidatorTests
     public void Given_PasswordWithoutUppercase_When_Validated_Then_ShouldHaveError()
     {
         // Arrange
-        var password = "password@123";
+        Password password = "password@123";
 
         // Act
         var result = _validator.TestValidate(password);
 
         // Assert
         result.ShouldHaveValidationErrorFor(x => x)
-            .WithErrorMessage("Password must contain at least one uppercase letter.");
+            .WithErrorMessage("Password must contain at least one uppercase letter");
     }
 
     /// <summary>
@@ -90,14 +86,14 @@ public class PasswordValidatorTests
     public void Given_PasswordWithoutLowercase_When_Validated_Then_ShouldHaveError()
     {
         // Arrange
-        var password = "PASSWORD@123";
+        Password password = "PASSWORD@123";
 
         // Act
         var result = _validator.TestValidate(password);
 
         // Assert
         result.ShouldHaveValidationErrorFor(x => x)
-            .WithErrorMessage("Password must contain at least one lowercase letter.");
+            .WithErrorMessage("Password must contain at least one lowercase letter");
     }
 
     /// <summary>
@@ -107,14 +103,14 @@ public class PasswordValidatorTests
     public void Given_PasswordWithoutNumber_When_Validated_Then_ShouldHaveError()
     {
         // Arrange
-        var password = "Password@ABC";
+        Password password = "Password@ABC";
 
         // Act
         var result = _validator.TestValidate(password);
 
         // Assert
         result.ShouldHaveValidationErrorFor(x => x)
-            .WithErrorMessage("Password must contain at least one number.");
+            .WithErrorMessage("Password must contain at least one number");
     }
 
     /// <summary>
@@ -124,13 +120,13 @@ public class PasswordValidatorTests
     public void Given_PasswordWithoutSpecialCharacter_When_Validated_Then_ShouldHaveError()
     {
         // Arrange
-        var password = "Password123";
+        Password password = "Password123";
 
         // Act
         var result = _validator.TestValidate(password);
 
         // Assert
         result.ShouldHaveValidationErrorFor(x => x)
-            .WithErrorMessage("Password must contain at least one special character.");
+            .WithErrorMessage("Password must contain at least one special character");
     }
 }

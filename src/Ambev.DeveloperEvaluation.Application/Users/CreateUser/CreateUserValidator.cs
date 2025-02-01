@@ -1,33 +1,32 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Enums;
-using Ambev.DeveloperEvaluation.Domain.Validation;
+﻿using Ambev.DeveloperEvaluation.Domain.ValueObjects;
 using FluentValidation;
 
 namespace Ambev.DeveloperEvaluation.Application.Users.CreateUser;
 
-/// <summary>
-/// Validator for CreateUserCommand that defines validation rules for user creation command.
-/// </summary>
-internal sealed class CreateUserCommandValidator : AbstractValidator<CreateUserCommand>
+public sealed class CreateUserValidator : AbstractValidator<CreateUserCommand>
 {
-    /// <summary>
-    /// Initializes a new instance of the CreateUserCommandValidator with defined validation rules.
-    /// </summary>
-    /// <remarks>
-    /// Validation rules include:
-    /// - Email: Must be in valid format (using EmailValidator)
-    /// - Username: Required, must be between 3 and 50 characters
-    /// - Password: Must meet security requirements (using PasswordValidator)
-    /// - Phone: Must match international format (+X XXXXXXXXXX)
-    /// - Status: Cannot be set to Unknown
-    /// - Role: Cannot be set to None
-    /// </remarks>
-    internal CreateUserCommandValidator()
+    public CreateUserValidator(
+        IValidator<Email> emailValidator,
+        IValidator<Password> passwordValidator,
+        IValidator<Phone> phoneValidator)
     {
-        RuleFor(user => user.Email).SetValidator(new EmailValidator());
+        RuleFor(user => user.Email)
+            .SetValidator(emailValidator);
+        RuleFor(user => user.Password)
+            .SetValidator(passwordValidator);
+        RuleFor(user => user.Phone)
+            .SetValidator(phoneValidator);
+
         RuleFor(user => user.Username).NotEmpty().Length(3, 50);
-        RuleFor(user => user.Password).SetValidator(new PasswordValidator());
-        RuleFor(user => user.Phone).Matches(@"^\+?[1-9]\d{1,14}$");
-        RuleFor(user => user.Status).NotEqual(UserStatus.Unknown);
-        RuleFor(user => user.Role).NotEqual(UserRole.None);
+        RuleFor(user => user.Firstname).NotEmpty().Length(2, 50);
+        RuleFor(user => user.Lastname).NotEmpty().Length(2, 50);
+        RuleFor(user => user.City).NotEmpty().Length(3, 50);
+        RuleFor(user => user.Street).NotEmpty().Length(3, 70);
+        RuleFor(user => user.Number).NotEmpty().GreaterThan(-1);
+        RuleFor(user => user.ZipCode).NotEmpty().Length(3, 50);
+        RuleFor(user => user.Latitude).NotEmpty().Length(3, 50);
+        RuleFor(user => user.Longitude).NotEmpty().Length(3, 50);
+        RuleFor(user => user.Role);
+        RuleFor(user => user.Status);
     }
 }

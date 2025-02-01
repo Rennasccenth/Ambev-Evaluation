@@ -5,16 +5,11 @@ namespace Ambev.DeveloperEvaluation.Common.Errors;
 
 public record ApplicationError
 {
+    
     protected ApplicationError(string Code, string Message)
     {
         this.Code = Code;
         this.Message = Message;
-    }
-
-    protected ApplicationError(string code)
-    {
-        Code = code;
-        Message = "";
     }
 
     public string Code { get; }
@@ -27,6 +22,9 @@ public record ApplicationError
     public static implicit operator ApplicationError (List<ValidationErrorDetail> validationErrorDetails) => new ValidationError(validationErrorDetails);
 
     public static ValidationError ValidationError(ValidationErrorDetail validationErrorDetail) => validationErrorDetail;
+    public static ValidationError ValidationError(ValidationResult validationResult) => new(validationResult.Errors);
+    public static ValidationError ValidationError(ValidationResult[] validationResults) 
+        => new(validationResults.SelectMany(validationResult => validationResult.Errors).ToList());
 
     public static BadRequestError BadRequestError(string? message = null) =>
         message is null

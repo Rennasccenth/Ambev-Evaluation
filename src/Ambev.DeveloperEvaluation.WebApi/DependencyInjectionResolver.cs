@@ -1,9 +1,10 @@
 using System.Reflection;
+using Ambev.DeveloperEvaluation.WebApi.Common.Converters;
 using Ambev.DeveloperEvaluation.Common.ExceptionHandlers;
 using Ambev.DeveloperEvaluation.Common.HealthChecks;
 using Ambev.DeveloperEvaluation.Common.Security;
 using FluentValidation;
-using Microsoft.AspNetCore.Http.Features;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Ambev.DeveloperEvaluation.WebApi;
 
@@ -11,6 +12,8 @@ internal static class DependencyInjectionResolver
 {
     internal static IServiceCollection InstallApiDependencies(this IServiceCollection serviceCollection)
     {
+        serviceCollection.TryAddSingleton(TimeProvider.System);
+
         // Adds HCs
         serviceCollection.AddBasicHealthChecks();
 
@@ -29,7 +32,13 @@ internal static class DependencyInjectionResolver
         serviceCollection.AddJwtAuthentication();
         
         serviceCollection.AddEndpointsApiExplorer();
-        serviceCollection.AddControllers();
+        serviceCollection.AddControllers().AddJsonOptions(options =>
+        {
+            options.JsonSerializerOptions.Converters.Add(new EmailJsonConverter());
+            options.JsonSerializerOptions.Converters.Add(new PhoneJsonConverter());
+            options.JsonSerializerOptions.Converters.Add(new PasswordJsonConverter());
+            options.JsonSerializerOptions.Converters.Add(new AddressJsonConverter());
+        });
 
         serviceCollection.AddProblemDetails(options =>
         {
@@ -37,7 +46,6 @@ internal static class DependencyInjectionResolver
             {
                 context.ProblemDetails.Instance = $"{context.HttpContext.Request.Method} {context.HttpContext.Request.Path}";
                 context.ProblemDetails.Extensions.Add("requestId", context.HttpContext.TraceIdentifier);
-                context.ProblemDetails.Extensions.Add("traceId", context.HttpContext.Features.Get<IHttpActivityFeature>()?.Activity.Id);
             };
         });
         

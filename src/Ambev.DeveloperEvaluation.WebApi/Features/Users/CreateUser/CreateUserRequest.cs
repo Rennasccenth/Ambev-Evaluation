@@ -1,39 +1,33 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Enums;
+﻿namespace Ambev.DeveloperEvaluation.WebApi.Features.Users.CreateUser;
 
-namespace Ambev.DeveloperEvaluation.WebApi.Features.Users.CreateUser;
-
-/// <summary>
-/// Represents a request to create a new user in the system.
-/// </summary>
 public sealed class CreateUserRequest
 {
-    /// <summary>
-    /// Gets or sets the username. Must be unique and contain only valid characters.
-    /// </summary>
     public string Username { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Gets or sets the password. Must meet security requirements.
-    /// </summary>
     public string Password { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Gets or sets the phone number in format (XX) XXXXX-XXXX.
-    /// </summary>
     public string Phone { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Gets or sets the email address. Must be a valid email format.
-    /// </summary>
     public string Email { get; set; } = string.Empty;
+    public NameDto Name { get; set; } = null!;
+    public AddressDto Address { get; set; } = null!;
+    public string Status { get; set; } = "";
+    public string Role { get; set; } = "";
+}
 
-    /// <summary>
-    /// Gets or sets the initial status of the user account.
-    /// </summary>
-    public UserStatus Status { get; set; }
+public record NameDto(
+    string Firstname,
+    string Lastname
+);
 
-    /// <summary>
-    /// Gets or sets the role assigned to the user.
-    /// </summary>
-    public UserRole Role { get; set; }
+public record AddressDto
+{
+    public required string City { get; init; }
+    public required string Street { get; init; }
+    public required int Number { get; init; }
+    public required string Zipcode { get; init; }
+    public required GeolocationDto Geolocation { get; init; }
+}
+
+public record GeolocationDto
+{
+    public required string Lat { get; init; }
+    public required string Long { get; init; }
 }

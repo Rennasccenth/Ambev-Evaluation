@@ -32,6 +32,7 @@ public sealed record ValidationError : ApplicationError
             );
     }
 
+    public static implicit operator ValidationError (ValidationFailure[] validationFailures) => new (validationFailures.ToList());
     public static implicit operator ValidationError (ValidationFailure validationFailure) => new ([validationFailure]);
     public static implicit operator ValidationError (List<ValidationFailure> validationFailures) => new (validationFailures);
     

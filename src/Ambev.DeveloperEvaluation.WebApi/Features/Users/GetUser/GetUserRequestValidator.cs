@@ -5,12 +5,12 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Users.GetUser;
 /// <summary>
 /// Validator for GetUserRequest
 /// </summary>
-internal sealed class GetUserRequestValidator : AbstractValidator<GetUserRequest>
+public sealed class GetUserRequestValidator : AbstractValidator<GetUserRequest>
 {
     /// <summary>
     /// Initializes validation rules for GetUserRequest
     /// </summary>
-    internal GetUserRequestValidator()
+    public GetUserRequestValidator()
     {
         RuleFor(x => x.Id)
             .NotEmpty()
