@@ -1,3 +1,4 @@
+using Ambev.DeveloperEvaluation.Application.Users.Commands.DeleteUser;
 using AutoMapper;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Users.DeleteUser;
@@ -6,7 +7,7 @@ public sealed class DeleteUserProfile : Profile
 {
     public DeleteUserProfile()
     {
-        CreateMap<DeleteUserRequest, Application.Users.DeleteUser.DeleteUserCommand>()
-            .ConstructUsing(request => new Application.Users.DeleteUser.DeleteUserCommand(request.Id));
+        CreateMap<DeleteUserRequest, DeleteUserCommand>()
+            .ConstructUsing(request => new DeleteUserCommand(request.Id));
     }
 }

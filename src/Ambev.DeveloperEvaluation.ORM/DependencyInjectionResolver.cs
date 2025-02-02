@@ -1,4 +1,4 @@
-using Ambev.DeveloperEvaluation.Domain.Repositories;
+using Ambev.DeveloperEvaluation.Domain.Repositories.User;
 using Ambev.DeveloperEvaluation.ORM.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -23,8 +23,8 @@ public static class DependencyInjectionResolver
 
             options.EnableDetailedErrors();
             options.EnableSensitiveDataLogging();
-        });
-        serviceCollection.AddScoped<IUserRepository, UserRepository>();
+        }, ServiceLifetime.Transient);
+        serviceCollection.AddTransient<IUserRepository, UserRepository>();
 
         return serviceCollection;
     }

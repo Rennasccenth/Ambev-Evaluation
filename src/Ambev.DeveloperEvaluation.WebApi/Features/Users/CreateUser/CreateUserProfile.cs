@@ -1,5 +1,5 @@
 using System.ComponentModel;
-using Ambev.DeveloperEvaluation.Application.Users.CreateUser;
+using Ambev.DeveloperEvaluation.Application.Users.Commands.CreateUser;
 using Ambev.DeveloperEvaluation.Domain.Enums;
 using AutoMapper;
 
