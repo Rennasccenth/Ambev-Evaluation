@@ -2,7 +2,7 @@ using System.ComponentModel;
 using System.Net.Http.Json;
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Enums;
-using Ambev.DeveloperEvaluation.WebApi.Features.Users.CreateUser;
+using Ambev.DeveloperEvaluation.WebApi.Features.Users.Commands.CreateUser;
 
 namespace Ambev.DeveloperEvaluation.Functional.Features.Users;
 

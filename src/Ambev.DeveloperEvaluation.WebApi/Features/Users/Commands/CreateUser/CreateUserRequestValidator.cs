@@ -2,7 +2,7 @@
 using Ambev.DeveloperEvaluation.Domain.ValueObjects;
 using FluentValidation;
 
-namespace Ambev.DeveloperEvaluation.WebApi.Features.Users.CreateUser;
+namespace Ambev.DeveloperEvaluation.WebApi.Features.Users.Commands.CreateUser;
 
 public sealed class CreateUserRequestValidator : AbstractValidator<CreateUserRequest>
 {

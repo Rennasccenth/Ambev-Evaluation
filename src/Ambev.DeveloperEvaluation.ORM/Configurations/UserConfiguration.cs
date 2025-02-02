@@ -51,9 +51,11 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder.Property(u => u.CreatedAt)
             .IsRequired()
+            // .HasConversion<DateTimeValueConverter>()
             .HasColumnType(PostgreSqlConstants.Types.DateTime);
 
-        builder.Property(u => u.CreatedAt)
+        builder.Property(u => u.UpdatedAt)
+            // .HasConversion<DateTimeValueConverter>()
             .HasColumnType(PostgreSqlConstants.Types.DateTime);
     }
 }

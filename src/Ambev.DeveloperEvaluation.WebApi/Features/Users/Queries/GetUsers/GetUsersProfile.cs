@@ -1,52 +1,8 @@
 using Ambev.DeveloperEvaluation.Application.Users.Queries.GetUsers;
 using Ambev.DeveloperEvaluation.Domain.Enums;
-using Ambev.DeveloperEvaluation.Domain.ValueObjects;
-using Ambev.DeveloperEvaluation.WebApi.Common;
 using AutoMapper;
-using FluentValidation;
-using Microsoft.AspNetCore.Mvc;
 
-namespace Ambev.DeveloperEvaluation.WebApi.Features.Users.GetUsers;
-
-public sealed class GetUsersRequest : PaginatedRequest
-{
-    [FromQuery] public Guid? Id { get; set; }
-    [FromQuery] public string? Email { get; set; }
-    [FromQuery] public string? Username { get; set; }
-    [FromQuery] public string? Firstname { get; set; }
-    [FromQuery] public string? Lastname { get; set; }
-    [FromQuery] public string? Street { get; set; }
-    [FromQuery] public int? Number { get; set; }
-    [FromQuery] public string? City { get; set; }
-    [FromQuery] public string? Lat { get; set; }
-    [FromQuery] public string? Long { get; set; }
-    [FromQuery] public string? Phone { get; set; }
-    [FromQuery] public string? Status { get; set; }
-    [FromQuery] public string? Role { get; set; }
-}
-
-public sealed class GetUsersQueryItem
-{
-    public string Id { get; set; }
-    public string Email { get; set; }
-    public string Username { get; set; }
-    public string Password { get; set; }
-    public string Firstname { get; set; }
-    public string Lastname { get; set; }
-    public Address Address { get; set; }
-    public string Phone { get; set; }
-    public string Status { get; set; }
-    public string Role { get; set; }
-}
-
-public sealed class GetUsersQueryResponse
-{
-    public required List<GetUsersQueryItem> Data { get; init; }
-    public required int TotalCount { get; init; }
-    public required int Page { get; init; }
-    public required int PageSize { get; init; }
-    public required int TotalPages { get; init; }
-}
+namespace Ambev.DeveloperEvaluation.WebApi.Features.Users.Queries.GetUsers;
 
 public sealed class GetUsersProfile : Profile
 {
@@ -79,17 +35,5 @@ public sealed class GetUsersProfile : Profile
         
 
         CreateMap<GetUsersQuerySummary, GetUsersQueryItem>();
-    }
-}
-
-public sealed class GetUsersValidator : AbstractValidator<GetUsersRequest>
-{
-    public GetUsersValidator()
-    {
-        RuleFor(req => req.Status)
-            .IsEnumName(typeof(UserStatus), caseSensitive: false).When(req => !string.IsNullOrEmpty(req.Status));
-        
-        RuleFor(req => req.Role)
-            .IsEnumName(typeof(UserRole), caseSensitive: false).When(req => !string.IsNullOrEmpty(req.Role));
     }
 }

@@ -1,12 +1,14 @@
 ﻿using Ambev.DeveloperEvaluation.Application.Users.Commands.CreateUser;
 using Ambev.DeveloperEvaluation.Application.Users.Commands.DeleteUser;
+using Ambev.DeveloperEvaluation.Application.Users.Commands.UpdateUser;
 using Ambev.DeveloperEvaluation.Application.Users.Queries.GetUser;
 using Ambev.DeveloperEvaluation.Application.Users.Queries.GetUsers;
 using Ambev.DeveloperEvaluation.WebApi.Common;
-using Ambev.DeveloperEvaluation.WebApi.Features.Users.CreateUser;
+using Ambev.DeveloperEvaluation.WebApi.Features.Users.Commands.CreateUser;
+using Ambev.DeveloperEvaluation.WebApi.Features.Users.Commands.UpdateUser;
 using Ambev.DeveloperEvaluation.WebApi.Features.Users.DeleteUser;
-using Ambev.DeveloperEvaluation.WebApi.Features.Users.GetUser;
-using Ambev.DeveloperEvaluation.WebApi.Features.Users.GetUsers;
+using Ambev.DeveloperEvaluation.WebApi.Features.Users.Queries.GetUser;
+using Ambev.DeveloperEvaluation.WebApi.Features.Users.Queries.GetUsers;
 using AutoMapper;
 using FluentValidation;
 using FluentValidation.Results;
@@ -96,7 +98,29 @@ public class UsersController : BaseController
             error => HandleKnownError(error)
         );
     }
-    
+
+    [HttpPut("{id:guid}")]
+    [ProducesResponseType(typeof(UpdateUserResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> UpdateUser(
+        [FromRoute] Guid id,
+        [FromBody] UpdateUserRequestBody requestBody,
+        [FromServices] IValidator<UpdateUserRequest> updateUserRequestValidator,
+        CancellationToken cancellationToken)
+    {
+        UpdateUserRequest request = new(id, requestBody);
+        ValidationResult? validationResult = await updateUserRequestValidator.ValidateAsync(request, cancellationToken);
+        if (!validationResult.IsValid) return HandleKnownError(validationResult.Errors);
+
+        var commandResult = await _mediator.Send(_mapper.Map<UpdateUserCommand>(request), cancellationToken);
+
+        return commandResult.Match(
+            updatedUser => Ok(_mapper.Map<UpdateUserResponse>(updatedUser)),
+            error => HandleKnownError(error)
+        );
+    }
+
     [HttpGet]
     [ProducesResponseType(typeof(GetUsersQueryResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]

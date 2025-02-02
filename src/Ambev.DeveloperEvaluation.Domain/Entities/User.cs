@@ -16,23 +16,89 @@ public partial class User : BaseEntity
     // The only way to build User entities is going by Builder, unless you use some internal scan
     internal User() { }
 
-    public string Username { get; internal set; } = null!;
-    public Email Email { get; set; } = null!;
-    public Address Address { get; set; } = null!;
-    public Phone Phone { get; set; } = null!;
-    public string Firstname { get; set; } = null!;
-    public string Lastname { get; set; } = null!;
-    public Password Password { get; set; } = null!;
-    public UserRole Role { get; set; }
+    public string Username { get; private set; } = null!;
+    public Email Email { get; private set; } = null!;
+    public Address Address { get; private set; } = null!;
+    public Phone Phone { get; private set; } = null!;
+    public string Firstname { get; private set; } = null!;
+    public string Lastname { get; private set; } = null!;
+    public Password Password { get; private set; } = null!;
+    public UserRole Role { get; private set; }
     public UserStatus Status { get; private set; }
-    public DateTime CreatedAt { get; set; }
-    public DateTime? UpdatedAt { get; set; }
+    public DateTime CreatedAt { get; private set; }
+    public DateTime? UpdatedAt { get; private set; }
 
     public static UserBuilder GetBuilder(
         IPasswordHasher passwordHasher,
         TimeProvider timeProvider,
         IValidator<User> userValidator)
         => new (passwordHasher, timeProvider, userValidator);
+
+    public void Activate(TimeProvider timeProvider)
+    {
+        Status = UserStatus.Active;
+        UpdatedAt = timeProvider.GetUtcNow().DateTime;
+    }
+    public void Deactivate(TimeProvider timeProvider)
+    {
+        Status = UserStatus.Inactive;
+        UpdatedAt = timeProvider.GetUtcNow().DateTime;
+    }
+    public void Suspend(TimeProvider timeProvider)
+    {
+        Status = UserStatus.Suspended;
+        UpdatedAt = timeProvider.GetUtcNow().DateTime;
+    }
+    public User UpdateUsername(string username, TimeProvider timeProvider)
+    {
+        if (Username == username) return this;
+        Username = username;
+        UpdatedAt = timeProvider.GetUtcNow().DateTime;
+        return this;
+    }
+    public User ChangePassword(Password newPassword, IPasswordHasher passwordHasher, TimeProvider timeProvider)
+    {
+        var newHashedPassword = passwordHasher.HashPassword(newPassword);
+        if (Password == newHashedPassword) return this;
+        Password = newHashedPassword;
+        UpdatedAt = timeProvider.GetUtcNow().DateTime;
+        return this;
+    }
+    public User UpdateAddress(Address newAddress, TimeProvider timeProvider)
+    {
+        if (Address == newAddress) return this;
+        Address = newAddress;
+        UpdatedAt = timeProvider.GetUtcNow().DateTime;
+        return this;
+    }
+    public User UpdatePhone(Phone newPhone, TimeProvider timeProvider)
+    {
+        if (Phone == newPhone) return this;
+        Phone = newPhone;
+        UpdatedAt = timeProvider.GetUtcNow().DateTime;
+        return this;
+    }
+    public User UpdateEmail(Email newEmail, TimeProvider timeProvider)
+    {
+        if (Email == newEmail) return this;
+        Email = newEmail;
+        UpdatedAt = timeProvider.GetUtcNow().DateTime;
+        return this;
+    }
+    public User UpdateRole(UserRole newRole, TimeProvider timeProvider)
+    {
+        if (Role == newRole) return this;
+        Role = newRole;
+        UpdatedAt = timeProvider.GetUtcNow().DateTime;
+        return this;
+    }
+    public User UpdateStatus(UserStatus newStatus, TimeProvider timeProvider)
+    {
+        if (Status == newStatus) return this;
+        Status = newStatus;
+        UpdatedAt = timeProvider.GetUtcNow().DateTime;
+        return this;
+    }
 
     /// <summary>
     /// Fluent builder pattern for User, intended to build User entities while keep them valid.
@@ -123,24 +189,6 @@ public partial class User : BaseEntity
         {
             return _buildingUser;
         }
-    }
-
-    public void Activate(TimeProvider timeProvider)
-    {
-        Status = UserStatus.Active;
-        UpdatedAt = timeProvider.GetUtcNow().DateTime;
-    }
-
-    public void Deactivate(TimeProvider timeProvider)
-    {
-        Status = UserStatus.Inactive;
-        UpdatedAt = timeProvider.GetUtcNow().DateTime;
-    }
-
-    public void Suspend(TimeProvider timeProvider)
-    {
-        Status = UserStatus.Suspended;
-        UpdatedAt = timeProvider.GetUtcNow().DateTime;
     }
 }
 

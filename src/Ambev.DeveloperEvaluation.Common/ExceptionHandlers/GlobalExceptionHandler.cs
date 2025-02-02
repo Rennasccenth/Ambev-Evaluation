@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Text.Json;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
@@ -28,7 +29,9 @@ public sealed class GlobalExceptionHandler : IExceptionHandler
 
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("An unhandled exception was caught with message: {ExceptionMessage}", exception.Message);
+        _logger.LogCritical("An unhandled exception was caught with message: {Exception}", JsonSerializer.Serialize(exception.Message));
+        if (exception.InnerException is not null)
+            _logger.LogCritical("Inner exception was caught with message: {Exception}", JsonSerializer.Serialize(exception.InnerException.Message));
 
         return await _problemDetailsService.TryWriteAsync(new ProblemDetailsContext
         {
