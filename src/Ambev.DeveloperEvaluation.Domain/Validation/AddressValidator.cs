@@ -23,9 +23,9 @@ public sealed class AddressValidator : AbstractValidator<Address>
             .Custom((zipCode, context) =>
             {
                 var zipCodeNumbers = new string(zipCode.Where(c => char.IsDigit(c)).ToArray());
-                if (zipCodeNumbers.Length is < 12 and > 0)
+                if (zipCodeNumbers.Length > 12)
                 {
-                    context.AddFailure("ZipCode is invalid");
+                    context.AddFailure("Zipcode is invalid");
                 }
             });
 

@@ -24,22 +24,22 @@ public static class LoggingExtension
         .WithDefaultDestructurers()
         .WithDestructurers([new DbUpdateExceptionDestructurer()]);
 
-    /// <summary>
-    /// A filter predicate to exclude log events with specific criteria.
-    /// </summary>
-    static readonly Func<LogEvent, bool> _filterPredicate = exclusionPredicate =>
-    {
-
-        if (exclusionPredicate.Level != LogEventLevel.Information) return true;
-
-        exclusionPredicate.Properties.TryGetValue("StatusCode", out var statusCode);
-        exclusionPredicate.Properties.TryGetValue("Path", out var path);
-
-        var excludeByStatusCode = statusCode == null || statusCode.ToString().Equals("200");
-        var excludeByPath = path?.ToString().Contains("/health") ?? false;
-
-        return excludeByStatusCode && excludeByPath;
-    };
+    // /// <summary>
+    // /// A filter predicate to exclude log events with specific criteria.
+    // /// </summary>
+    // static readonly Func<LogEvent, bool> _filterPredicate = exclusionPredicate =>
+    // {
+    //
+    //     if (exclusionPredicate.Level != LogEventLevel.Information) return true;
+    //
+    //     exclusionPredicate.Properties.TryGetValue("StatusCode", out var statusCode);
+    //     exclusionPredicate.Properties.TryGetValue("Path", out var path);
+    //
+    //     var excludeByStatusCode = statusCode == null || statusCode.ToString().Equals("200");
+    //     var excludeByPath = path?.ToString().Contains("/health") ?? false;
+    //
+    //     return excludeByStatusCode && excludeByPath;
+    // };
 
     /// <summary>
     /// This method configures the logging with commonly used features for DataDog integration.
@@ -60,8 +60,8 @@ public static class LoggingExtension
                 .Enrich.WithProperty("Environment", builder.Environment.EnvironmentName)
                 .Enrich.WithProperty("Application", builder.Environment.ApplicationName)
                 .Enrich.FromLogContext()
-                .Enrich.WithExceptionDetails(_destructuringOptionsBuilder)
-                .Filter.ByExcluding(_filterPredicate);
+                .Enrich.WithExceptionDetails(_destructuringOptionsBuilder);
+                // .Filter.ByExcluding(_filterPredicate);
 
             if (Debugger.IsAttached)
             {

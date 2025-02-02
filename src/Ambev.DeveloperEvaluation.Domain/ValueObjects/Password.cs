@@ -45,8 +45,8 @@ public sealed partial class Password
             case < 8:
                 ValidationErrors.Add("Password must be at least 8 characters long");
                 break;
-            case > 20:
-                ValidationErrors.Add("Password must be at most 20 characters long");
+            case > 60:
+                ValidationErrors.Add("Password must be at most 60 characters long");
                 break;
         }
         return ValidationErrors.Count == 0;
