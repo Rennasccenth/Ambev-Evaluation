@@ -3,16 +3,10 @@ using Ambev.DeveloperEvaluation.Application.Users.Commands.CreateUser;
 using Ambev.DeveloperEvaluation.Domain.Enums;
 using AutoMapper;
 
-namespace Ambev.DeveloperEvaluation.WebApi.Features.Users.CreateUser;
+namespace Ambev.DeveloperEvaluation.WebApi.Features.Users.Commands.CreateUser;
 
-/// <summary>
-/// Profile for mapping between Application and API CreateUser responses
-/// </summary>
 public sealed class CreateUserProfile : Profile
 {
-    /// <summary>
-    /// Initializes the mappings for CreateUser feature
-    /// </summary>
     public CreateUserProfile()
     {
         CreateMap<CreateUserRequest, CreateUserCommand>()

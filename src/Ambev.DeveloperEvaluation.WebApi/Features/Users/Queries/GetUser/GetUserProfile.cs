@@ -3,7 +3,7 @@ using Ambev.DeveloperEvaluation.Application.Users.Queries.GetUser;
 using Ambev.DeveloperEvaluation.Domain.Enums;
 using AutoMapper;
 
-namespace Ambev.DeveloperEvaluation.WebApi.Features.Users.GetUser;
+namespace Ambev.DeveloperEvaluation.WebApi.Features.Users.Queries.GetUser;
 
 public sealed class GetUserProfile : Profile
 {
