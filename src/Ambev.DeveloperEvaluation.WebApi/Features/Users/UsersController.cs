@@ -43,9 +43,11 @@ public class UsersController : BaseController
 
         var command = _mapper.Map<CreateUserCommand>(request);
         var response = await _mediator.Send(command, cancellationToken);
-
+        
         return response.Match(
-            createUserResult => CreatedAtAction(nameof(GetUser), new { createUserResult.Id } ,createUserResult),
+            createUserResult => CreatedAtAction(nameof(GetUser), 
+                new { createUserResult.Id } ,
+                _mapper.Map<CreateUserResponse>(createUserResult)),
             error => HandleKnownError(error)
         );
     }

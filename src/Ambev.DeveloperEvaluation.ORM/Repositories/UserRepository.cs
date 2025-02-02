@@ -69,7 +69,7 @@ public class UserRepository : IUserRepository
 
         foreach (var orderCandidate in orderingFieldCandidates)
         {
-            var orderingPair = orderCandidate.Split(' ', StringSplitOptions.TrimEntries);
+            var orderingPair = orderCandidate.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
             var orderingKey = orderingPair.FirstOrDefault();
             if (string.IsNullOrEmpty(orderingKey)) continue;
 

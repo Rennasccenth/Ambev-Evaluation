@@ -27,6 +27,17 @@ public sealed class CreateUserProfile : Profile
             .ForMember(command => command.Status, member => member.MapFrom(req => new EnumConverter(typeof(UserStatus)).ConvertFromString(req.Status)))
             .ForMember(command => command.Role, member => member.MapFrom(req => new EnumConverter(typeof(UserRole)).ConvertFromString(req.Role)));
 
-        CreateMap<CreateUserResult, CreateUserResponse>();
+        CreateMap<CreateUserResult, CreateUserResponse>()
+            .ForMember(response => response.Id, member => member.MapFrom(result => result.Id))
+            .ForPath(response => response.Name.Firstname, member => member.MapFrom(result => result.Name.Firstname))
+            .ForPath(response => response.Name.Lastname, member => member.MapFrom(result => result.Name.Lastname))
+            .ForPath(response => response.Address.City, expression => expression.MapFrom(result => result.Address.City))
+            .ForPath(response => response.Address.Street, expression => expression.MapFrom(result => result.Address.Street))
+            .ForPath(response => response.Address.Zipcode, expression => expression.MapFrom(result => result.Address.Zipcode))
+            .ForPath(response => response.Address.Number, expression => expression.MapFrom(result => result.Address.Number))
+            .ForPath(response => response.Address.Geolocation.Lat, expression => expression.MapFrom(result => result.Address.Geolocation.Latitude))
+            .ForPath(response => response.Address.Geolocation.Long, expression => expression.MapFrom(result => result.Address.Geolocation.Longitude))
+            .ForMember(response => response.Status, expression => expression.MapFrom(result => new EnumConverter(typeof(UserStatus)).ConvertToString(result.Status)))
+            .ForMember(response => response.Role, expression => expression.MapFrom(result => new EnumConverter(typeof(UserRole)).ConvertToString(result.Role)));
     }
 }
