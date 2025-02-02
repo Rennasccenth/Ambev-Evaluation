@@ -1,10 +1,12 @@
-﻿using Ambev.DeveloperEvaluation.Application.Users.CreateUser;
-using Ambev.DeveloperEvaluation.Application.Users.DeleteUser;
-using Ambev.DeveloperEvaluation.Application.Users.GetUser;
+﻿using Ambev.DeveloperEvaluation.Application.Users.Commands.CreateUser;
+using Ambev.DeveloperEvaluation.Application.Users.Commands.DeleteUser;
+using Ambev.DeveloperEvaluation.Application.Users.Queries.GetUser;
+using Ambev.DeveloperEvaluation.Application.Users.Queries.GetUsers;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Users.CreateUser;
 using Ambev.DeveloperEvaluation.WebApi.Features.Users.DeleteUser;
 using Ambev.DeveloperEvaluation.WebApi.Features.Users.GetUser;
+using Ambev.DeveloperEvaluation.WebApi.Features.Users.GetUsers;
 using AutoMapper;
 using FluentValidation;
 using FluentValidation.Results;
@@ -41,9 +43,11 @@ public class UsersController : BaseController
 
         var command = _mapper.Map<CreateUserCommand>(request);
         var response = await _mediator.Send(command, cancellationToken);
-
+        
         return response.Match(
-            createUserResult => CreatedAtAction(nameof(GetUser), new { createUserResult.Id } ,createUserResult),
+            createUserResult => CreatedAtAction(nameof(GetUser), 
+                new { createUserResult.Id } ,
+                _mapper.Map<CreateUserResponse>(createUserResult)),
             error => HandleKnownError(error)
         );
     }
@@ -92,4 +96,27 @@ public class UsersController : BaseController
             error => HandleKnownError(error)
         );
     }
+    
+    [HttpGet]
+    [ProducesResponseType(typeof(GetUsersQueryResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetUsers(
+        [FromQuery] GetUsersRequest request,
+        [FromServices] IValidator<GetUsersRequest> requestValidator,
+        CancellationToken cancellationToken)
+    {
+        ValidationResult? validationResult = await requestValidator
+            .ValidateAsync(request, cancellationToken);
+
+        if (!validationResult.IsValid) return HandleKnownError(validationResult.Errors);
+
+        GetUsersQuery? query = _mapper.Map<GetUsersQuery>(request);
+        var result = await _mediator.Send(query, cancellationToken);
+
+        return result.Match(
+            users => Ok(_mapper.Map<GetUsersQueryResponse>(users)),
+            error => HandleKnownError(error)
+        );
+    }
+
 }

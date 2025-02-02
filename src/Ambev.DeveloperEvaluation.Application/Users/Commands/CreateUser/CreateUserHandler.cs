@@ -3,14 +3,15 @@ using Ambev.DeveloperEvaluation.Common.Results;
 using Ambev.DeveloperEvaluation.Common.Security;
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
+using Ambev.DeveloperEvaluation.Domain.Repositories.User;
 using Ambev.DeveloperEvaluation.Domain.ValueObjects;
 using AutoMapper;
 using FluentValidation;
 using MediatR;
 
-namespace Ambev.DeveloperEvaluation.Application.Users.CreateUser;
+namespace Ambev.DeveloperEvaluation.Application.Users.Commands.CreateUser;
 
-public sealed class CreateUserHandler : IRequestHandler<CreateUserCommand, CommandResult<CreateUserResult>>
+public sealed class CreateUserHandler : IRequestHandler<CreateUserCommand, ApplicationResult<CreateUserResult>>
 {
     private readonly IUserRepository _userRepository;
     private readonly IMapper _mapper;
@@ -32,7 +33,7 @@ public sealed class CreateUserHandler : IRequestHandler<CreateUserCommand, Comma
         _userValidator = userValidator;
     }
 
-    public async Task<CommandResult<CreateUserResult>> Handle(CreateUserCommand command, CancellationToken cancellationToken)
+    public async Task<ApplicationResult<CreateUserResult>> Handle(CreateUserCommand command, CancellationToken cancellationToken)
     {
         User? existingUser = await _userRepository.GetByEmailAsync(command.Email!, cancellationToken);
         if (existingUser is not null) return ApplicationError.DuplicatedResourceError();

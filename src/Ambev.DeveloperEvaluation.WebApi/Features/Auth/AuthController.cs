@@ -39,9 +39,9 @@ public class AuthController : BaseController
             return HandleKnownError(validationResult.Errors);
 
         var command = _mapper.Map<AuthenticateUserCommand>(request);
-        CommandResult<AuthenticateUserResult> commandResultResult = await _mediator.Send(command, cancellationToken);
+        ApplicationResult<AuthenticateUserResult> applicationResult = await _mediator.Send(command, cancellationToken);
 
-        return commandResultResult.Match<IActionResult>(
+        return applicationResult.Match<IActionResult>(
             success => Ok(_mapper.Map<AuthenticateUserResponse>(success)),
             error => HandleKnownError(error)
         );

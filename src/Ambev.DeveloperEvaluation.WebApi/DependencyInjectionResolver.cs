@@ -19,7 +19,11 @@ internal static class DependencyInjectionResolver
         serviceCollection.AddBasicHealthChecks();
 
         // Configure Generation of OpenApiDocumentation
-        serviceCollection.AddSwaggerGen();
+        serviceCollection.AddSwaggerGen(options =>
+        {
+            // Gets the last 2 words of type namespace, avoiding type name collision.
+            options.CustomSchemaIds(type => string.Join(": ", type.ToString().Split('.').TakeLast(2)));
+        });
 
         // Register Mapping Profiles from API layer
         serviceCollection.AddAutoMapper(Assembly.GetExecutingAssembly());

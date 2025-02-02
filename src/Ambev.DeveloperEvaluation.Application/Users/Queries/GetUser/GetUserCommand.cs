@@ -1,9 +1,9 @@
 using Ambev.DeveloperEvaluation.Common.Results;
 using MediatR;
 
-namespace Ambev.DeveloperEvaluation.Application.Users.GetUser;
+namespace Ambev.DeveloperEvaluation.Application.Users.Queries.GetUser;
 
-public sealed class GetUserCommand : IRequest<CommandResult<GetUserResult>>
+public sealed class GetUserCommand : IRequest<ApplicationResult<GetUserResult>>
 {
     public Guid Id { get; }
 

@@ -12,10 +12,12 @@ public sealed class CreateUserRequest
     public string Role { get; set; } = "";
 }
 
-public record NameDto(
-    string Firstname,
-    string Lastname
-);
+public record NameDto
+{
+    public required string Firstname { get; init; }
+    public required string Lastname { get; init; }
+}
+    
 
 public record AddressDto
 {

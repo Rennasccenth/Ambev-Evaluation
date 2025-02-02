@@ -1,4 +1,4 @@
-namespace Ambev.DeveloperEvaluation.Application.Users.DeleteUser;
+namespace Ambev.DeveloperEvaluation.Application.Users.Commands.DeleteUser;
 
 public sealed class DeleteUserResponse
 {

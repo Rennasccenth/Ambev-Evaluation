@@ -22,7 +22,7 @@ public static class DependencyInjectionResolver
             // Install all mediatR Handlers from Application Assembly
             config.RegisterGenericHandlers = true;
             config.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly());
-            config.AddOpenBehavior(typeof(CommandValidationBehavior<,>));
+            config.AddOpenBehavior(typeof(ApplicationValidationBehavior<,>));
         });
         
         serviceCollection.AddAutoMapper(Assembly.GetExecutingAssembly());

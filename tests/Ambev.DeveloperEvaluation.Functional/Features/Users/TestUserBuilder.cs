@@ -1,129 +1,74 @@
-using System.Text.Json;
+using System.ComponentModel;
+using System.Net.Http.Json;
+using Ambev.DeveloperEvaluation.Domain.Entities;
+using Ambev.DeveloperEvaluation.Domain.Enums;
 using Ambev.DeveloperEvaluation.WebApi.Features.Users.CreateUser;
 
 namespace Ambev.DeveloperEvaluation.Functional.Features.Users;
 
 public static class TestUserBuilder
 {
-    
-    public static CreateUserRequest GetInvalidUserRequest()
+    public static Task CreateUserAsync(User userEntity, HttpClient httpClient)
     {
-        var invalidRequest = """
-                           {
-                             "Username": "XXXXXXXX",
-                             "Password": "XXXXXXXXXXXXX!",
-                             "Phone": "00000000000000",
-                             "Email": "john.doe@example.com",
-                             "Name": {
-                               "Firstname": "John",
-                               "Lastname": "Doe"
-                             },
-                             "Address": {
-                               "City": "São Paulo",
-                               "Street": "Av. Paulista",
-                               "Number": 12,
-                               "Zipcode": "01311-200",
-                               "Geolocation": {
-                                 "Lat": "-23.5631",
-                                 "Long": "-46.6567"
-                               }
-                             },
-                             "Status": "Active",
-                             "Role": "Admin"
-                           }
-                           """;
+        var createUserRequest = new CreateUserRequest
+        {
+            Username = userEntity.Username,
+            Password = userEntity.Password,
+            Name = new NameDto
+            {
+                Firstname = userEntity.Firstname,
+                Lastname = userEntity.Lastname
+            },
+            Email = userEntity.Email,
+            Phone = userEntity.Phone,
+            Address = new AddressDto
+            {
+                City = userEntity.Address.City,
+                Street = userEntity.Address.Street,
+                Number = userEntity.Address.Number,
+                Zipcode = userEntity.Address.ZipCode,
+                Geolocation = new GeolocationDto
+                {
+                    Lat = userEntity.Address.Latitude,
+                    Long = userEntity.Address.Longitude
+                }
+            },
+            Status = new EnumConverter(typeof(UserStatus)).ConvertToString(userEntity.Status)!,
+            Role = new EnumConverter(typeof(UserRole)).ConvertToString(userEntity.Role)!,
+        };
 
-        return JsonSerializer.Deserialize<CreateUserRequest>(invalidRequest) ?? throw new InvalidOperationException();
-    }
-
-     public static CreateUserRequest GetInvalidUserRequestWithEmptyUsername()
-    {
-        var invalidRequest = """
-                           {
-                             "Username": "",
-                             "Password": "XXXXXXXXXXXXX!",
-                             "Phone": "00000000000000",
-                             "Email": "john.doe@example.com",
-                             "Name": {
-                               "Firstname": "John",
-                               "Lastname": "Doe"
-                             },
-                             "Address": {
-                               "City": "São Paulo",
-                               "Street": "Av. Paulista",
-                               "Number": 12,
-                               "Zipcode": "01311-200",
-                               "Geolocation": {
-                                 "Lat": "-23.5631",
-                                 "Long": "-46.6567"
-                               }
-                             },
-                             "Status": "Active",
-                             "Role": "Admin"
-                           }
-                           """;
-
-        return JsonSerializer.Deserialize<CreateUserRequest>(invalidRequest) ?? throw new InvalidOperationException();
-    }
-
-    public static CreateUserRequest GetValidUserRequest()
-    {
-        const string validRequest = """
-                                    {
-                                      "Username": "john_doe",
-                                      "Password": "SecurePass123!",
-                                      "Phone": "+5511999999999",
-                                      "Email": "john.doe@example.com",
-                                      "Name": {
-                                        "Firstname": "John",
-                                        "Lastname": "Doe"
-                                      },
-                                      "Address": {
-                                        "City": "São Paulo",
-                                        "Street": "Av. Paulista",
-                                        "Number": 12,
-                                        "Zipcode": "01311-200",
-                                        "Geolocation": {
-                                          "Lat": "-23.5631",
-                                          "Long": "-46.6567"
-                                        }
-                                      },
-                                      "Status": "Active",
-                                      "Role": "Admin"
-                                    }
-                                    """;
-
-        return JsonSerializer.Deserialize<CreateUserRequest>(validRequest) ?? throw new InvalidOperationException();
+        return httpClient.PostAsJsonAsync("/api/users", createUserRequest)
+            .ContinueWith(task => task.Result.EnsureSuccessStatusCode());
     }
     
-    public static CreateUserRequest GetInactiveUserRequest()
+    public static CreateUserRequest CreateUserRequest(User userEntity)
     {
-        const string validRequest = """
-                                    {
-                                      "Username": "john_doe",
-                                      "Password": "SecurePass123!",
-                                      "Phone": "+5511999999999",
-                                      "Email": "john.doe@example.com",
-                                      "Name": {
-                                        "Firstname": "John",
-                                        "Lastname": "Doe"
-                                      },
-                                      "Address": {
-                                        "City": "São Paulo",
-                                        "Street": "Av. Paulista",
-                                        "Number": 12,
-                                        "Zipcode": "01311-200",
-                                        "Geolocation": {
-                                          "Lat": "-23.5631",
-                                          "Long": "-46.6567"
-                                        }
-                                      },
-                                      "Status": "Inactive",
-                                      "Role": "Admin"
-                                    }
-                                    """;
-
-        return JsonSerializer.Deserialize<CreateUserRequest>(validRequest) ?? throw new InvalidOperationException();
+        return new CreateUserRequest
+        {
+            Username = userEntity.Username,
+            Password = userEntity.Password,
+            Name = new NameDto
+            {
+                Firstname = userEntity.Firstname,
+                Lastname = userEntity.Lastname
+            },
+            Email = userEntity.Email,
+            Phone = userEntity.Phone,
+            Address = new AddressDto
+            {
+                City = userEntity.Address.City,
+                Street = userEntity.Address.Street,
+                Number = userEntity.Address.Number,
+                Zipcode = userEntity.Address.ZipCode,
+                Geolocation = new GeolocationDto
+                {
+                    Lat = userEntity.Address.Latitude,
+                    Long = userEntity.Address.Longitude
+                }
+            },
+            Status = new EnumConverter(typeof(UserStatus)).ConvertToString(userEntity.Status)!,
+            Role = new EnumConverter(typeof(UserRole)).ConvertToString(userEntity.Role)!,
+        };
     }
 }
 

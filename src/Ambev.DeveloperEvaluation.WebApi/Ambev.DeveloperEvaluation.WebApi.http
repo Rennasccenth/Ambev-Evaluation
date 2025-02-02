@@ -4,6 +4,14 @@
 
 
 ### Create User Request
+
+< {%
+    const statuses = ["Active", "Inactive", "Suspended"];
+    const roles = ["Customer", "Manager", "Admin"];
+    request.variables.set("status", statuses[Math.floor(Math.random() * statuses.length)])
+    request.variables.set("role", roles[Math.floor(Math.random() * roles.length)])
+%}
+
 POST {{host}}/api/users
 Content-Type: application/json
 
@@ -12,8 +20,8 @@ Content-Type: application/json
     "username": "{{$random.name.username}}",
     "password": "{{password}}",
     "name": {
-        "firstname": "Alice",
-        "lastname": "Smith"
+        "firstname": "{{$random.address.firstName}}",
+        "lastname": "{{$random.name.lastName}}"
     },
     "address": {
         "city": "{{$random.address.city}}",
@@ -26,8 +34,8 @@ Content-Type: application/json
         }
     },
     "phone": "+559198{{$random.address.streetAddressNumber}}45",
-    "status": "Active",
-    "role": "Customer"
+    "status": "{{status}}",
+    "role": "{{role}}"
 }
 
 > {%
