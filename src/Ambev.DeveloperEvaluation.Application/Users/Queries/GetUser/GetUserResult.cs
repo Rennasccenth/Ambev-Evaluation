@@ -1,6 +1,6 @@
 using Ambev.DeveloperEvaluation.Domain.Enums;
 
-namespace Ambev.DeveloperEvaluation.Application.Users.GetUser;
+namespace Ambev.DeveloperEvaluation.Application.Users.Queries.GetUser;
 
 public sealed class GetUserResult
 {

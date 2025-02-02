@@ -1,7 +1,7 @@
 ﻿using Ambev.DeveloperEvaluation.Domain.ValueObjects;
 using FluentValidation;
 
-namespace Ambev.DeveloperEvaluation.Application.Users.CreateUser;
+namespace Ambev.DeveloperEvaluation.Application.Users.Commands.CreateUser;
 
 public sealed class CreateUserValidator : AbstractValidator<CreateUserCommand>
 {

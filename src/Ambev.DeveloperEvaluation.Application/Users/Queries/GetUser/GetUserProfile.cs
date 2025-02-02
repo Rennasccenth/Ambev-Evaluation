@@ -1,7 +1,7 @@
-using AutoMapper;
 using Ambev.DeveloperEvaluation.Domain.Entities;
+using AutoMapper;
 
-namespace Ambev.DeveloperEvaluation.Application.Users.GetUser;
+namespace Ambev.DeveloperEvaluation.Application.Users.Queries.GetUser;
 
 public sealed class GetUserProfile : Profile
 {
@@ -22,5 +22,6 @@ public sealed class GetUserProfile : Profile
             .ForPath(dest => dest.Address.Geolocation.Longitude, opt => opt.MapFrom(usr => usr.Address.Longitude))
             .ForMember(dest => dest.Phone, opt => opt.MapFrom(usr => usr.Phone))
             .ForMember(dest => dest.Status, opt => opt.MapFrom(usr => usr.Status))
-            .ForMember(dest => dest.Role, opt => opt.MapFrom(usr => usr.Role));    }
+            .ForMember(dest => dest.Role, opt => opt.MapFrom(usr => usr.Role));
+    }
 }

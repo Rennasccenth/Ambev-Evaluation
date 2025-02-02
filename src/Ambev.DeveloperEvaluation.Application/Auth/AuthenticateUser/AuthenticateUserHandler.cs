@@ -4,12 +4,13 @@ using Ambev.DeveloperEvaluation.Common.Security;
 using Ambev.DeveloperEvaluation.Common.Validation;
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
+using Ambev.DeveloperEvaluation.Domain.Repositories.User;
 using Ambev.DeveloperEvaluation.Domain.Specifications;
 using MediatR;
 
 namespace Ambev.DeveloperEvaluation.Application.Auth.AuthenticateUser;
 
-public sealed class AuthenticateUserHandler : IRequestHandler<AuthenticateUserCommand, CommandResult<AuthenticateUserResult>>
+public sealed class AuthenticateUserHandler : IRequestHandler<AuthenticateUserCommand, ApplicationResult<AuthenticateUserResult>>
 {
     private readonly IUserRepository _userRepository;
     private readonly IPasswordHasher _passwordHasher;
@@ -25,7 +26,7 @@ public sealed class AuthenticateUserHandler : IRequestHandler<AuthenticateUserCo
         _jwtTokenGenerator = jwtTokenGenerator;
     }
 
-    public async Task<CommandResult<AuthenticateUserResult>> Handle(AuthenticateUserCommand request, CancellationToken cancellationToken)
+    public async Task<ApplicationResult<AuthenticateUserResult>> Handle(AuthenticateUserCommand request, CancellationToken cancellationToken)
     {
         User? user = await _userRepository.GetByEmailAsync(request.Email, cancellationToken);
         if (user is null || !_passwordHasher.VerifyPassword(request.Password, user.Password))
