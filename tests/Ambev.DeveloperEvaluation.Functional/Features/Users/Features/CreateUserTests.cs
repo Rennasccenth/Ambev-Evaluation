@@ -22,7 +22,7 @@ public sealed class CreateUserTests : BaseTest
 
         HttpResponseMessage createUserHttpResponse = await TestServerHttpClient.PostAsJsonAsync(
             requestUri: "api/users",
-            value: TestUserBuilder.GetValidUserRequest(),
+            value: TestUserBuilder.CreateUserRequest(UserTestData.DumpUser()),
             cancellationToken: cancellationTokenSource.Token);
 
         // Act

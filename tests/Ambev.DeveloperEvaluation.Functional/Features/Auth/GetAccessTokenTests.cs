@@ -46,13 +46,13 @@ public sealed class GetAccessTokenTests : BaseTest
         // Arrange
         CancellationTokenSource cancellationTokenSource = new();
 
-        var createUserRequest = TestUserBuilder.GetValidUserRequest();
+        var createUserRequest = TestUserBuilder.CreateUserRequest(UserTestData.DumpUser(status: UserStatus.Active));
         string preHashPassword = createUserRequest.Password;
 
         // Create the user
         HttpResponseMessage createUserHttpResponse = await TestServerHttpClient.PostAsJsonAsync(
             requestUri: "api/users",
-            value: TestUserBuilder.GetValidUserRequest(),
+            value: createUserRequest,
             cancellationToken: cancellationTokenSource.Token);
 
         // Get the created user resource
@@ -91,7 +91,7 @@ public sealed class GetAccessTokenTests : BaseTest
         // Arrange
         CancellationTokenSource cancellationTokenSource = new();
 
-        CreateUserRequest createUserRequest = TestUserBuilder.GetValidUserRequest();
+        CreateUserRequest createUserRequest = TestUserBuilder.CreateUserRequest(UserTestData.DumpUser());
         createUserRequest.Status = Enum.GetName(UserStatus.Inactive)!;
         string preHashPassword = createUserRequest.Password;
 

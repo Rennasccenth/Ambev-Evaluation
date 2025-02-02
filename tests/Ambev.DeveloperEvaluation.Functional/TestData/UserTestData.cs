@@ -28,7 +28,7 @@ public class UserTestData : ICollectionFixture<DeveloperEvaluationWebApplication
 
     private User.UserBuilder GetUserBuilder => User.GetBuilder(_passwordHasher, _timeProvider, _userValidator);
 
-    internal string Email => _faker.Person.Email;
+    internal string Email => _faker.Internet.Email(uniqueSuffix: _faker.UniqueIndex.ToString(), provider: "test.com");
     internal string Password => _faker.Internet.Password(8, prefix: "!T3sT");
 
     private string Phone => $"+{_faker.Random.Int(1, 9)}{_faker.Random.Number(100000000, 999999999)}";

@@ -51,7 +51,7 @@ public sealed class DeveloperEvaluationWebApplicationFactory
 
             // Replace the current Context by pointing it to a PostgreSQL Container instance.
             collection.RemoveAll<DbContextOptions<DefaultContext>>()
-                .AddDbContextPool<DefaultContext>(optionsBuilder =>
+                .AddDbContext<DefaultContext>(optionsBuilder =>
                 {
                     optionsBuilder.UseNpgsql(_postgreSqlContainer.GetConnectionString(), psqlOptions =>
                     {
@@ -60,7 +60,7 @@ public sealed class DeveloperEvaluationWebApplicationFactory
                     });
                     optionsBuilder.EnableDetailedErrors();
                     optionsBuilder.EnableSensitiveDataLogging();
-                });
+                }, contextLifetime: ServiceLifetime.Transient);
         });
     }
 
