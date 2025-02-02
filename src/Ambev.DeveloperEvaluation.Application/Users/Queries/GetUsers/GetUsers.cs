@@ -108,7 +108,10 @@ public sealed class GetUsersProfile : Profile
     public GetUsersProfile()
     {
         CreateMap<User, GetUsersQuerySummary>();
-        CreateMap<GetUsersQuery, GetUsersQueryFilter>();
+        CreateMap<GetUsersQuery, GetUsersQueryFilter>()
+            .ForMember(filter => filter.CurrentPage, expression => expression.MapFrom(query => query.Page))
+            .ForMember(filter => filter.PageSize, expression => expression.MapFrom(query => query.PageSize))
+            .ForMember(filter => filter.OrderBy, expression => expression.MapFrom(query => query.OrderBy));
 
         CreateMap<PaginatedList<User>, GetUsersQueryResult>()
             .ForMember(queryResult => queryResult.Users, opt => opt.MapFrom(users => users))
