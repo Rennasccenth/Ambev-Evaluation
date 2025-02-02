@@ -1,8 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
-using Ambev.DeveloperEvaluation.Domain.Enums;
-using Ambev.DeveloperEvaluation.WebApi.Features.Users.CreateUser;
-using Ambev.DeveloperEvaluation.WebApi.Features.Users.GetUser;
+using Ambev.DeveloperEvaluation.WebApi.Features.Users.Queries.GetUser;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Xunit;
