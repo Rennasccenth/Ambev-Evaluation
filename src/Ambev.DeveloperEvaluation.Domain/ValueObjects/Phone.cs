@@ -10,7 +10,7 @@ public sealed partial class Phone
 
     private Phone(string value)
     {
-        _value = value;
+        _value = value.Trim(trimChars: ['+', '(', ')', ' ']);
         IsValid = Validate();
     }
 
