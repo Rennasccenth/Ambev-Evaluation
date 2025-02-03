@@ -1,4 +1,5 @@
 using Ambev.DeveloperEvaluation.Domain.Events;
+using Ambev.DeveloperEvaluation.Domain.Events.Abstractions;
 using Ambev.DeveloperEvaluation.Domain.Repositories.Products;
 using Ambev.DeveloperEvaluation.Domain.Repositories.User;
 using Ambev.DeveloperEvaluation.ORM.Events;

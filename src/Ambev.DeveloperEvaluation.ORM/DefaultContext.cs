@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using Ambev.DeveloperEvaluation.Domain.Events;
+using Ambev.DeveloperEvaluation.Domain.Events.Abstractions;
 using Ambev.DeveloperEvaluation.ORM.Interceptors;
 
 namespace Ambev.DeveloperEvaluation.ORM;

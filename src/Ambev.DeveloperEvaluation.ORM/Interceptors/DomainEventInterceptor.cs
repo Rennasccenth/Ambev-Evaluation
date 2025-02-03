@@ -1,4 +1,5 @@
 using Ambev.DeveloperEvaluation.Domain.Events;
+using Ambev.DeveloperEvaluation.Domain.Events.Abstractions;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace Ambev.DeveloperEvaluation.ORM.Interceptors;

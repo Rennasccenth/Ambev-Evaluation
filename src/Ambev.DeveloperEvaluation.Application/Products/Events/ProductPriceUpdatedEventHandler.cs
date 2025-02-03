@@ -1,5 +1,5 @@
 using System.Text.Json;
-using Ambev.DeveloperEvaluation.Domain.Events;
+using Ambev.DeveloperEvaluation.Domain.Events.Abstractions;
 using Ambev.DeveloperEvaluation.Domain.Events.Products;
 using Microsoft.Extensions.Logging;
 

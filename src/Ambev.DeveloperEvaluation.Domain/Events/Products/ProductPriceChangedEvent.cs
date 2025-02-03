@@ -1,4 +1,5 @@
 using Ambev.DeveloperEvaluation.Domain.Entities;
+using Ambev.DeveloperEvaluation.Domain.Events.Abstractions;
 
 namespace Ambev.DeveloperEvaluation.Domain.Events.Products;
 

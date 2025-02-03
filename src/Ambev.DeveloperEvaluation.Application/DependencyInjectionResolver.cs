@@ -3,6 +3,7 @@ using Ambev.DeveloperEvaluation.Application.Products.Events;
 using Ambev.DeveloperEvaluation.Common.Security;
 using Ambev.DeveloperEvaluation.Common.Validation;
 using Ambev.DeveloperEvaluation.Domain.Events;
+using Ambev.DeveloperEvaluation.Domain.Events.Abstractions;
 using Ambev.DeveloperEvaluation.Domain.Events.Products;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,7 +16,7 @@ public static class DependencyInjectionResolver
     public static IServiceCollection InstallApplicationLayer(this IServiceCollection serviceCollection)
     {
         serviceCollection.TryAddSingleton<IPasswordHasher, BCryptPasswordHasher>();
-        serviceCollection.TryAddSingleton<IEventHandler<ProductPriceChangedEvent>, ProductPriceChangedEventHandler>();
+        serviceCollection.AddEventHandlers(Assembly.GetExecutingAssembly());
         
         serviceCollection.AddValidatorsFromAssembly(
             assembly: Assembly.GetExecutingAssembly(),
