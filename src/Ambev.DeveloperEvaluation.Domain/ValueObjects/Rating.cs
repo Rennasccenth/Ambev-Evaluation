@@ -2,7 +2,6 @@ namespace Ambev.DeveloperEvaluation.Domain.ValueObjects;
 
 public sealed record Rating
 {
-    public bool IsValid { get; init; }
     public decimal Rate { get; init; }
     public int Count { get; init; }
 
@@ -12,6 +11,5 @@ public sealed record Rating
     {
         Rate = rate;
         Count = count;
-        IsValid = Rate <= 5 && Count > 0;
     }
 }
