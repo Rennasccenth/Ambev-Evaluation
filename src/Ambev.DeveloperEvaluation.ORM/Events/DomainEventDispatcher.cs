@@ -1,0 +1,57 @@
+using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Ambev.DeveloperEvaluation.Domain.Events;
+
+namespace Ambev.DeveloperEvaluation.ORM.Events;
+
+internal sealed class DomainEventDispatcher : IDomainEventDispatcher
+{
+    private readonly IServiceScopeFactory _serviceScopeFactory;
+    private readonly ILogger<DomainEventDispatcher> _logger;
+
+    public DomainEventDispatcher(IServiceScopeFactory serviceScopeFactory, ILogger<DomainEventDispatcher> logger)
+    {
+        _serviceScopeFactory = serviceScopeFactory ?? throw new ArgumentNullException(nameof(serviceScopeFactory));
+        _logger = logger;
+    }
+
+    public async Task DispatchAndClearEventsAsync(IEventableEntity eventableEntity)
+    {
+        var events = eventableEntity.DomainEvents.ToList();
+
+        if (!events.Any()) return;
+
+        using IServiceScope scope = _serviceScopeFactory.CreateScope();
+
+        List<Task> handlingTasks = [];
+
+        foreach (IEvent @event in events)
+        {
+            Type handlerType = typeof(IEventHandler<>).MakeGenericType(@event.GetType());
+            var handlers = scope.ServiceProvider.GetServices(handlerType)
+                .ToList();
+
+            if (handlers.Count == 0)
+            {
+                _logger.LogWarning("No handlers registered for event {EventType}", @event.GetType().Name);
+                continue;
+            }
+
+            foreach (var handler in handlers)
+            {
+                MethodInfo? handleMethod = handlerType.GetMethod("HandleAsync");
+                if (handleMethod == null)
+                {
+                    _logger.LogError("Handler {HandlerType} does not implement HandleAsync method", handler?.GetType().Name);
+                    continue;
+                }
+
+                handlingTasks.Add((Task)handleMethod.Invoke(handler, [@event])!);
+            }
+        }
+
+        await Task.WhenAll(handlingTasks);
+        eventableEntity.ClearDomainEvents();
+    }
+}

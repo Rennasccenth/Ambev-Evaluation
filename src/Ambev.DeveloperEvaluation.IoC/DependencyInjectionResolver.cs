@@ -15,6 +15,6 @@ public static class DependencyInjectionResolver
         serviceCollection
             .InstallInfrastructureLayer()
             .InstallApplicationLayer()
-            .RegisterDomainServices();
+            .InstallDomainServices();
     }
 }

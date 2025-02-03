@@ -1,5 +1,7 @@
+using Ambev.DeveloperEvaluation.Domain.Events;
 using Ambev.DeveloperEvaluation.Domain.Repositories.Products;
 using Ambev.DeveloperEvaluation.Domain.Repositories.User;
+using Ambev.DeveloperEvaluation.ORM.Events;
 using Ambev.DeveloperEvaluation.ORM.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -28,6 +30,7 @@ public static class DependencyInjectionResolver
 
         serviceCollection.AddTransient<IUserRepository, UserRepository>();
         serviceCollection.AddTransient<IProductRepository, ProductRepository>();
+        serviceCollection.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
 
         return serviceCollection;
     }
