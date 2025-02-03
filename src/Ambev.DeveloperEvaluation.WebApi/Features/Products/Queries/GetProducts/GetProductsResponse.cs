@@ -1,15 +1,9 @@
 using Ambev.DeveloperEvaluation.Domain.ValueObjects;
+using Ambev.DeveloperEvaluation.WebApi.Common;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Products.Queries.GetProducts;
 
-public sealed class GetProductsResponse
-{
-    public List<GetProductsResponseItem> Data { get; init; } = [];
-    public int TotalCount { get; init; }
-    public int PageNumber { get; init; }
-    public int PageSize { get; init; }
-    public int TotalPages { get; init; }
-}
+public sealed class GetProductsResponse : PaginatedResponse<GetProductsResponseItem>;
 
 public sealed class GetProductsResponseItem
 {
