@@ -109,7 +109,7 @@ public sealed class GetUsersProfile : Profile
     {
         CreateMap<User, GetUsersQuerySummary>();
         CreateMap<GetUsersQuery, GetUsersQueryFilter>()
-            .ForMember(filter => filter.CurrentPage, expression => expression.MapFrom(query => query.Page))
+            .ForMember(filter => filter.CurrentPage, expression => expression.MapFrom(query => query.CurrentPage))
             .ForMember(filter => filter.PageSize, expression => expression.MapFrom(query => query.PageSize))
             .ForMember(filter => filter.OrderBy, expression => expression.MapFrom(query => query.OrderBy));
 
