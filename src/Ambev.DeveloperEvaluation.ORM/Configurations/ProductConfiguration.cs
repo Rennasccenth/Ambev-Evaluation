@@ -21,8 +21,12 @@ public sealed class ProductConfiguration : IEntityTypeConfiguration<Product>
         builder.Property(e => e.Image).IsRequired().HasMaxLength(100);
         builder.ComplexProperty(e => e.Rating, propertyBuilder =>
         {
-            propertyBuilder.Property(rating => rating.Rate).HasPrecision(18, 2);
-            propertyBuilder.Property(rating => rating.Count).HasDefaultValue(0);
+            propertyBuilder.Property(rating => rating.Rate)
+                .IsRequired()
+                .HasPrecision(18, 2);
+            propertyBuilder.Property(rating => rating.Count)
+                .IsRequired()
+                .HasDefaultValue(0);
         });
     }
 }
