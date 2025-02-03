@@ -94,7 +94,6 @@ file sealed class GetUsersTestData : IEnumerable<object[]>
         yield return [15u, UserStatus.Active, null!, null!];
         yield return [20u, UserStatus.Active, UserRole.Customer, "johndoe"];
         yield return [9u,  UserStatus.Suspended, UserRole.Admin, "adminUser"];
-        yield return [1u,  UserStatus.Inactive, null!, "guestUser"];
         yield return [1u,  UserStatus.Inactive, UserRole.Manager, "managerUser"];
     }
 

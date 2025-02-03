@@ -2,15 +2,15 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Users.Queries.GetUser;
 
 public sealed class GetUserResponse
 {
-    public Guid Id { get; init; }
-    public string Email { get; init; }
-    public string Username { get; init; }
-    public string Password { get; init; }
-    public NameDto Name { get; init; }
-    public AddressDto Address { get; init; }
-    public string Phone { get; init; }
-    public string Status { get; init; }
-    public string Role { get; init; }
+    public required Guid Id { get; init; }
+    public required string Email { get; init; }
+    public required string Username { get; init; }
+    public required string Password { get; init; }
+    public required NameDto Name { get; init; }
+    public required AddressDto Address { get; init; }
+    public required string Phone { get; init; }
+    public required string Status { get; init; }
+    public required string Role { get; init; }
 }
 
 public sealed record AddressDto

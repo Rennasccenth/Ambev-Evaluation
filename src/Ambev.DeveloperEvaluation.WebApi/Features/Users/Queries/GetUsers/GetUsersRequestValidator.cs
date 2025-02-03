@@ -3,14 +3,16 @@ using FluentValidation;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Users.Queries.GetUsers;
 
-public sealed class GetUsersValidator : AbstractValidator<GetUsersRequest>
+public sealed class GetUsersRequestValidator : AbstractValidator<GetUsersRequest>
 {
-    public GetUsersValidator()
+    public GetUsersRequestValidator()
     {
         RuleFor(req => req.Status)
+            .NotNull()
             .IsEnumName(typeof(UserStatus), caseSensitive: false).When(req => !string.IsNullOrEmpty(req.Status));
-        
+
         RuleFor(req => req.Role)
+            .NotNull()
             .IsEnumName(typeof(UserRole), caseSensitive: false).When(req => !string.IsNullOrEmpty(req.Role));
     }
 }

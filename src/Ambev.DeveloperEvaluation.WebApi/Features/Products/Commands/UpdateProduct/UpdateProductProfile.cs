@@ -1,8 +1,6 @@
 using System.Globalization;
 using Ambev.DeveloperEvaluation.Application.Products.Commands.UpdateProduct;
-using Ambev.DeveloperEvaluation.Domain.ValueObjects;
 using AutoMapper;
-using FluentValidation;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Products.Commands.UpdateProduct;
 
