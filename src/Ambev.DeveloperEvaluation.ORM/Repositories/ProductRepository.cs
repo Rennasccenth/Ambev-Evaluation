@@ -1,7 +1,9 @@
+using Ambev.DeveloperEvaluation.Application.Products.Commands.UpdateProduct;
 using Ambev.DeveloperEvaluation.Domain.Common;
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Repositories.Products;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace Ambev.DeveloperEvaluation.ORM.Repositories;
 
@@ -40,7 +42,13 @@ internal sealed class ProductRepository : IProductRepository
     public async Task<Product> UpdateAsync(Product updatingProduct, CancellationToken ct)
     {
         var updatingEntry = _dbContext.Products.Update(updatingProduct);
-        await _dbContext.SaveChangesAsync(ct);
+        try
+        {
+            await _dbContext.SaveChangesAsync(ct);
+        }catch (DbUpdateException ex) when (ex.InnerException is PostgresException { SqlState: "23505" })
+        {
+            throw new DuplicatedProductException("A duplicate key violation occurred.");
+        }
         return updatingEntry.Entity;
     }
 }

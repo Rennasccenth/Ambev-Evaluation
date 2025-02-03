@@ -1,0 +1,45 @@
+@baseUrl = http://localhost:5119
+
+### Get Product by ID
+GET {{baseUrl}}/api/products/{{productId}}
+Accept: application/json
+
+### Create Product
+POST {{baseUrl}}/api/products
+Content-Type: application/json
+
+{
+    "name": "Test Product",
+    "description": "A test product description",
+    "price": 19.99,
+    "stock": 100,
+    "title": "This is a toy",
+    "image": "asdasdasd",
+    "category": "Action",
+    "rating":{
+        "count": 0,
+        "rate": 1.5
+    }
+}
+
+### Update Product
+PUT {{baseUrl}}/api/products/{{productId}}
+Content-Type: application/json
+
+{
+    "title": "This is a toy",
+    "price": 20.1,
+    "description": "A test product description",
+    "category": "Action",
+    "image": "asdasdasd",
+    "rating": {
+        "rate": 0,
+        "count": 0
+    }
+}
+
+### Delete Product
+DELETE {{baseUrl}}/api/products/{{productId}}
+
+### Variables
+@productId = 00000000-0000-0000-0000-000000000000

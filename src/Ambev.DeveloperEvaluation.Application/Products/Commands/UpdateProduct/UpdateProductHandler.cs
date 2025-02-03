@@ -1,7 +1,6 @@
 using AutoMapper;
 using MediatR;
 using Ambev.DeveloperEvaluation.Common.Results;
-using Ambev.DeveloperEvaluation.Domain.Repositories;
 using Ambev.DeveloperEvaluation.Common.Errors;
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Repositories.Products;
@@ -45,7 +44,15 @@ public sealed class UpdateProductHandler : IRequestHandler<UpdateProductCommand,
             .ChangeImage(request.Image)
             .ChangeRating(request.Rating);
 
-        Product updatedProduct = await _productRepository.UpdateAsync(updatingProduct, cancellationToken);
+        Product updatedProduct;
+        try
+        {
+            updatedProduct = await _productRepository.UpdateAsync(updatingProduct, cancellationToken);
+        }
+        catch (DuplicatedProductException e)
+        {
+            return  ApplicationError.DuplicatedResourceError(e.Message);
+        }
 
         _logger.LogInformation("Product {Id} updated", request.Id);
         return _mapper.Map<UpdateProductCommandResult>(updatedProduct);

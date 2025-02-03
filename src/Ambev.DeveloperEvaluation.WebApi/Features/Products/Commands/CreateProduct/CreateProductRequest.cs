@@ -6,21 +6,21 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Products.Commands.CreateProd
 public sealed class CreateProductRequest
 {
     [Required]
-    public required string Title { get; init; }
+    public string Title { get; init; }
 
     [Required]
     [Range(0.01, double.MaxValue)]
-    public required decimal Price { get; init; }
+    public decimal Price { get; init; }
 
     [Required]
-    public required string Description { get; init; }
+    public string Description { get; init; }
 
     [Required]
-    public required string Category { get; init; }
+    public string Category { get; init; }
 
     [Required]
-    public required string Image { get; init; }
+    public string Image { get; init; }
 
     [Required]
-    public required Rating Rating { get; init; }
+    public Rating Rating { get; init; }
 }
