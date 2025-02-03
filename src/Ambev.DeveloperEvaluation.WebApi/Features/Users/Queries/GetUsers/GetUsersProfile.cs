@@ -30,10 +30,10 @@ public sealed class GetUsersProfile : Profile
                 opt => opt.PreCondition(src => src.Role != null && Enum.IsDefined(typeof(UserRole), src.Role)))
             .ForMember(dest => dest.Role, opt => opt.MapFrom(src => Enum.Parse<UserRole>(src.Role!, true)));
 
-        CreateMap<GetUsersQueryResult, GetUsersQueryResponse>()
+        CreateMap<GetUsersQueryResult, GetUsersResponse>()
             .ForMember(dest => dest.Data, opt => opt.MapFrom(src => src.Users));
         
 
-        CreateMap<GetUsersQuerySummary, GetUsersQueryItem>();
+        CreateMap<GetUsersQuerySummary, GetUsersRequestItem>();
     }
 }

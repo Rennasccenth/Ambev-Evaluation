@@ -46,11 +46,14 @@ public sealed class GetUsersTests : BaseTest
 
         await Task.WhenAll(creatingUsersTasks.ToArray());
 
-        // Create another user with different data than provided.
-        await TestUserBuilder.CreateUserAsync(
-            userEntity: UserTestData.DumpUser(
-                password: _faker.Internet.Password(length: 12, prefix: "T3s!T")
-            ), httpClient: TestServerHttpClient);
+        // Create another users with different data than provided just to add randomness.
+        await TestUserBuilder.CreateUserAsync(userEntity: UserTestData.DumpUser(
+                password: _faker.Internet.Password(length: 12, prefix: "T3s!T")),
+            httpClient: TestServerHttpClient);
+        await TestUserBuilder.CreateUserAsync(userEntity: UserTestData.DumpUser(
+                email: _faker.Internet.Email("randommin.com", uniqueSuffix: _faker.UniqueIndex.ToString())),
+            httpClient: TestServerHttpClient);
+
         
         GetUsersQuery query = new GetUsersQuery
         {

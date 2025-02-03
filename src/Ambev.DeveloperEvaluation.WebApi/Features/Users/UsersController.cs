@@ -122,7 +122,7 @@ public class UsersController : BaseController
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(GetUsersQueryResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(GetUsersResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetUsers(
         [FromQuery] GetUsersRequest request,
@@ -138,7 +138,7 @@ public class UsersController : BaseController
         var result = await _mediator.Send(query, cancellationToken);
 
         return result.Match(
-            users => Ok(_mapper.Map<GetUsersQueryResponse>(users)),
+            users => Ok(_mapper.Map<GetUsersResponse>(users)),
             error => HandleKnownError(error)
         );
     }
