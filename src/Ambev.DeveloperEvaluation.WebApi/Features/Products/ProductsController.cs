@@ -1,7 +1,9 @@
 using Ambev.DeveloperEvaluation.Application.Products.Commands.CreateProduct;
+using Ambev.DeveloperEvaluation.Application.Products.Commands.DeleteProduct;
 using Ambev.DeveloperEvaluation.Application.Products.Queries.GetProduct;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.Commands.CreateProduct;
+using Ambev.DeveloperEvaluation.WebApi.Features.Products.Commands.DeleteProduct;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.Queries;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.Queries.GetProduct;
 using AutoMapper;
@@ -63,6 +65,25 @@ public class ProductsController : BaseController
 
         return result.Match(
             onSuccess: successResult => CreatedAtAction(nameof(Get), new { successResult.Id }, successResult),
+            onFailure: HandleKnownError);
+    }
+
+    [HttpDelete("{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Delete(
+        [FromRoute] Guid id,
+        [FromServices] IValidator<DeleteProductRequest> requestValidator,
+        CancellationToken ct)
+    {
+        DeleteProductRequest request = new(id);
+        ValidationResult validationResult = await requestValidator.ValidateAsync(request, ct);
+        if (!validationResult.IsValid) return HandleKnownError(validationResult.Errors);
+
+        var commandResult = await _mediator.Send(_mapper.Map<DeleteProductCommand>(request), ct);
+
+        return commandResult.Match(
+            onSuccess: _ => NoContent(),
             onFailure: HandleKnownError);
     }
 }
