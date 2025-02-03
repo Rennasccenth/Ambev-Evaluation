@@ -18,15 +18,13 @@ internal sealed class DomainEventDispatcher : IDomainEventDispatcher
 
     public async Task DispatchAndClearEventsAsync(IEventableEntity eventableEntity)
     {
-        var events = eventableEntity.DomainEvents.ToList();
-
-        if (!events.Any()) return;
+        if (eventableEntity.DomainEvents.Count == 0) return;
 
         using IServiceScope scope = _serviceScopeFactory.CreateScope();
 
         List<Task> handlingTasks = [];
 
-        foreach (IEvent @event in events)
+        foreach (IEvent @event in eventableEntity.DomainEvents)
         {
             Type handlerType = typeof(IEventHandler<>).MakeGenericType(@event.GetType());
             var handlers = scope.ServiceProvider.GetServices(handlerType)
