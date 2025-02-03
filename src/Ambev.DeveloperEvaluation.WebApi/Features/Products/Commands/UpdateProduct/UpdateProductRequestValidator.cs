@@ -1,11 +1,11 @@
 using Ambev.DeveloperEvaluation.Domain.ValueObjects;
 using FluentValidation;
 
-namespace Ambev.DeveloperEvaluation.WebApi.Features.Products.Commands.CreateProduct;
+namespace Ambev.DeveloperEvaluation.WebApi.Features.Products.Commands.UpdateProduct;
 
-public class CreateProductRequestValidator : AbstractValidator<CreateProductRequest>
+public sealed class UpdateProductRequestValidator : AbstractValidator<UpdateProductRequest>
 {
-    public CreateProductRequestValidator(IValidator<Rating> ratingValidator)
+    public UpdateProductRequestValidator(IValidator<Rating> ratingValidator)
     {
         RuleFor(x => x.Title)
             .NotEmpty()

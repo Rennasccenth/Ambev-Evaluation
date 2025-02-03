@@ -25,7 +25,8 @@ public class BaseEntity : IComparable<BaseEntity>, IEventableEntity
     public IReadOnlyList<IEvent> DomainEvents => [.._domainEvents.Values];
 
     private readonly Dictionary<Guid, IEvent> _domainEvents = new();
-    void IEventableEntity.AddDomainEvent(IEvent domainEvent)
+
+    public void AddDomainEvent(IEvent domainEvent)
     {
         ArgumentNullException.ThrowIfNull(domainEvent, nameof(domainEvent));
         _domainEvents.TryAdd(domainEvent.Id, domainEvent);

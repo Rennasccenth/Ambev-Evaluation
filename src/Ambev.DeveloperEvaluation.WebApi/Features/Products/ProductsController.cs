@@ -1,10 +1,11 @@
 using Ambev.DeveloperEvaluation.Application.Products.Commands.CreateProduct;
+using Ambev.DeveloperEvaluation.Application.Products.Commands.UpdateProduct;
+using Ambev.DeveloperEvaluation.WebApi.Features.Products.Commands.UpdateProduct;
 using Ambev.DeveloperEvaluation.Application.Products.Commands.DeleteProduct;
 using Ambev.DeveloperEvaluation.Application.Products.Queries.GetProduct;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.Commands.CreateProduct;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.Commands.DeleteProduct;
-using Ambev.DeveloperEvaluation.WebApi.Features.Products.Queries;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.Queries.GetProduct;
 using AutoMapper;
 using FluentValidation;
@@ -64,7 +65,28 @@ public class ProductsController : BaseController
         var result = await _mediator.Send(command, ct);
 
         return result.Match(
-            onSuccess: successResult => CreatedAtAction(nameof(Get), new { successResult.Id }, successResult),
+            onSuccess: successResult => CreatedAtAction(nameof(Get), new { successResult.Id },
+                _mapper.Map<CreateProductResponse>(successResult)),
+            onFailure: HandleKnownError);
+    }
+
+    [HttpPut("{id:guid}")]
+    [ProducesResponseType(typeof(UpdateProductResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Update(
+        [FromRoute] Guid id,
+        [FromBody] UpdateProductRequest request,
+        [FromServices] IValidator<UpdateProductRequest> requestValidator,
+        CancellationToken cancellationToken)
+    {
+        request.Id = id;
+        ValidationResult? validationResult = await requestValidator.ValidateAsync(request, cancellationToken);
+        if (!validationResult.IsValid) return HandleKnownError(validationResult.Errors);
+        var commandResult = await _mediator.Send(_mapper.Map<UpdateProductCommand>(request), cancellationToken);
+
+        return commandResult.Match(
+            onSuccess: successResult => Ok(_mapper.Map<UpdateProductResponse>(successResult)),
             onFailure: HandleKnownError);
     }
 
