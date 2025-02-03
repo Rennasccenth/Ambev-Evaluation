@@ -5,10 +5,10 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Products.Commands.UpdateProd
 public sealed class UpdateProductRequest
 {
     public Guid Id { get; set; }
-    public string Title { get; init; }
+    public string Title { get; init; } = null!;
     public decimal Price { get; init; }
-    public string Description { get; init; }
-    public string Category { get; init; }
-    public string Image { get; init; }
-    public Rating Rating { get; init; }
+    public string Description { get; init; } = null!;
+    public string Category { get; init; } = null!;
+    public string Image { get; init; } = null!;
+    public Rating Rating { get; init; } = null!;
 }
