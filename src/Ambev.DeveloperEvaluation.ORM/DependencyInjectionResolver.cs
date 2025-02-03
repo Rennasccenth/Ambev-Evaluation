@@ -1,3 +1,4 @@
+using Ambev.DeveloperEvaluation.Domain.Repositories.Products;
 using Ambev.DeveloperEvaluation.Domain.Repositories.User;
 using Ambev.DeveloperEvaluation.ORM.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -24,7 +25,9 @@ public static class DependencyInjectionResolver
             options.EnableDetailedErrors();
             options.EnableSensitiveDataLogging();
         }, ServiceLifetime.Transient);
+
         serviceCollection.AddTransient<IUserRepository, UserRepository>();
+        serviceCollection.AddTransient<IProductRepository, ProductRepository>();
 
         return serviceCollection;
     }
