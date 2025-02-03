@@ -1,4 +1,6 @@
-using Ambev.DeveloperEvaluation.Application.Products.Commands.UpdateProduct;
+using System.Linq.Expressions;
+using Ambev.DeveloperEvaluation.Application.Products.Exceptions;
+using Ambev.DeveloperEvaluation.Common.Results;
 using Ambev.DeveloperEvaluation.Domain.Common;
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Repositories.Products;
@@ -10,7 +12,7 @@ namespace Ambev.DeveloperEvaluation.ORM.Repositories;
 internal sealed class ProductRepository : IProductRepository
 {
     private readonly DefaultContext _dbContext;
-
+    private const string DescendingSortOrderIndicator = "desc";
     public ProductRepository(DefaultContext dbContext)
     {
         _dbContext = dbContext;
@@ -21,9 +23,66 @@ internal sealed class ProductRepository : IProductRepository
         return await _dbContext.Products.FirstAsync(product => product.Id == id, cancellationToken: ct);
     }
 
-    public Task<PaginatedList<Product>> GetByFilter(GetProductsQueryFilter queryFilter, CancellationToken ct)
+    public async Task<PaginatedList<Product>> GetByFilterAsync(GetProductsQueryFilter queryFilter, CancellationToken ct)
     {
-        throw new NotImplementedException();
+        IQueryable<Product> query = _dbContext.Set<Product>().AsQueryable();
+
+        query = ApplyProductsFiltering(query, queryFilter);
+
+        if (!string.IsNullOrWhiteSpace(queryFilter.OrderBy))
+        {
+            query = ApplySortExpression(query, queryFilter.OrderBy);
+        }
+
+        return await PaginatedList<Product>.CreateAsync(query, queryFilter.CurrentPage, queryFilter.PageSize, ct);
+    }
+
+    private static readonly Dictionary<string, Expression<Func<Product, object>>> SortingKeyMap = new()
+    {
+        ["id"] =  product => product.Id,
+        ["title"] = product => product.Title,
+        ["price"] = product => product.Price,
+        ["description"] = product => product.Description,
+        ["category"] = product => product.Category,
+        ["rate"] = product => product.Rating.Rate,
+        ["count"] = product => product.Rating.Count
+    };
+
+    private static IOrderedQueryable<Product> ApplySortExpression(IQueryable<Product> filteredItems, string orderByString)
+    {
+        var orderingCandidates = orderByString.Trim().Split(',');
+
+        IOrderedQueryable<Product> orderingItems = filteredItems.OrderBy(p => 0);
+        
+        foreach (var orderCandidate in orderingCandidates)
+        {
+            var orderingPair = orderCandidate.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            var orderingKey = orderingPair.FirstOrDefault();
+
+            if (string.IsNullOrEmpty(orderingKey)) continue;
+
+            // Key selector didn't match known ordering expressions
+            if (!SortingKeyMap.TryGetValue(orderingKey, out var orderingExpression)) continue;
+
+            if (orderingPair.Length == 2)
+            {
+                var orderingSelector = orderingPair[1];
+                orderingItems = orderingSelector == DescendingSortOrderIndicator
+                    ? orderingItems.ThenByDescending(orderingExpression)
+                    : orderingItems.ThenBy(orderingExpression);
+            }
+            else
+            {
+                orderingItems = orderingItems.ThenBy(orderingExpression);
+            }
+        }
+
+        return orderingItems;
+    }
+
+    private static IQueryable<Product> ApplyProductsFiltering(IQueryable<Product> products, GetProductsQueryFilter queryFilter)
+    {
+        return products.ApplyFilters(queryFilter.FilterBy);
     }
 
     public async Task<Product> CreateAsync(Product creatingProduct, CancellationToken ct)
