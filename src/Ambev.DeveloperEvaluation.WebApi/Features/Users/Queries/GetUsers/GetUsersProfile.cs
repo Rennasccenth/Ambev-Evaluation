@@ -9,7 +9,7 @@ public sealed class GetUsersProfile : Profile
     public GetUsersProfile()
     {
         CreateMap<GetUsersRequest, GetUsersQuery>()
-            .ForMember(dest => dest.Page, opt => opt.MapFrom(src => src.CurrentPage))
+            .ForMember(dest => dest.CurrentPage, opt => opt.MapFrom(src => src.CurrentPage))
             .ForMember(dest => dest.PageSize, opt => opt.MapFrom(src => src.PageSize))
             .ForMember(dest => dest.OrderBy, opt => opt.MapFrom(src => src.OrderBy))
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))

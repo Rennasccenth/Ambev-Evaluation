@@ -54,7 +54,7 @@ public sealed class GetUsersTests : BaseTest
         
         GetUsersQuery query = new GetUsersQuery
         {
-            Page = 1,
+            CurrentPage = 1,
             PageSize = 80,
             Status = status ?? null,
             Role = role ?? null,
@@ -71,7 +71,7 @@ public sealed class GetUsersTests : BaseTest
             activeUsersQueryApplicationResult.Data.Should().NotBeNull();
             GetUsersQueryResult queryResult = activeUsersQueryApplicationResult.Data!;
 
-            queryResult.Page.Should().Be(query.Page);
+            queryResult.Page.Should().Be(query.CurrentPage);
             queryResult.PageSize.Should().Be(query.PageSize);
             queryResult.Users.Should().AllSatisfy(usrSummary =>
             {

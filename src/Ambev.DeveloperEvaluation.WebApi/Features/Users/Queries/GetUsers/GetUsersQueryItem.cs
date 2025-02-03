@@ -4,14 +4,14 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Users.Queries.GetUsers;
 
 public sealed class GetUsersQueryItem
 {
-    public string Id { get; set; }
-    public string Email { get; set; }
-    public string Username { get; set; }
-    public string Password { get; set; }
-    public string Firstname { get; set; }
-    public string Lastname { get; set; }
-    public Address Address { get; set; }
-    public string Phone { get; set; }
-    public string Status { get; set; }
-    public string Role { get; set; }
+    public required string Id { get; set; }
+    public required string Email { get; set; }
+    public required string Username { get; set; }
+    public required string Password { get; set; }
+    public required string Firstname { get; set; }
+    public required string Lastname { get; set; }
+    public required Address Address { get; set; }
+    public required string Phone { get; set; }
+    public required string Status { get; set; }
+    public required string Role { get; set; }
 }
