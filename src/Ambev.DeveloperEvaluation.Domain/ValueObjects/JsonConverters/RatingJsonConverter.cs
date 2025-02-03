@@ -3,24 +3,43 @@ using System.Text.Json.Serialization;
 
 namespace Ambev.DeveloperEvaluation.Domain.ValueObjects.JsonConverters;
 
-public sealed class RatingJsonConverter : JsonConverter<Rating>
+public class RatingJsonConverter : JsonConverter<Rating>
 {
     public override Rating Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         decimal rate = 0;
         int count = 0;
 
+        Dictionary<string, string> propertyNameComparer;
+        if (options.PropertyNamingPolicy is not null && options.PropertyNamingPolicy != JsonNamingPolicy.CamelCase)
+        {
+            propertyNameComparer = new Dictionary<string, string>
+            {
+                { "rate", "Rate" },
+                { "count", "Count" }
+            };
+        }
+        else
+        {
+            propertyNameComparer = new Dictionary<string, string>
+            {
+                { "Rate", "Rate" },
+                { "Count", "Count" }
+            };
+        }
+
         while (reader.Read())
         {
             if (reader.TokenType == JsonTokenType.EndObject)
                 break;
 
-            if (reader.TokenType == JsonTokenType.PropertyName)
-            {
-                string propertyName = reader.GetString()!;
-                reader.Read();
+            if (reader.TokenType != JsonTokenType.PropertyName) continue;
+            var propertyName = reader.GetString()!;
+            reader.Read();
                 
-                switch (propertyName)
+            if (propertyNameComparer.TryGetValue(propertyName, out var standardizedProperty))
+            {
+                switch (standardizedProperty)
                 {
                     case "Rate":
                         rate = reader.GetDecimal();
@@ -38,8 +57,12 @@ public sealed class RatingJsonConverter : JsonConverter<Rating>
     public override void Write(Utf8JsonWriter writer, Rating value, JsonSerializerOptions options)
     {
         writer.WriteStartObject();
-        writer.WriteNumber("Rate", value.Rate);
-        writer.WriteNumber("Count", value.Count);
+        
+        string rateProperty = options.PropertyNamingPolicy?.ConvertName("Rate") ?? "Rate";
+        string countProperty = options.PropertyNamingPolicy?.ConvertName("Count") ?? "Count";
+        
+        writer.WriteNumber(rateProperty, value.Rate);
+        writer.WriteNumber(countProperty, value.Count);
         writer.WriteEndObject();
     }
 }
