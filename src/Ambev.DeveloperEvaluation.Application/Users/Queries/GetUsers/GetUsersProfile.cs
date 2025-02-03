@@ -16,7 +16,7 @@ public sealed class GetUsersProfile : Profile
             .ForMember(filter => filter.OrderBy, expression => expression.MapFrom(query => query.OrderBy));
 
         CreateMap<PaginatedList<User>, GetUsersQueryResult>()
-            .ForMember(queryResult => queryResult, opt => opt.MapFrom(users => users))
+            .ForMember(queryResult => queryResult.Users, opt => opt.MapFrom(users => users))
             .ForMember(queryResult => queryResult.TotalCount, opt => opt.MapFrom(users => users.Count))
             .ForMember(queryResult => queryResult.Page, opt => opt.MapFrom(users => users.CurrentPage))
             .ForMember(queryResult => queryResult.PageSize, opt => opt.MapFrom(users => users.PageSize))
