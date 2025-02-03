@@ -45,6 +45,7 @@ internal sealed class DomainEventDispatcher : IDomainEventDispatcher
                     continue;
                 }
 
+                // TODO: I guess I can add the CancellationToken in params list, but i need to check it later. 
                 handlingTasks.Add((Task)handleMethod.Invoke(handler, [@event])!);
             }
         }
