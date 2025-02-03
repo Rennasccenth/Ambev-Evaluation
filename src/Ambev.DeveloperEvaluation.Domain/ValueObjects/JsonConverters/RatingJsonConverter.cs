@@ -7,50 +7,33 @@ public class RatingJsonConverter : JsonConverter<Rating>
 {
     public override Rating Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
+        string expectedRateName = options.PropertyNamingPolicy?.ConvertName(nameof(Rating.Rate)) ?? "rate";
+        string expectedCountName = options.PropertyNamingPolicy?.ConvertName(nameof(Rating.Count)) ?? "count";
+
         decimal rate = 0;
         int count = 0;
-
-        Dictionary<string, string> propertyNameComparer;
-        if (options.PropertyNamingPolicy is not null && options.PropertyNamingPolicy != JsonNamingPolicy.CamelCase)
-        {
-            propertyNameComparer = new Dictionary<string, string>
-            {
-                { "rate", "Rate" },
-                { "count", "Count" }
-            };
-        }
-        else
-        {
-            propertyNameComparer = new Dictionary<string, string>
-            {
-                { "Rate", "Rate" },
-                { "Count", "Count" }
-            };
-        }
-
+        
         while (reader.Read())
         {
             if (reader.TokenType == JsonTokenType.EndObject)
                 break;
-
-            if (reader.TokenType != JsonTokenType.PropertyName) continue;
+            
+            if (reader.TokenType != JsonTokenType.PropertyName)
+                continue;
+            
             var propertyName = reader.GetString()!;
-            reader.Read();
-                
-            if (propertyNameComparer.TryGetValue(propertyName, out var standardizedProperty))
+            reader.Read(); // go look for the value token
+            
+            if (propertyName == expectedRateName)
             {
-                switch (standardizedProperty)
-                {
-                    case "Rate":
-                        rate = reader.GetDecimal();
-                        break;
-                    case "Count":
-                        count = reader.GetInt32();
-                        break;
-                }
+                rate = reader.GetDecimal();
+            }
+            else if (propertyName == expectedCountName)
+            {
+                count = reader.GetInt32();
             }
         }
-
+        
         return new Rating(rate, count);
     }
 
@@ -58,8 +41,8 @@ public class RatingJsonConverter : JsonConverter<Rating>
     {
         writer.WriteStartObject();
         
-        string rateProperty = options.PropertyNamingPolicy?.ConvertName("Rate") ?? "Rate";
-        string countProperty = options.PropertyNamingPolicy?.ConvertName("Count") ?? "Count";
+        string rateProperty = options.PropertyNamingPolicy?.ConvertName(nameof(Rating.Rate)) ?? "rate";
+        string countProperty = options.PropertyNamingPolicy?.ConvertName(nameof(Rating.Count)) ?? "count";
         
         writer.WriteNumber(rateProperty, value.Rate);
         writer.WriteNumber(countProperty, value.Count);
