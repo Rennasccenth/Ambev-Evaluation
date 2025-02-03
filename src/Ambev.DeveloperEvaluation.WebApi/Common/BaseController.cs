@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.WebUtilities;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Common;
 
-[Route("api/[controller]")]
 [ApiController]
+[Route("api/[controller]")]
 public class BaseController : ControllerBase
 {
     protected int GetCurrentUserId() =>

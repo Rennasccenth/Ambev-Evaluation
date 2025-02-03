@@ -1,5 +1,4 @@
-using System.Diagnostics;
-using System.Text.Json;
+using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
@@ -29,25 +28,36 @@ public sealed class GlobalExceptionHandler : IExceptionHandler
 
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
     {
-        _logger.LogCritical("An unhandled exception was caught with message: {Exception}", JsonSerializer.Serialize(exception.Message));
-        if (exception.InnerException is not null)
-            _logger.LogCritical("Inner exception was caught with message: {Exception}", JsonSerializer.Serialize(exception.InnerException.Message));
+        _logger.LogError(exception, "An error occurred while processing the request.");
+
+        ProblemDetails problemDetails = new()
+        {
+            Status = ExceptionStatusCodeMapper.GetStatusCode(exception),
+            Type = exception.GetType().Name,
+            Title = ExceptionStatusCodeMapper.GetTitle(exception),
+            Detail = exception.Message,
+        };
+
+        var traceId = httpContext.Features.Get<IHttpActivityFeature>()?.Activity.TraceId;
+        if (traceId is not null)
+        {
+            problemDetails.Extensions.TryAdd("traceId", traceId.ToString());
+        }
+
+        if (exception is ValidationException validationException)
+        {
+            problemDetails.Extensions["errors"] = validationException.Errors
+                .GroupBy(e => e.PropertyName)
+                .ToDictionary(
+                    group => group.Key,
+                    failures => failures.Select(e => e.ErrorMessage).ToArray()
+                );
+        }
 
         return await _problemDetailsService.TryWriteAsync(new ProblemDetailsContext
         {
             HttpContext = httpContext,
-            Exception = exception,
-            ProblemDetails = new ProblemDetails
-            {
-                Status = StatusCodes.Status500InternalServerError,
-                Type = exception.GetType().Name,
-                Title = "An unexpected error has occurred.",
-                Detail = exception.Message,
-                Extensions =
-                {
-                    { "traceId", httpContext.Features.Get<IHttpActivityFeature>()?.Activity.TraceId  }
-                }
-            }
+            ProblemDetails = problemDetails
         });
     }   
 }
