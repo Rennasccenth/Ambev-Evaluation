@@ -29,7 +29,14 @@ internal sealed class ProductRepository : IProductRepository
     public async Task<Product> CreateAsync(Product creatingProduct, CancellationToken ct)
     {
         var addedEntry = await _dbContext.Products.AddAsync(creatingProduct, ct);
-        await _dbContext.SaveChangesAsync(ct);
+        try
+        {
+            await _dbContext.SaveChangesAsync(ct);
+        } catch (DbUpdateException ex) when (ex.InnerException is PostgresException { SqlState: "23505" })
+        {
+            throw new DuplicatedProductException();
+        }
+
         return addedEntry.Entity;
     }
 
@@ -47,7 +54,7 @@ internal sealed class ProductRepository : IProductRepository
             await _dbContext.SaveChangesAsync(ct);
         }catch (DbUpdateException ex) when (ex.InnerException is PostgresException { SqlState: "23505" })
         {
-            throw new DuplicatedProductException("A duplicate key violation occurred.");
+            throw new DuplicatedProductException();
         }
         return updatingEntry.Entity;
     }

@@ -1,3 +1,5 @@
+using Ambev.DeveloperEvaluation.Application.Products.Exceptions;
+using Ambev.DeveloperEvaluation.Common.Errors;
 using Ambev.DeveloperEvaluation.Common.Results;
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Repositories.Products;
@@ -24,8 +26,15 @@ public sealed class CreateProductCommandHandler : IRequestHandler<CreateProductC
     {
         _logger.LogInformation("Creating product with Title: {Title}", request.Title);
         Product creatingProduct = new (request.Title, request.Price, request.Description, request.Category, request.Image, request.Rating);
-
-        Product storedProduct = await _productRepository.CreateAsync(creatingProduct, cancellationToken);
+        Product storedProduct;
+        try
+        {
+             storedProduct = await _productRepository.CreateAsync(creatingProduct, cancellationToken);
+        }
+        catch (DuplicatedProductException e)
+        {
+            return ApplicationError.DuplicatedResourceError(e.Message);
+        }
 
         _logger.LogInformation("Created product {Title} with Id: {ProductId}", request.Title, storedProduct.Id.ToString());
         return _mapper.Map<CreateProductCommandResult>(storedProduct);

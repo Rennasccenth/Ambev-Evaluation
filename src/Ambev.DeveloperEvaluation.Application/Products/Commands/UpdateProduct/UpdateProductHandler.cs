@@ -1,3 +1,4 @@
+using Ambev.DeveloperEvaluation.Application.Products.Exceptions;
 using AutoMapper;
 using MediatR;
 using Ambev.DeveloperEvaluation.Common.Results;
