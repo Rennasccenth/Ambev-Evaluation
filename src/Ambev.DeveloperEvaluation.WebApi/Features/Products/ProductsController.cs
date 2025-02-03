@@ -3,10 +3,12 @@ using Ambev.DeveloperEvaluation.Application.Products.Commands.UpdateProduct;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.Commands.UpdateProduct;
 using Ambev.DeveloperEvaluation.Application.Products.Commands.DeleteProduct;
 using Ambev.DeveloperEvaluation.Application.Products.Queries.GetProduct;
+using Ambev.DeveloperEvaluation.Application.Products.Queries.GetProducts;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.Commands.CreateProduct;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.Commands.DeleteProduct;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.Queries.GetProduct;
+using Ambev.DeveloperEvaluation.WebApi.Features.Products.Queries.GetProducts;
 using AutoMapper;
 using FluentValidation;
 using FluentValidation.Results;
@@ -28,6 +30,26 @@ public class ProductsController : BaseController
     {
         _mediator = mediator;
         _mapper = mapper;
+    }
+
+    [HttpGet("")]
+    [ProducesResponseType(typeof(GetProductsResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetAll(
+        [FromQuery] GetProductsRequest request,
+        [FromServices] IValidator<GetProductsRequest> requestValidator,
+        CancellationToken ct)
+    {
+        request.SetFilter(HttpContext.Request.Query);
+        var validateAsync = await requestValidator.ValidateAsync(request, ct);
+        if (!validateAsync.IsValid) return HandleKnownError(validateAsync.Errors);
+
+        var getProductQuery = _mapper.Map<GetProductsQuery>(request);
+        var queryResult = await _mediator.Send(getProductQuery, ct);
+
+        return queryResult.Match(
+            onSuccess: successResult => Ok(_mapper.Map<GetProductsResponse>(successResult)),
+            onFailure: HandleKnownError);
     }
 
     [HttpGet("{id:guid}")]
