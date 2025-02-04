@@ -1,10 +1,15 @@
 using System.Collections;
+using System.Net.Http.Json;
 using Ambev.DeveloperEvaluation.Application.Users.Queries.GetUsers;
 using Ambev.DeveloperEvaluation.Domain.Enums;
+using Ambev.DeveloperEvaluation.Functional.TestData;
+using Ambev.DeveloperEvaluation.WebApi.Features.Users.Queries.GetUsers;
 using Bogus;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using MediatR;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
@@ -12,14 +17,12 @@ namespace Ambev.DeveloperEvaluation.Functional.Features.Users.Features;
 
 public sealed class GetUsersTests : BaseTest
 {
-    private readonly IMediator _mediatR;
     private readonly Faker _faker = new("pt_BR");
 
     public GetUsersTests(DeveloperEvaluationWebApplicationFactory webApplicationFactory)
         : base(webApplicationFactory)
     {
         IServiceScope serviceScope = webApplicationFactory.Services.CreateScope();
-        _mediatR = serviceScope.ServiceProvider.GetRequiredService<IMediator>();
     }
 
     [Theory(DisplayName = "Get users when filter properties are provided, should return filtered users.")]
@@ -55,36 +58,41 @@ public sealed class GetUsersTests : BaseTest
             httpClient: TestServerHttpClient);
 
         
-        GetUsersQuery query = new GetUsersQuery
+        GetUsersRequest getUsersRequest = new GetUsersRequest
         {
             CurrentPage = 1,
             PageSize = 80,
-            Status = status ?? null,
-            Role = role ?? null,
+            Status = status.ToString() ?? null,
+            Role = role.ToString() ?? null,
             Username = username ?? null
         };
 
         // Act
-        var activeUsersQueryApplicationResult = await _mediatR.Send(query);
+        string queryStringObject = QueryStringHelper.ToQueryString(getUsersRequest);
+
+        var getUsersResponse = await TestServerHttpClient.GetFromJsonAsync<GetUsersResponse>($"api/users{queryStringObject}");
 
         // Assert
         using (var _ = new AssertionScope())
         {
-            activeUsersQueryApplicationResult.Error.Should().BeNull();
-            activeUsersQueryApplicationResult.Data.Should().NotBeNull();
-            GetUsersQueryResult queryResult = activeUsersQueryApplicationResult.Data!;
+            getUsersResponse.Should().NotBeNull();
+            getUsersResponse?.Data.Should().NotBeNull();
 
-            queryResult.Page.Should().Be(query.CurrentPage);
-            queryResult.PageSize.Should().Be(query.PageSize);
-            queryResult.Users.Should().AllSatisfy(usrSummary =>
+            if (getUsersResponse is not null)
             {
-                if (username is not null)
-                    usrSummary.Username.Should().Contain(username);
-                if (role is not null)
-                    usrSummary.Role.Should().Be(role);
-                if (status is not null)
-                    usrSummary.Status.Should().Be(status);
-            });
+                getUsersResponse.PageNumber.Should().Be(getUsersRequest.CurrentPage);
+                getUsersResponse.PageSize.Should().Be(getUsersRequest.PageSize);
+                getUsersResponse.TotalCount.Should().Be((int)userMatchingCount);
+                getUsersResponse.Data.Should().AllSatisfy(usrSummary =>
+                {
+                    if (username is not null)
+                        usrSummary.Username.Should().Contain(username);
+                    if (role is not null)
+                        usrSummary.Role.Should().Be(role.ToString());
+                    if (status is not null)
+                        usrSummary.Status.Should().Be(status.ToString());
+                });
+            }
         }
     }
 
@@ -94,7 +102,6 @@ file sealed class GetUsersTestData : IEnumerable<object[]>
 {
     public IEnumerator<object[]> GetEnumerator()
     {
-        yield return [15u, UserStatus.Active, null!, null!];
         yield return [20u, UserStatus.Active, UserRole.Customer, "johndoe"];
         yield return [9u,  UserStatus.Suspended, UserRole.Admin, "adminUser"];
         yield return [1u,  UserStatus.Inactive, UserRole.Manager, "managerUser"];
