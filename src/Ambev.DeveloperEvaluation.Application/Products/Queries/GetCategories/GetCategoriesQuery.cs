@@ -8,16 +8,16 @@ public sealed class GetCategoriesQuery : IRequest<ApplicationResult<GetCategorie
 
 public sealed class GetCategoriesQueryHandler : IRequestHandler<GetCategoriesQuery, ApplicationResult<GetCategoriesQueryResponse>>
 {
-    private readonly IProductRepository _productRepository;
+    private readonly IProductRegistryRepository _productRegistryRepository;
 
-    public GetCategoriesQueryHandler(IProductRepository productRepository)
+    public GetCategoriesQueryHandler(IProductRegistryRepository productRegistryRepository)
     {
-        _productRepository = productRepository;
+        _productRegistryRepository = productRegistryRepository;
     }
 
     public async Task<ApplicationResult<GetCategoriesQueryResponse>> Handle(GetCategoriesQuery request, CancellationToken cancellationToken)
     {
-        var categories = await _productRepository.GetCategoriesAsync(cancellationToken);
+        var categories = await _productRegistryRepository.GetCategoriesAsync(cancellationToken);
 
         return new GetCategoriesQueryResponse(categories);
     }

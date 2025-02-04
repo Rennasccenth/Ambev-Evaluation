@@ -9,20 +9,20 @@ namespace Ambev.DeveloperEvaluation.Application.Products.Queries.GetProduct;
 
 public sealed class GetProductHandler : IRequestHandler<GetProductQuery, ApplicationResult<GetProductQueryResult>>
 {
-    private readonly IProductRepository _productRepository;
+    private readonly IProductRegistryRepository _productRegistryRepository;
     private readonly IMapper _mapper;
 
     public GetProductHandler(
-        IProductRepository productRepository,
+        IProductRegistryRepository productRegistryRepository,
         IMapper mapper)
     {
-        _productRepository = productRepository;
+        _productRegistryRepository = productRegistryRepository;
         _mapper = mapper;
     }
 
     public async Task<ApplicationResult<GetProductQueryResult>> Handle(GetProductQuery request, CancellationToken cancellationToken)
     {
-        Product? foundProduct = await _productRepository.FindByIdAsync(request.Id, cancellationToken);
+        Product? foundProduct = await _productRegistryRepository.FindByIdAsync(request.Id, cancellationToken);
         if (foundProduct is null) return ApplicationError.NotFoundError($"Product with ID {request.Id} wasn't found.");
 
         return _mapper.Map<GetProductQueryResult>(foundProduct);

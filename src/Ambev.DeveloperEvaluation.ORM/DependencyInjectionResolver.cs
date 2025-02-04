@@ -1,8 +1,5 @@
-using Ambev.DeveloperEvaluation.Domain.Events;
-using Ambev.DeveloperEvaluation.Domain.Events.Abstractions;
 using Ambev.DeveloperEvaluation.Domain.Repositories.Products;
 using Ambev.DeveloperEvaluation.Domain.Repositories.User;
-using Ambev.DeveloperEvaluation.ORM.Events;
 using Ambev.DeveloperEvaluation.ORM.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -12,7 +9,7 @@ namespace Ambev.DeveloperEvaluation.ORM;
 
 public static class DependencyInjectionResolver
 {
-    public static IServiceCollection InstallInfrastructureLayer(this IServiceCollection serviceCollection)
+    public static IServiceCollection InstallPostgreSqlInfrastructure(this IServiceCollection serviceCollection)
     {
         // Use this instead DI default methods for safer DbContext injection.
         serviceCollection.AddDbContext<DefaultContext>((provider, options) =>
@@ -30,8 +27,7 @@ public static class DependencyInjectionResolver
         }, ServiceLifetime.Transient);
 
         serviceCollection.AddTransient<IUserRepository, UserRepository>();
-        serviceCollection.AddTransient<IProductRepository, ProductRepository>();
-        serviceCollection.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
+        serviceCollection.AddTransient<IProductRegistryRepository, ProductRegistryRepository>();
 
         return serviceCollection;
     }

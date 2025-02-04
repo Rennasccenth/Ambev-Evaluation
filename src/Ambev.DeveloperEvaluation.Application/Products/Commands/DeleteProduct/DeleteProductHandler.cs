@@ -8,19 +8,19 @@ namespace Ambev.DeveloperEvaluation.Application.Products.Commands.DeleteProduct;
 
 public sealed class DeleteProductHandler : IRequestHandler<DeleteProductCommand, ApplicationResult<DeleteProductCommandResult>>
 {
-    private readonly IProductRepository _productRepository;
+    private readonly IProductRegistryRepository _productRegistryRepository;
     private readonly ILogger<DeleteProductHandler> _logger;
 
-    public DeleteProductHandler(IProductRepository productRepository, ILogger<DeleteProductHandler> logger)
+    public DeleteProductHandler(IProductRegistryRepository productRegistryRepository, ILogger<DeleteProductHandler> logger)
     {
-        _productRepository = productRepository;
+        _productRegistryRepository = productRegistryRepository;
         _logger = logger;
     }
 
     public async Task<ApplicationResult<DeleteProductCommandResult>> Handle(DeleteProductCommand command, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Deleting product with ID {Id}", command.Id);
-        var wasDeleted = await _productRepository.DeleteAsync(command.Id, cancellationToken);
+        var wasDeleted = await _productRegistryRepository.DeleteAsync(command.Id, cancellationToken);
 
         if (!wasDeleted) return ApplicationError.NotFoundError($"Product ID {command.Id} wasn't found.");
 

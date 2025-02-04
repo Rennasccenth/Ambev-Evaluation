@@ -9,11 +9,11 @@ using Npgsql;
 
 namespace Ambev.DeveloperEvaluation.ORM.Repositories;
 
-internal sealed class ProductRepository : IProductRepository
+internal sealed class ProductRegistryRepository : IProductRegistryRepository
 {
     private readonly DefaultContext _dbContext;
     private const string DescendingSortOrderIndicator = "desc";
-    public ProductRepository(DefaultContext dbContext)
+    public ProductRegistryRepository(DefaultContext dbContext)
     {
         _dbContext = dbContext;
     }
@@ -23,7 +23,7 @@ internal sealed class ProductRepository : IProductRepository
         return await _dbContext.Products.FirstAsync(product => product.Id == id, cancellationToken: ct);
     }
 
-    public async Task<PaginatedList<Product>> GetByFilterAsync(GetProductsQueryFilter queryFilter, CancellationToken ct)
+    public async Task<PaginatedList<Product>> GetByFilterAsync(GetRegisteredProductsQueryFilter queryFilter, CancellationToken ct)
     {
         IQueryable<Product> query = _dbContext.Set<Product>()
             .AsNoTracking()
@@ -82,7 +82,7 @@ internal sealed class ProductRepository : IProductRepository
         return orderingItems;
     }
 
-    private static IQueryable<Product> ApplyProductsFiltering(IQueryable<Product> products, GetProductsQueryFilter queryFilter)
+    private static IQueryable<Product> ApplyProductsFiltering(IQueryable<Product> products, GetRegisteredProductsQueryFilter queryFilter)
     {
         return products.ApplyFilters(queryFilter.FilterBy);
     }

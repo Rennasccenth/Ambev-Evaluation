@@ -9,7 +9,7 @@ public class GetProductsProfile : Profile
 {
     public GetProductsProfile()
     {
-        CreateMap<GetProductsQuery, GetProductsQueryFilter>()
+        CreateMap<GetProductsQuery, GetRegisteredProductsQueryFilter>()
             .ForMember(dest => dest.FilterBy, expression => expression.MapFrom(src => src.FilterBy))
             .ForMember(dest => dest.OrderBy, expression => expression.MapFrom(src => src.OrderBy))
             .ForMember(dest => dest.CurrentPage, opt => opt.MapFrom(src => src.CurrentPage))

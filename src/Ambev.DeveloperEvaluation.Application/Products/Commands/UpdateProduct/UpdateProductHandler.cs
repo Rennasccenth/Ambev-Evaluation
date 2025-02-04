@@ -11,18 +11,18 @@ namespace Ambev.DeveloperEvaluation.Application.Products.Commands.UpdateProduct;
 
 public sealed class UpdateProductHandler : IRequestHandler<UpdateProductCommand, ApplicationResult<UpdateProductCommandResult>>
 {
-    private readonly IProductRepository _productRepository;
+    private readonly IProductRegistryRepository _productRegistryRepository;
     private readonly IMapper _mapper;
     private readonly TimeProvider _timeProvider;
     private readonly ILogger<UpdateProductHandler> _logger;
 
     public UpdateProductHandler(
-        IProductRepository productRepository,
+        IProductRegistryRepository productRegistryRepository,
         IMapper mapper,
         TimeProvider timeProvider,
         ILogger<UpdateProductHandler> logger)
     {
-        _productRepository = productRepository;
+        _productRegistryRepository = productRegistryRepository;
         _mapper = mapper;
         _timeProvider = timeProvider;
         _logger = logger;
@@ -34,7 +34,7 @@ public sealed class UpdateProductHandler : IRequestHandler<UpdateProductCommand,
     {
         _logger.LogInformation("Updating product {Id}", request.Id);
 
-        Product? updatingProduct = await _productRepository.FindByIdAsync(request.Id, cancellationToken);
+        Product? updatingProduct = await _productRegistryRepository.FindByIdAsync(request.Id, cancellationToken);
         if (updatingProduct is null) return ApplicationError.NotFoundError($"Product ID {request.Id} wasn't found.");
 
         updatingProduct = updatingProduct
@@ -48,7 +48,7 @@ public sealed class UpdateProductHandler : IRequestHandler<UpdateProductCommand,
         Product updatedProduct;
         try
         {
-            updatedProduct = await _productRepository.UpdateAsync(updatingProduct, cancellationToken);
+            updatedProduct = await _productRegistryRepository.UpdateAsync(updatingProduct, cancellationToken);
         }
         catch (DuplicatedProductException e)
         {
