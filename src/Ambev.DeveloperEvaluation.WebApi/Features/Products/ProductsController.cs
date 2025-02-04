@@ -2,11 +2,14 @@ using Ambev.DeveloperEvaluation.Application.Products.Commands.CreateProduct;
 using Ambev.DeveloperEvaluation.Application.Products.Commands.UpdateProduct;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.Commands.UpdateProduct;
 using Ambev.DeveloperEvaluation.Application.Products.Commands.DeleteProduct;
+using Ambev.DeveloperEvaluation.Application.Products.Queries.GetCategories;
 using Ambev.DeveloperEvaluation.Application.Products.Queries.GetProduct;
 using Ambev.DeveloperEvaluation.Application.Products.Queries.GetProducts;
+using Ambev.DeveloperEvaluation.Common.Results;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.Commands.CreateProduct;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.Commands.DeleteProduct;
+using Ambev.DeveloperEvaluation.WebApi.Features.Products.Queries.GetCategories;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.Queries.GetProduct;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.Queries.GetProducts;
 using AutoMapper;
@@ -130,4 +133,17 @@ public class ProductsController : BaseController
             onSuccess: _ => NoContent(),
             onFailure: HandleKnownError);
     }
+
+    [HttpGet("categories")]
+    [ProducesResponseType(typeof(GetCategoriesResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetAllCategories(CancellationToken ct)
+    {
+        ApplicationResult<GetCategoriesQueryResponse> queryResult = await _mediator.Send(new GetCategoriesQuery(), ct);
+
+        return queryResult.Match(
+            onSuccess: successResult => Ok(_mapper.Map<GetCategoriesResponse>(successResult)),
+            onFailure: HandleKnownError);
+    }
+
 }

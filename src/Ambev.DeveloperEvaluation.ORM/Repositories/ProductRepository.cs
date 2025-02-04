@@ -25,7 +25,9 @@ internal sealed class ProductRepository : IProductRepository
 
     public async Task<PaginatedList<Product>> GetByFilterAsync(GetProductsQueryFilter queryFilter, CancellationToken ct)
     {
-        IQueryable<Product> query = _dbContext.Set<Product>().AsQueryable();
+        IQueryable<Product> query = _dbContext.Set<Product>()
+            .AsNoTracking()
+            .AsQueryable();
 
         query = ApplyProductsFiltering(query, queryFilter);
 
@@ -116,5 +118,13 @@ internal sealed class ProductRepository : IProductRepository
             throw new DuplicatedProductException();
         }
         return updatingEntry.Entity;
+    }
+
+    public Task<List<string>> GetCategoriesAsync(CancellationToken ct)
+    {
+        return _dbContext.Products.AsNoTracking()
+            .Select(product => product.Category)
+            .Distinct()
+            .ToListAsync(ct);
     }
 }
