@@ -10,6 +10,7 @@ using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.Commands.CreateProduct;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.Commands.DeleteProduct;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.Queries.GetCategories;
+using Ambev.DeveloperEvaluation.WebApi.Features.Products.Queries.GetCategoryProducts;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.Queries.GetProduct;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.Queries.GetProducts;
 using AutoMapper;
@@ -146,4 +147,26 @@ public class ProductsController : BaseController
             onFailure: HandleKnownError);
     }
 
+    [HttpGet("categories/{category}")]
+    [ProducesResponseType(typeof(GetProductsResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetFilteredByCategory(
+        [FromRoute] string category,
+        [FromServices] IValidator<GetProductsRequest> requestValidator,
+        CancellationToken ct)
+    {
+        GetProductsRequest request = new();
+        request.SetFilter(HttpContext.Request.Query);
+        request.FilterBy["category"] = category;
+
+        var validateAsync = requestValidator.ValidateAsync(request, ct);
+        if (!validateAsync.Result.IsValid) return HandleKnownError(validateAsync.Result.Errors);
+
+        var getProductsQuery = _mapper.Map<GetProductsQuery>(request);
+        ApplicationResult<GetProductsQueryResult> queryResult = await _mediator.Send(getProductsQuery, ct);
+
+        return queryResult.Match(
+            onSuccess: successResult => Ok(_mapper.Map<GetCategoryProductsResponse>(successResult)),
+            onFailure: HandleKnownError);
+    }
 }
