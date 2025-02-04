@@ -19,18 +19,18 @@ internal sealed class ProductInventoryRepository : IProductInventoryRepository
 
     public async Task<Dictionary<Guid, int>> GetProductQuantitiesAsync(IEnumerable<Guid> productIds, CancellationToken ct)
     {
-        var filter = Builders<ProductInventory>.Filter.In(pi => pi.ProductId, productIds);
+        var filter = Builders<ProductInventory>.Filter.In(pi => pi.Id, productIds);
         
         var productInventories = await _inventoryCollection.Find(filter).ToListAsync(ct);
         
-        return productInventories.ToDictionary(pi => pi.ProductId, pi => pi.Quantity);
+        return productInventories.ToDictionary(pi => pi.Id, pi => pi.Quantity);
     }
 
     public async Task<ProductInventory> StockProductQuantityAsync(Guid productId, ulong quantity, CancellationToken ct)
     {
         _logger.LogInformation("ReStocking product {ProductId} with quantity {Quantity}", productId, quantity);
 
-        var filter = Builders<ProductInventory>.Filter.Eq(pi => pi.ProductId, productId);
+        var filter = Builders<ProductInventory>.Filter.Eq(pi => pi.Id, productId);
         ProductInventory reStockedProduct = await _inventoryCollection.FindOneAndUpdateAsync(
             filter, 
             Builders<ProductInventory>.Update.Inc(pi => pi.Quantity, (long)quantity),
@@ -48,7 +48,7 @@ internal sealed class ProductInventoryRepository : IProductInventoryRepository
     {
         _logger.LogInformation("Emptying product {ProductId} with quantity {Quantity}", productId, quantity);
 
-        var filter = Builders<ProductInventory>.Filter.Eq(pi => pi.ProductId, productId);
+        var filter = Builders<ProductInventory>.Filter.Eq(pi => pi.Id, productId);
         ProductInventory reStockedProduct = await _inventoryCollection.FindOneAndUpdateAsync(
             filter, 
             Builders<ProductInventory>.Update.Inc(pi => pi.Quantity, (long)quantity*-1),

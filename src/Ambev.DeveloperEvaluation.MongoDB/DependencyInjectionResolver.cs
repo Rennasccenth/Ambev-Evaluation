@@ -18,6 +18,7 @@ public static class DependencyInjectionResolver
         serviceCollection.AddSingleton<IMongoClient>(serviceProvider => 
         {
             MongoDbSettings settings = serviceProvider.GetRequiredService<IOptions<MongoDbSettings>>().Value;
+            
             return new MongoClient(settings.ConnectionString);
         });
         serviceCollection.AddScoped<IMongoDatabase>(serviceProvider => 
@@ -29,6 +30,7 @@ public static class DependencyInjectionResolver
         });
 
         serviceCollection.AddMongoDbCollections();
+        serviceCollection.AddHostedService<MongoIndexInitializer>();
         
         serviceCollection.AddTransient<IProductInventoryRepository, ProductInventoryRepository>();
 
@@ -62,6 +64,7 @@ public static class DependencyInjectionResolver
     {
         ArgumentNullException.ThrowIfNull(type);
         
+        // probably humanizer can do it better, but that's fine for now.
         return type.Name.ToLowerInvariant().EndsWith('s') 
             ? type.Name.ToLowerInvariant()
             : type.Name.ToLowerInvariant() + 's';

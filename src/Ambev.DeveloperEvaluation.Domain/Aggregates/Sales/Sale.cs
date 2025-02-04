@@ -5,7 +5,6 @@ namespace Ambev.DeveloperEvaluation.Domain.Aggregates.Sales;
 
 public sealed class Sale : BaseEntity
 {
-    public new Guid Id { get; set; } = Guid.NewGuid();
     public Guid CustomerId { get; set; }
     public int Number { get; set; }
     public DateTime? CreatedDate { get; private set; }
@@ -22,6 +21,7 @@ public sealed class Sale : BaseEntity
 
     private Sale(Guid customerId, string branch, DateTime createdDate, List<SaleProduct> products)
     {
+        Id = Guid.NewGuid();
         CreatedDate = createdDate;
         Products = products;
         CustomerId = customerId;
