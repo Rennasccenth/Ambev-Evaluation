@@ -19,7 +19,7 @@ public class BaseTest : IAsyncLifetime
 
     protected BaseTest(DeveloperEvaluationWebApplicationFactory webApplicationFactory)
     {
-        _restartDatabaseStateAsync = webApplicationFactory.ResetDatabaseAsync;
+        _restartDatabaseStateAsync = webApplicationFactory.ResetDatabasesAsync;
         TestServerHttpClient = webApplicationFactory.CreateClient();
         WebApplicationFactory = webApplicationFactory;
         IServiceScope serviceScope = webApplicationFactory.Services.CreateScope();
