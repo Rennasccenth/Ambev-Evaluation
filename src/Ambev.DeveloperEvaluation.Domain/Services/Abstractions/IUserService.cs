@@ -1,6 +1,6 @@
 using Ambev.DeveloperEvaluation.Domain.Aggregates.Carts;
 
-namespace Ambev.DeveloperEvaluation.Domain.Services;
+namespace Ambev.DeveloperEvaluation.Domain.Services.Abstractions;
 
 public interface IUserService
 {

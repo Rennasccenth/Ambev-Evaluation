@@ -1,5 +1,6 @@
 ﻿using Ambev.DeveloperEvaluation.Application;
 using Ambev.DeveloperEvaluation.Domain;
+using Ambev.DeveloperEvaluation.MongoDB;
 using Ambev.DeveloperEvaluation.ORM;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -13,7 +14,8 @@ public static class DependencyInjectionResolver
     public static void RegisterDependenciesServices(this IServiceCollection serviceCollection)
     {
         serviceCollection
-            .InstallInfrastructureLayer()
+            .InstallMongoDbInfrastructure()
+            .InstallPostgreSqlInfrastructure()
             .InstallApplicationLayer()
             .InstallDomainServices();
     }
