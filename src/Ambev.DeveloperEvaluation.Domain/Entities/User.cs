@@ -1,6 +1,7 @@
 using Ambev.DeveloperEvaluation.Common.Security;
 using Ambev.DeveloperEvaluation.Domain.Common;
 using Ambev.DeveloperEvaluation.Domain.Enums;
+using Ambev.DeveloperEvaluation.Domain.Events.Users;
 using Ambev.DeveloperEvaluation.Domain.ValueObjects;
 using FluentValidation;
 using FluentValidation.Results;
@@ -178,6 +179,7 @@ public partial class User : BaseEntity
             // Only sets the hashed password once the creating object was validated
             // because otherwise we will try to validate a hashed password.
             _buildingUser.Password = HashedPassword;
+            _buildingUser.AddDomainEvent(UserRegisteredEvent.From(_buildingUser, _timeProvider));
             return _buildingUser;
         }
 

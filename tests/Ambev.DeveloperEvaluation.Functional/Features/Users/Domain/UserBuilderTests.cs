@@ -70,6 +70,53 @@ public sealed class UserBuilderTests : BaseTest
             .Build();
 
         // Assert
-        buildResult.IsT0.Should().BeTrue("all provided data is correct so we should retrieve a User.");
+        buildResult.TryPickT0(out User? createdUser, out _)
+            .Should().BeTrue("all provided data is correct so we should retrieve a User.");
+    }
+    
+    [Theory(DisplayName = "User build should fail when data is invalid.")]
+    [InlineData(
+        "", "WeakPass", "invalid-email", 
+        "", "", "Unknown City", "", 0, 
+        "00000", "", "", "", 
+        UserStatus.Active, UserRole.Manager)] // Empty username, weak password, invalid email
+    [InlineData(
+        "valid.user", "ValidPass123!", "valid.user@email.com",
+        "Valid", "User", "City", "Street", 100,
+        "12345", "12.3456", "-98.7654", "+12345678",
+        UserStatus.Active, (UserRole)999)] // Invalid user role
+    [InlineData(
+        "test.user", "ValidPass!234", "test.user@email.com",
+        "Test", "User", "Some City", "Some Street", 200,
+        "54321", "54.3210", "-76.5432", "+9876543210",
+        (UserStatus)999, UserRole.Customer)] // Invalid user status
+    [InlineData(
+        "another.user", "NoSpecialChar123", "another.user@email.com",
+        "Another", "User", "Another City", "Another Street", 300,
+        "67890", "65.4321", "-87.6543", "+1122334455",
+        UserStatus.Active, UserRole.Admin)] // Weak password (no special character)
+    public void Given_InvalidUserData_When_Build_Then_ShouldFail(string username, Password password,
+        Email email, string firstname, string lastname, string city, string street, int number,
+        string zipCode, string latitude, string longitude, Phone phone, UserStatus status, UserRole role)
+    {
+        // Arrange
+        Address address = new(city, street, number, zipCode, latitude, longitude);
+
+        // Act
+        var buildResult = _userBuilder
+            .WithUsername(username)
+            .WithPassword(password)
+            .WithEmail(email)
+            .WithFirstname(firstname)
+            .WithLastname(lastname)
+            .WithAddress(address)
+            .WithPhone(phone)
+            .WithStatus(status)
+            .WithRole(role)
+            .Build();
+
+        // Assert
+        buildResult.TryPickT1(out _, out _)
+            .Should().BeTrue("invalid data should prevent building a User.");
     }
 }

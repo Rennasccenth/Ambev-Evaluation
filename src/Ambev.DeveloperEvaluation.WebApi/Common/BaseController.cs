@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.WebUtilities;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Common;
 
-[Route("api/[controller]")]
 [ApiController]
+[Route("api/[controller]")]
 public class BaseController : ControllerBase
 {
     protected int GetCurrentUserId() =>
@@ -14,19 +14,6 @@ public class BaseController : ControllerBase
 
     protected string GetCurrentUserEmail() =>
         User.FindFirst(ClaimTypes.Email)?.Value ?? throw new NullReferenceException();
-
-    protected IActionResult Created<T>(string routeName, object routeValues, T data) =>
-        base.CreatedAtRoute(routeName, routeValues, new ApiResponseWithData<T> { Data = data, Success = true });
-
-    // protected IActionResult OkPaginated<T>(PaginatedList<T> pagedList) =>
-    //         Ok(new PaginatedResponse<T>
-    //         {
-    //             Data = pagedList,
-    //             CurrentPage = pagedList.CurrentPage,
-    //             TotalPages = pagedList.TotalPages,
-    //             TotalCount = pagedList.TotalCount,
-    //             Success = true
-    //         });
 
     /// <summary>
     /// Resolve the appropriate http response for every known error.

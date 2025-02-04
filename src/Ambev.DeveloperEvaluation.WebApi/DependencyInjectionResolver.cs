@@ -1,8 +1,8 @@
 using System.Reflection;
-using Ambev.DeveloperEvaluation.WebApi.Common.Converters;
 using Ambev.DeveloperEvaluation.Common.ExceptionHandlers;
 using Ambev.DeveloperEvaluation.Common.HealthChecks;
 using Ambev.DeveloperEvaluation.Common.Security;
+using Ambev.DeveloperEvaluation.Domain.ValueObjects.JsonConverters;
 using FluentValidation;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -43,6 +43,7 @@ internal static class DependencyInjectionResolver
             options.JsonSerializerOptions.Converters.Add(new PhoneJsonConverter());
             options.JsonSerializerOptions.Converters.Add(new PasswordJsonConverter());
             options.JsonSerializerOptions.Converters.Add(new AddressJsonConverter());
+            options.JsonSerializerOptions.Converters.Add(new RatingJsonConverter());
         });
 
         serviceCollection.AddProblemDetails(options =>

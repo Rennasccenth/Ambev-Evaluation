@@ -1,5 +1,6 @@
 ﻿using Ambev.DeveloperEvaluation.Common.Validation;
 using Ambev.DeveloperEvaluation.Domain.Events;
+using Ambev.DeveloperEvaluation.Domain.Events.Abstractions;
 
 namespace Ambev.DeveloperEvaluation.Domain.Common;
 
@@ -21,11 +22,24 @@ public class BaseEntity : IComparable<BaseEntity>, IEventableEntity
 
         return other.Id.CompareTo(Id);
     }
+    
+    public IReadOnlyList<IEvent> DomainEvents => [.._domainEvents.Values];
 
-    public List<IEvent> DomainEvents { get; } = [];
+    private readonly Dictionary<Guid, IEvent> _domainEvents = new();
 
-    protected void AddDomainEvent(IEvent @event)
+    public void AddDomainEvent(IEvent domainEvent)
     {
-        DomainEvents.Add(@event);
-    } 
+        ArgumentNullException.ThrowIfNull(domainEvent, nameof(domainEvent));
+        _domainEvents.TryAdd(domainEvent.Id, domainEvent);
+    }
+
+    public void RemoveDomainEvent(Guid eventId)
+    {
+        _domainEvents.Remove(eventId);
+    }
+
+    public void ClearDomainEvents()
+    {
+        _domainEvents.Clear();
+    }
 }

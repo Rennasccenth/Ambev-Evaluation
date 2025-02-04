@@ -6,7 +6,7 @@ namespace Ambev.DeveloperEvaluation.Domain;
 
 public static class DependencyInjectionResolver
 {
-    public static IServiceCollection RegisterDomainValidators(this IServiceCollection serviceCollection)
+    public static IServiceCollection InstallDomainServices(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddValidatorsFromAssembly(
             assembly: Assembly.GetExecutingAssembly(),

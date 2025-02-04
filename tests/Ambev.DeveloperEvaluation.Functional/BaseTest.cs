@@ -14,16 +14,18 @@ public class BaseTest : IAsyncLifetime
     /// </summary>
     protected readonly HttpClient TestServerHttpClient;
     protected readonly FakeTimeProvider CurrentTimeProvider;
+    protected readonly DeveloperEvaluationWebApplicationFactory WebApplicationFactory;
     private readonly Func<Task> _restartDatabaseStateAsync;
 
     protected BaseTest(DeveloperEvaluationWebApplicationFactory webApplicationFactory)
     {
         _restartDatabaseStateAsync = webApplicationFactory.ResetDatabaseAsync;
         TestServerHttpClient = webApplicationFactory.CreateClient();
-
+        WebApplicationFactory = webApplicationFactory;
         IServiceScope serviceScope = webApplicationFactory.Services.CreateScope();
         CurrentTimeProvider = (FakeTimeProvider) serviceScope.ServiceProvider.GetRequiredService<TimeProvider>();
         UserTestData = new UserTestData(webApplicationFactory);
+        ProductTestData = new ProductsTestData(webApplicationFactory);
     }
 
     // Nothing needed for now, but can be used for seed the database 
@@ -34,4 +36,5 @@ public class BaseTest : IAsyncLifetime
 
     // Test data initialization
     protected readonly UserTestData UserTestData;
+    protected readonly ProductsTestData ProductTestData;
 }

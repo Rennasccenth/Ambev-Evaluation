@@ -5,8 +5,8 @@ using Ambev.DeveloperEvaluation.Application.Users.Queries.GetUser;
 using Ambev.DeveloperEvaluation.Application.Users.Queries.GetUsers;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Users.Commands.CreateUser;
+using Ambev.DeveloperEvaluation.WebApi.Features.Users.Commands.DeleteUser;
 using Ambev.DeveloperEvaluation.WebApi.Features.Users.Commands.UpdateUser;
-using Ambev.DeveloperEvaluation.WebApi.Features.Users.DeleteUser;
 using Ambev.DeveloperEvaluation.WebApi.Features.Users.Queries.GetUser;
 using Ambev.DeveloperEvaluation.WebApi.Features.Users.Queries.GetUsers;
 using AutoMapper;
@@ -122,13 +122,14 @@ public class UsersController : BaseController
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(GetUsersQueryResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(GetUsersResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetUsers(
         [FromQuery] GetUsersRequest request,
         [FromServices] IValidator<GetUsersRequest> requestValidator,
         CancellationToken cancellationToken)
     {
+        request.SetFilter(HttpContext.Request.Query);
         ValidationResult? validationResult = await requestValidator
             .ValidateAsync(request, cancellationToken);
 
@@ -138,7 +139,7 @@ public class UsersController : BaseController
         var result = await _mediator.Send(query, cancellationToken);
 
         return result.Match(
-            users => Ok(_mapper.Map<GetUsersQueryResponse>(users)),
+            users => Ok(_mapper.Map<GetUsersResponse>(users)),
             error => HandleKnownError(error)
         );
     }

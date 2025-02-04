@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Ambev.DeveloperEvaluation.Application.Users.Commands.DeleteUser;
 
-public sealed class DeleteUserCommand : IRequest<ApplicationResult<DeleteUserResponse>>
+public sealed class DeleteUserCommand : IRequest<ApplicationResult<DeleteUserCommandResult>>
 {
     public Guid Id { get; }
 
