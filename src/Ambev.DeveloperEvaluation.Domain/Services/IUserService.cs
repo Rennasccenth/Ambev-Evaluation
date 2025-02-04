@@ -1,1 +1,8 @@
-// Placeholder for IInventoryService.cs file
+using Ambev.DeveloperEvaluation.Domain.Aggregates.Carts;
+
+namespace Ambev.DeveloperEvaluation.Domain.Services;
+
+public interface IUserService
+{
+    Task<Cart> GetUserCartAsync(Guid userId);
+}
