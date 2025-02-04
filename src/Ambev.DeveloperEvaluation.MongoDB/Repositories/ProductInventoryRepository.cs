@@ -10,10 +10,11 @@ internal sealed class ProductInventoryRepository : IProductInventoryRepository
     private readonly ILogger<ProductInventoryRepository> _logger;
     private readonly IMongoCollection<ProductInventory> _inventoryCollection;
 
-    internal ProductInventoryRepository(IMongoDatabase database, ILogger<ProductInventoryRepository> logger)
+    public ProductInventoryRepository(IMongoCollection<ProductInventory> inventoryCollection,
+        ILogger<ProductInventoryRepository> logger)
     {
         _logger = logger;
-        _inventoryCollection = database.GetCollection<ProductInventory>(nameof(ProductInventory).ToLowerInvariant());
+        _inventoryCollection = inventoryCollection;
     }
 
     public async Task<Dictionary<Guid, int>> GetProductQuantitiesAsync(IEnumerable<Guid> productIds, CancellationToken ct)

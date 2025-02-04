@@ -9,9 +9,9 @@ public sealed class CartRepository : ICartRepository
 {
     private readonly IMongoCollection<Cart> _cartCollection;
 
-    public CartRepository(IMongoDatabase mongoDatabase)
+    public CartRepository(IMongoCollection<Cart> cartCollection)
     {
-        _cartCollection = mongoDatabase.GetCollection<Cart>(nameof(Cart).ToLowerInvariant());
+        _cartCollection = cartCollection;
     }
 
     public async Task<Cart?> FindByIdAsync(Guid cartId, CancellationToken ct)
