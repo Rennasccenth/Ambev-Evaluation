@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -7,6 +8,7 @@ public static class QueryableExtensions
 {
     private static class FilterDefinitions
     {
+        public const string NestedPropertyIndicator = ".";
         public const string MinRangeIndicator = "_min";
         public const string MaxRangeIndicator = "_max";
         public const char WildcardOperator = '*';
@@ -23,17 +25,17 @@ public static class QueryableExtensions
     {
         foreach (var (key, value) in filters)
         {
-            if (key.StartsWith(FilterDefinitions.MinRangeIndicator, StringComparison.OrdinalIgnoreCase) ||
-                key.StartsWith(FilterDefinitions.MaxRangeIndicator, StringComparison.OrdinalIgnoreCase))
+            if (key.Contains(FilterDefinitions.MinRangeIndicator, StringComparison.OrdinalIgnoreCase))
             {
-                bool isMin = key.StartsWith(FilterDefinitions.MinRangeIndicator, StringComparison.OrdinalIgnoreCase);
-                string propertyName = key[4..];
-
-                query = query.ApplyRangeFilter(propertyName, value, isMin);
+                string propertyName = key.Replace(FilterDefinitions.MinRangeIndicator, string.Empty);
+                query = query.ApplyRangeFilter(propertyName, value, isMin: true);
+            } else if (key.Contains(FilterDefinitions.MaxRangeIndicator, StringComparison.OrdinalIgnoreCase))
+            {
+                string propertyName = key.Replace(FilterDefinitions.MaxRangeIndicator, string.Empty);
+                query = query.ApplyRangeFilter(propertyName, value, isMin: false);
             }
             else
             {
-                // Standard (exact or wildcard) filter.
                 query = query.ApplyValueFilter(key, value);
             }
         }
@@ -47,37 +49,41 @@ public static class QueryableExtensions
     private static IQueryable<T> ApplyValueFilter<T>(this IQueryable<T> query, string propertyName, string filterValue)
     {
         ParameterExpression parameter = Expression.Parameter(typeof(T), "x");
-        // Try to get the property (case-insensitive)
-        PropertyInfo? property = typeof(T).GetProperties()
-            .FirstOrDefault(p => p.Name.Equals(propertyName, StringComparison.OrdinalIgnoreCase));
 
-        if (property == null)
+        // Handle nested properties using dot notation e.g: User.Address or Product.Rating 
+        Expression? propertyAccess = QueryableExtensionsEnhancements.FindNestedPropertyExpression(parameter, propertyName);
+        if (propertyAccess == null)
         {
-            // Unknown property – ignoring it.
             return query;
         }
 
-        Expression propertyAccess = Expression.Property(parameter, property);
+        Type propertyType = propertyAccess.Type;
         Expression predicateBody;
-
-        if (property.PropertyType == typeof(string))
+        if (propertyType == typeof(string))
         {
             predicateBody = ApplyStringFilter<T>(filterValue, propertyAccess);
         }
-        else
+        else if (propertyType.IsEnum)
         {
-            // For non-string properties, convert the value and use equality.
+            var enumValue = QueryableExtensionsEnhancements.ConvertToEnumValue(filterValue, propertyType);
+            if (enumValue == null)
+            {
+                return query;
+            }
+            predicateBody = Expression.Equal(propertyAccess, Expression.Constant(enumValue, propertyType));
+        }
+        else // Fallback
+        {
             object? convertedValue;
             try
             {
-                convertedValue = Convert.ChangeType(filterValue, property.PropertyType);
+                convertedValue = Convert.ChangeType(filterValue, propertyType);
             }
             catch
             {
-                // If conversion fails, skip this filter.
                 return query;
             }
-            predicateBody = Expression.Equal(propertyAccess, Expression.Constant(convertedValue, property.PropertyType));
+            predicateBody = Expression.Equal(propertyAccess, Expression.Constant(convertedValue, propertyType));
         }
 
         var lambda = Expression.Lambda<Func<T, bool>>(predicateBody, parameter);
@@ -116,7 +122,6 @@ public static class QueryableExtensions
         Expression predicateBody;
         if (method == null)
         {
-            // Fallback to equality
             predicateBody = Expression.Equal(propertyAccess, Expression.Constant(filterValue));
         }
         else
@@ -127,27 +132,23 @@ public static class QueryableExtensions
 
         return predicateBody;
     }
-
-    /// <summary>
-    /// Applies a range filter (min or max) for numeric or date properties.
-    /// </summary>
     private static IQueryable<T> ApplyRangeFilter<T>(this IQueryable<T> query, string propertyName, string filterValue, bool isMin)
     {
         ParameterExpression parameter = Expression.Parameter(typeof(T), "x");
-        // Try to get the property (case-insensitive)
-        PropertyInfo? property = typeof(T).GetProperties()
-            .FirstOrDefault(p => p.Name.Equals(propertyName, StringComparison.OrdinalIgnoreCase));
 
-        if (property == null)
+        // Handle nested properties using GetNestedPropertyExpression
+        Expression? propertyAccess = QueryableExtensionsEnhancements.FindNestedPropertyExpression(parameter, propertyName);
+        if (propertyAccess == null)
         {
             return query;
         }
 
+        Type propertyType = propertyAccess.Type;
         // Only support range filtering on numeric or date types.
-        if (!(property.PropertyType == typeof(int)     ||
-              property.PropertyType == typeof(decimal) ||
-              property.PropertyType == typeof(double)  ||
-              property.PropertyType == typeof(DateTime)))
+        if (!(propertyType == typeof(int) ||
+              propertyType == typeof(decimal) ||
+              propertyType == typeof(double) ||
+              propertyType == typeof(DateTime)))
         {
             return query;
         }
@@ -155,25 +156,25 @@ public static class QueryableExtensions
         object? convertedValue;
         try
         {
-            if (property.PropertyType == typeof(decimal))
+            if (propertyType == typeof(decimal))
             {
-                convertedValue = decimal.Parse(filterValue, System.Globalization.CultureInfo.InvariantCulture);
+                convertedValue = decimal.Parse(filterValue, CultureInfo.InvariantCulture);
             }
-            else if (property.PropertyType == typeof(double))
+            else if (propertyType == typeof(double))
             {
-                convertedValue = double.Parse(filterValue, System.Globalization.CultureInfo.InvariantCulture);
+                convertedValue = double.Parse(filterValue, CultureInfo.InvariantCulture);
             }
-            else if (property.PropertyType == typeof(int))
+            else if (propertyType == typeof(int))
             {
-                convertedValue = int.Parse(filterValue, System.Globalization.CultureInfo.InvariantCulture);
-
-            } else if (property.PropertyType == typeof(DateTime))
+                convertedValue = int.Parse(filterValue, CultureInfo.InvariantCulture);
+            }
+            else if (propertyType == typeof(DateTime))
             {
-                convertedValue = DateTime.Parse(filterValue, System.Globalization.CultureInfo.InvariantCulture);
+                convertedValue = DateTime.Parse(filterValue, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
             }
             else
             {
-                throw new ArgumentOutOfRangeException(nameof(filterValue), "Unsupported property type for range filter."); 
+                throw new ArgumentOutOfRangeException(nameof(filterValue), "Unsupported property type for range filter.");
             }
         }
         catch
@@ -181,9 +182,7 @@ public static class QueryableExtensions
             return query;
         }
 
-        MemberExpression propertyAccess = Expression.Property(parameter, property);
-        Expression constant = Expression.Constant(convertedValue, property.PropertyType);
-
+        Expression constant = Expression.Constant(convertedValue, propertyType);
         Expression predicateBody = isMin
             ? Expression.GreaterThanOrEqual(propertyAccess, constant)
             : Expression.LessThanOrEqual(propertyAccess, constant);

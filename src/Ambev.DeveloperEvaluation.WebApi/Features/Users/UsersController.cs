@@ -129,6 +129,7 @@ public class UsersController : BaseController
         [FromServices] IValidator<GetUsersRequest> requestValidator,
         CancellationToken cancellationToken)
     {
+        request.SetFilter(HttpContext.Request.Query);
         ValidationResult? validationResult = await requestValidator
             .ValidateAsync(request, cancellationToken);
 

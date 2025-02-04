@@ -9,14 +9,18 @@ public sealed class GetUsersProfile : Profile
 {
     public GetUsersProfile()
     {
-        CreateMap<User, GetUsersQuerySummary>();
+        // In
         CreateMap<GetUsersQuery, GetUsersQueryFilter>()
             .ForMember(filter => filter.CurrentPage, expression => expression.MapFrom(query => query.CurrentPage))
             .ForMember(filter => filter.PageSize, expression => expression.MapFrom(query => query.PageSize))
-            .ForMember(filter => filter.OrderBy, expression => expression.MapFrom(query => query.OrderBy));
+            .ForMember(filter => filter.OrderBy, expression => expression.MapFrom(query => query.OrderBy))
+            .ForMember(filter => filter.FilterBy, expression => expression.MapFrom(query => query.FilterBy));
+
+        // Out
+        CreateMap<User, GetUsersQuerySummary>();
 
         CreateMap<PaginatedList<User>, GetUsersQueryResult>()
-            .ForMember(queryResult => queryResult.Users, opt => opt.MapFrom(users => users))
+            .ForMember(queryResult => queryResult.Users, opt => opt.MapFrom(items => items))
             .ForMember(queryResult => queryResult.TotalCount, opt => opt.MapFrom(users => users.Count))
             .ForMember(queryResult => queryResult.Page, opt => opt.MapFrom(users => users.CurrentPage))
             .ForMember(queryResult => queryResult.PageSize, opt => opt.MapFrom(users => users.PageSize))

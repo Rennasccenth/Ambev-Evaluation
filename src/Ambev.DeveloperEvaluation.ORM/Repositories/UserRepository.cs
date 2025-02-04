@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using Ambev.DeveloperEvaluation.Common.Results;
 using Ambev.DeveloperEvaluation.Domain.Common;
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Repositories.User;
@@ -112,36 +113,10 @@ public class UserRepository : IUserRepository
 
     private static IQueryable<User> ApplyUsersFiltering(IQueryable<User> users, GetUsersQueryFilter queryFilter)
     {
-        if (queryFilter.Id.HasValue)
-            users = users.Where(u => u.Id == queryFilter.Id.Value);
-        if (queryFilter.Email is not null)
-            users = users.Where(u => u.Email == queryFilter.Email);
-        if (queryFilter.Username is not null)
-            users = users.Where(u => u.Username.Contains(queryFilter.Username));
-        if (queryFilter.Firstname is not null)
-            users = users.Where(u => u.Firstname.Contains(queryFilter.Firstname));
-        if (queryFilter.Lastname is not null)
-            users = users.Where(u => u.Lastname.Contains(queryFilter.Lastname));
-
-        // Address filtering
-        if (queryFilter.City is not null)
-            users = users.Where(u => u.Address.City.Contains(queryFilter.City));
-        if (queryFilter.Street is not null)
-            users = users.Where(u => u.Address.Street.Contains(queryFilter.Street));
-        if (queryFilter.Number is not null)
-            users = users.Where(u => u.Address.Number != queryFilter.Number);
-        if (queryFilter.Zipcode is not null)
-            users = users.Where(u => u.Address.ZipCode.Contains(queryFilter.Zipcode));
-        if (queryFilter.Lat is not null)
-            users = users.Where(u => u.Address.Latitude == queryFilter.Lat);
-        if (queryFilter.Long is not null)
-            users = users.Where(u => u.Address.Longitude == queryFilter.Long);
-        if (queryFilter.Phone is not null)
-            users = users.Where(u => u.Phone == queryFilter.Phone);
-        if (queryFilter.Status is not null)
-            users = users.Where(u => u.Status == queryFilter.Status);
-        if (queryFilter.Role is not null)
-            users = users.Where(u => u.Role == queryFilter.Role);
+        if (queryFilter.FilterBy.Values.Any())
+        {
+            users = users.ApplyFilters(queryFilter.FilterBy);
+        }
 
         return users;
     }
