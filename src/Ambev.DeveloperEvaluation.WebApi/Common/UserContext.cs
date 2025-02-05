@@ -14,7 +14,7 @@ internal sealed class UserContext : IUserContext
 
     public bool IsAuthenticated => _httpContextAccessor.HttpContext?.User.Identity?.IsAuthenticated ?? false;
 
-    public Guid? UserUuid => _httpContextAccessor.HttpContext?
+    public Guid? UserId => _httpContextAccessor.HttpContext?
         .User.Claims
         .FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)?
         .Value.ToGuidOrDefault();

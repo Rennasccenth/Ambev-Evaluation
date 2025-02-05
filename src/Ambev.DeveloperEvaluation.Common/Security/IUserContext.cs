@@ -2,6 +2,6 @@ namespace Ambev.DeveloperEvaluation.Common.Security;
 
 public interface IUserContext
 {
-    Guid? UserUuid { get; }
+    Guid? UserId { get; }
     bool IsAuthenticated { get; }
 }

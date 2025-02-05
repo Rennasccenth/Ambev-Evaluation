@@ -14,7 +14,7 @@ public sealed class Program
             builder.AddDefaultLogging();
 
             builder.Services
-                .InstallApiDependencies()
+                .InstallApiDependencies(builder.Configuration)
                 .RegisterDependenciesServices();
 
             WebApplication app = builder.Build();

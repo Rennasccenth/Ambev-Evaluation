@@ -7,12 +7,13 @@ using Ambev.DeveloperEvaluation.WebApi.Common;
 using FluentValidation;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.OpenApi.Models;
 
 namespace Ambev.DeveloperEvaluation.WebApi;
 
 internal static class DependencyInjectionResolver
 {
-    internal static IServiceCollection InstallApiDependencies(this IServiceCollection serviceCollection)
+    internal static IServiceCollection InstallApiDependencies(this IServiceCollection serviceCollection, IConfiguration configuration)
     {
         serviceCollection.TryAddSingleton(TimeProvider.System);
 
@@ -24,6 +25,32 @@ internal static class DependencyInjectionResolver
         {
             // Gets the last 2 words of type namespace, avoiding type name collision.
             options.CustomSchemaIds(type => string.Join(": ", type.ToString().Split('.').TakeLast(2)));
+
+            options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            {
+                Name = "Authorization",
+                Type = SecuritySchemeType.Http,
+                Scheme = "Bearer",
+                BearerFormat = "JWT",
+                In = ParameterLocation.Header,
+                Description = "Enter your JWT Bearer token in the format: Bearer {your_token}"
+            });
+
+            // Add security requirement to enforce authentication in Swagger UI
+            options.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                        }
+                    },
+                    Array.Empty<string>()
+                }
+            });
         });
 
         // Register Mapping Profiles from API layer
@@ -35,7 +62,7 @@ internal static class DependencyInjectionResolver
             includeInternalTypes: true);
 
         // Configure JWT related Stuff
-        serviceCollection.AddJwtAuthentication();
+        serviceCollection.AddJwtAuthentication(configuration);
         
         serviceCollection.AddEndpointsApiExplorer();
         serviceCollection.AddControllers().AddJsonOptions(options =>
