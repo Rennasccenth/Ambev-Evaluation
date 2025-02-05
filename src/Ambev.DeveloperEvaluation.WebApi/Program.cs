@@ -1,5 +1,6 @@
 using Ambev.DeveloperEvaluation.Common.HealthChecks;
 using Ambev.DeveloperEvaluation.Common.Logging;
+using Ambev.DeveloperEvaluation.Common.Monitoring;
 using Ambev.DeveloperEvaluation.IoC;
 
 namespace Ambev.DeveloperEvaluation.WebApi;
@@ -11,7 +12,9 @@ public sealed class Program
         try
         {
             WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-            builder.AddDefaultLogging();
+            builder
+                .ConfigureSerilog()
+                .ConfigureOpenTelemetry();
 
             builder.Services
                 .InstallApiDependencies(builder.Configuration)
