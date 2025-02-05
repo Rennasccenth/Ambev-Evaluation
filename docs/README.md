@@ -56,7 +56,7 @@ This project uses Docker Compose for local development. Follow the steps below t
 - [x] Test suit. Theres a robust test suit for the project, that runs a mirror application. Basically we run the app withot expose any port, so we can execute any request while access internal components of the running app (like all services registered in the DI!).
 
 - [x] Database Respawning. To ensure every test runs isolated from others, we reset the databases (mongo and psql for now) to a known state every time a test runs.  
-
+- [x] Added Open Telemetry support. Currently we have a initial setup for OTEL. The Aspire dashboard can be acessed at localhost:18888, assuming you ran the docker compose.
 
 <img width="299" alt="image" src="https://github.com/user-attachments/assets/2cf2f991-b975-4b6d-877c-bbeece741cef" />
 
@@ -75,17 +75,17 @@ Enjoy exploring the application!
 ## Overview
 This section provides a high-level overview of the project and the various skills and competencies it aims to assess for developer candidates. 
 
-See [Overview](/.docs/overview.md)
+See [Overview](/docs/overview.md)
 
 ## Tech Stack
 This section lists the key technologies used in the project, including the backend, testing, frontend, and database components. 
 
-See [Tech Stack](/.docs/tech-stack.md)
+See [Tech Stack](/docs/tech-stack.md)
 
 ## Frameworks
 This section outlines the frameworks and libraries that are leveraged in the project to enhance development productivity and maintainability. 
 
-See [Frameworks](/.docs/frameworks.md)
+See [Frameworks](/docs/frameworks.md)
 
 <!-- 
 ## API Structure
@@ -100,4 +100,4 @@ This section includes links to the detailed documentation for the different API 
 ## Project Structure
 This section describes the overall structure and organization of the project files and directories. 
 
-See [Project Structure](/.docs/project-structure.md)
+See [Project Structure](/docs/project-structure.md)
