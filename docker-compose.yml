@@ -20,10 +20,14 @@ services:
       Jwt__SecretKey: "YourSuperSecretKeyForJwtTokenGenerationThatShouldBeAtLeast32BytesLong"
       Jwt__Issuer: "YourIssuer"
       Jwt__Audiences__0: "YourAudience"
-      Redis__ConnectionString: "redis://:evaluAt!0n@ambev_developer_evaluation_cache:6379"
+      Redis__HostAddress: "ambev_developer_evaluation_cache:6379"
+      Redis__Password: "evaluAt!0n"
       Redis__RetryDelayInMilliseconds: "30"
       Redis__CommandTimeoutInSeconds: "10"
       Redis__SyncTimeout: "60"
+      OpenApiDocumentation__Title: "Ambev Developer Evaluation Sales System"
+      OpenApiDocumentation__Description: "API that exposes endpoints that handles Sales."
+
     ports:
       - "8080:8080"
       - "8081:8081"
