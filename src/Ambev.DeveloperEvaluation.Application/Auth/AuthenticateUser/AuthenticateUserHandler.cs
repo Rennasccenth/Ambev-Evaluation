@@ -1,11 +1,9 @@
 using Ambev.DeveloperEvaluation.Common.Errors;
 using Ambev.DeveloperEvaluation.Common.Results;
 using Ambev.DeveloperEvaluation.Common.Security;
-using Ambev.DeveloperEvaluation.Common.Validation;
+using Ambev.DeveloperEvaluation.Domain.Aggregates.Users.Specifications;
 using Ambev.DeveloperEvaluation.Domain.Entities;
-using Ambev.DeveloperEvaluation.Domain.Repositories;
 using Ambev.DeveloperEvaluation.Domain.Repositories.User;
-using Ambev.DeveloperEvaluation.Domain.Specifications;
 using MediatR;
 
 namespace Ambev.DeveloperEvaluation.Application.Auth.AuthenticateUser;

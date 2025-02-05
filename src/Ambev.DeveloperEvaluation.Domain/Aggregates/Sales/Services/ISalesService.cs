@@ -1,11 +1,12 @@
 using Ambev.DeveloperEvaluation.Domain.Aggregates.Carts;
-using Ambev.DeveloperEvaluation.Domain.Aggregates.Sales;
+using Ambev.DeveloperEvaluation.Domain.Specifications;
 
-namespace Ambev.DeveloperEvaluation.Domain.Services.Abstractions;
+namespace Ambev.DeveloperEvaluation.Domain.Aggregates.Sales.Services;
 
 public interface ISalesService
 {
-    Task<Sale> CreateSaleAsync(Cart cart, string branch, IProductPriceResolver productPriceResolver, CancellationToken ct);
+    Task<Sale> CreateSaleAsync(Cart cart, string branch, IProductPriceResolver productPriceResolver,
+        ISpecification<Cart> specification, CancellationToken ct);
     // Task<Sale> UpdateSaleAsync(Cart cart, IProductPriceResolver productPriceResolver, CancellationToken ct);
     Task<Sale?> CancelSaleAsync(Guid saleId, CancellationToken ct);
     Task<Sale?> ConcludeSaleAsync(Guid saleId, CancellationToken ct);

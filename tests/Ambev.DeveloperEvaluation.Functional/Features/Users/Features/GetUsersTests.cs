@@ -1,15 +1,11 @@
 using System.Collections;
 using System.Net.Http.Json;
-using Ambev.DeveloperEvaluation.Application.Users.Queries.GetUsers;
 using Ambev.DeveloperEvaluation.Domain.Enums;
 using Ambev.DeveloperEvaluation.Functional.TestData;
 using Ambev.DeveloperEvaluation.WebApi.Features.Users.Queries.GetUsers;
 using Bogus;
 using FluentAssertions;
 using FluentAssertions.Execution;
-using MediatR;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 

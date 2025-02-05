@@ -1,7 +1,6 @@
 using Ambev.DeveloperEvaluation.Domain.Aggregates.Sales.Repositories;
-using Ambev.DeveloperEvaluation.Domain.Services.Abstractions;
 
-namespace Ambev.DeveloperEvaluation.Domain.Services;
+namespace Ambev.DeveloperEvaluation.Domain.Aggregates.Sales.Services;
 
 internal sealed class ProductPriceResolver : IProductPriceResolver
 {

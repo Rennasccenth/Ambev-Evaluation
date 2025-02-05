@@ -1,7 +1,8 @@
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Enums;
+using Ambev.DeveloperEvaluation.Domain.Specifications;
 
-namespace Ambev.DeveloperEvaluation.Domain.Specifications;
+namespace Ambev.DeveloperEvaluation.Domain.Aggregates.Users.Specifications;
 
 public class ActiveUserSpecification : ISpecification<User>
 {
@@ -9,4 +10,5 @@ public class ActiveUserSpecification : ISpecification<User>
     {
         return user.Status == UserStatus.Active;
     }
+    public string ErrorMessage => "User is not active";
 }

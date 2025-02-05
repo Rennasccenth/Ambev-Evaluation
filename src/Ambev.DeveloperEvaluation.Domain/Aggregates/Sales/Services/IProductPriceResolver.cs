@@ -1,4 +1,4 @@
-namespace Ambev.DeveloperEvaluation.Domain.Services.Abstractions;
+namespace Ambev.DeveloperEvaluation.Domain.Aggregates.Sales.Services;
 
 public interface IProductPriceResolver
 {

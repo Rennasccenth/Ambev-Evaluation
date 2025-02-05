@@ -39,6 +39,13 @@ internal sealed class ProductRegistryRepository : IProductRegistryRepository
         return await PaginatedList<Product>.CreateAsync(query, queryFilter.CurrentPage, queryFilter.PageSize, ct);
     }
 
+    public async ValueTask<bool> ExistsAllAsync(IEnumerable<Guid> productIds, CancellationToken ct)
+    {
+        return await _dbContext.Products
+            .AsNoTracking()
+            .AllAsync(x => productIds.Contains(x.Id), cancellationToken: ct);
+    }
+
     private static readonly Dictionary<string, Expression<Func<Product, object>>> SortingKeyMap = new()
     {
         ["id"] =  product => product.Id,

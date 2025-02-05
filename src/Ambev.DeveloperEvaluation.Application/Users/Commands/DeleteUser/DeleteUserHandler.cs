@@ -1,6 +1,5 @@
 using Ambev.DeveloperEvaluation.Common.Errors;
 using Ambev.DeveloperEvaluation.Common.Results;
-using Ambev.DeveloperEvaluation.Domain.Repositories;
 using Ambev.DeveloperEvaluation.Domain.Repositories.User;
 using MediatR;
 

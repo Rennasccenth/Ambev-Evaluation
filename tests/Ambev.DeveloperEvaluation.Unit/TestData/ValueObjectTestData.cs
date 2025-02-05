@@ -1,4 +1,3 @@
-using Ambev.DeveloperEvaluation.Domain.ValueObjects;
 using Bogus;
 
 namespace Ambev.DeveloperEvaluation.Unit.TestData

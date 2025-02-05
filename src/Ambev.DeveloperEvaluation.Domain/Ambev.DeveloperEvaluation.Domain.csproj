@@ -12,5 +12,8 @@
     <PackageReference Include="OneOf" Version="3.0.271" />
     <Using Include="OneOf"/>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Entities\" />
+  </ItemGroup>
 
 </Project>

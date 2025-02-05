@@ -24,7 +24,7 @@ public sealed class CartsService : ICartsService
         var allProductsExists = await _productRegistryRepository.ExistsAllAsync(productQuantitiesDictionary.Keys, ct);
         if (!allProductsExists)
         {
-            throw new InvalidCartProductException("Not every product in the cart exists.");
+            throw new CartValidationException("Not every product in the cart exists.");
         }
 
         Cart? userCart = await _cartRepository.FindByUserIdAsync(userId, ct);

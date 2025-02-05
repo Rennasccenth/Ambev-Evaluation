@@ -1,6 +1,6 @@
 namespace Ambev.DeveloperEvaluation.Domain.Aggregates.Carts.Strategies;
 
-internal class CartItemQuantityDiscountStrategy : ICartItemQuantityDiscountStrategy
+internal class ItemQuantity : IDiscountStrategy
 {
     public decimal GetDiscountPercentage(int quantity) =>
         quantity switch
