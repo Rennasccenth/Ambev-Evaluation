@@ -1,0 +1,10 @@
+using Ambev.DeveloperEvaluation.WebApi.Features.Carts.Common;
+
+namespace Ambev.DeveloperEvaluation.WebApi.Features.Carts.Commands.CreateCart;
+
+public sealed class CreateCartRequest
+{
+    public Guid UserId { get; set; }    
+    public required DateTime Date { get; set; }
+    public required List<ProductQuantifier> Products { get; set; }
+}
