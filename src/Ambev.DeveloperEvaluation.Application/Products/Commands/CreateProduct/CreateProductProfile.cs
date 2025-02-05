@@ -8,6 +8,7 @@ public class CreateProductProfile : Profile
     public CreateProductProfile()
     {
         // Out
-        CreateMap<Product, CreateProductCommandResult>();
+        CreateMap<Product, CreateProductCommandResult>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
     }    
 }

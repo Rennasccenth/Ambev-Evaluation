@@ -19,6 +19,12 @@ public sealed class CartProduct
         return this;
     }
 
+    public CartProduct OverrideQuantity(int quantity)
+    {
+        Quantity += quantity;
+        return this;
+    }
+
     public CartProduct DecreaseQuantity(int quantity)
     {
         Quantity -= quantity;

@@ -25,17 +25,14 @@ public sealed class Cart : BaseEntity
         Products = products;
     }
 
-    public int CountProducts(Func<CartProduct, bool> predicate)
-    {
-        return Products.Count(predicate);
-    }
+    public int CountProducts(Func<CartProduct, bool> predicate) => Products.Count(predicate);
 
-    public Cart AddProduct(Guid productId, int quantity)
+    public Cart UpsertProduct(Guid productId, int quantity)
     {
         CartProduct? product = Products.FirstOrDefault(p => p.ProductId == productId);
         if (product is not null)
         {
-            product.IncreaseQuantity(quantity);
+            product.OverrideQuantity(quantity);
             return this;
         }
 

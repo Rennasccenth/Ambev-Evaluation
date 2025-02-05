@@ -37,12 +37,21 @@ public sealed class CartRepository : ICartRepository
 
     public async Task<Cart> UpsertAsync(Cart upsertingCart, CancellationToken ct)
     {
-        var filter = Builders<Cart>.Filter.Eq(cart => cart.CustomerId, upsertingCart.Id);
-        await _cartCollection.ReplaceOneAsync(filter, upsertingCart, new ReplaceOptions
+        if (upsertingCart.Id == Guid.Empty)
         {
-            IsUpsert = true
-        }, ct);
-        
+            upsertingCart.Id = Guid.NewGuid();
+        }
+
+        var filter = Builders<Cart>.Filter.Eq(cart => cart.Id, upsertingCart.Id);
+        var update = Builders<Cart>.Update
+            .Set(cart => cart.CustomerId, upsertingCart.CustomerId)
+            .Set(cart => cart.Products, upsertingCart.Products)
+            .Set(cart => cart.Date, upsertingCart.Date);
+
+        var options = new UpdateOptions { IsUpsert = true };
+
+        await _cartCollection.UpdateOneAsync(filter, update, options, ct);
+
         return upsertingCart;
     }
 }

@@ -4,6 +4,7 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Products.Commands.CreateProd
 
 public sealed class CreateProductResponse
 {
+    public Guid Id { get; private set; }
     public string Title { get; private set; } = null!;
     public string Price { get; private set; } = null!;
     public string Description { get; private set; } = null!;

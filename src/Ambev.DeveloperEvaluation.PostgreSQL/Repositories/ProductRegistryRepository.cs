@@ -49,9 +49,11 @@ internal sealed class ProductRegistryRepository : IProductRegistryRepository
 
     public async ValueTask<bool> ExistsAllAsync(IEnumerable<Guid> productIds, CancellationToken ct)
     {
-        return await _dbContext.Products
+        var productCount = await _dbContext.Products
             .AsNoTracking()
-            .AllAsync(x => productIds.Contains(x.Id), cancellationToken: ct);
+            .CountAsync(p => productIds.Contains(p.Id), ct);
+
+        return productCount == productIds.Count();    
     }
 
     private static readonly Dictionary<string, Expression<Func<Product, object>>> SortingKeyMap = new()

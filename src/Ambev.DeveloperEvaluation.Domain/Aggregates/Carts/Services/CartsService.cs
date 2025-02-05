@@ -38,7 +38,7 @@ public sealed class CartsService : ICartsService
 
         foreach ((Guid productId, var productQuantity) in productQuantitiesDictionary)
         {
-            userCart.AddProduct(productId, (int)productQuantity);
+            userCart.UpsertProduct(productId, (int)productQuantity);
         }
 
         userCart = await _cartRepository.UpsertAsync(userCart, ct);

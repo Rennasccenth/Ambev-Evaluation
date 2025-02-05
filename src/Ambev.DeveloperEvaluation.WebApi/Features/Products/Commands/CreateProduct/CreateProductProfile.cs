@@ -7,8 +7,12 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Products.Commands.CreateProd
     {
         public CreateProductProfile()
         {
+            // In
             CreateMap<CreateProductRequest, CreateProductCommand>();
-            CreateMap<CreateProductCommandResult, CreateProductResponse>();
+            
+            // Out
+            CreateMap<CreateProductCommandResult, CreateProductResponse>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
         }
     }
 }

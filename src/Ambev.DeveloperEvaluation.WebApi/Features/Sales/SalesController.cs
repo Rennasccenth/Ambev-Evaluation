@@ -25,24 +25,6 @@ public class SalesController : BaseController
         _mapper = mapper;
     }
 
-    [HttpGet("{saleId:guid}")]
-    [ProducesResponseType(typeof(SaleResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Get(
-        [FromRoute] Guid saleId,
-        [FromServices] IValidator<GetSaleRequest> requestValidator,
-        CancellationToken ct)
-    {
-        GetSaleRequest request = new GetSaleRequest(saleId);
-        ValidationResult? validationResult = await requestValidator.ValidateAsync(request, ct);
-        if (!validationResult.IsValid) return HandleKnownError(validationResult.Errors);
-
-        var result = await _mediator.Send(_mapper.Map<GetSaleQuery>(request), ct);
-
-        return result.Match(
-            onSuccess: successResult => Ok(_mapper.Map<SaleResponse>(successResult)),
-            onFailure: HandleKnownError);
-    }
 
     [HttpPost]
     // [Authorize]
@@ -61,9 +43,27 @@ public class SalesController : BaseController
         var result = await _mediator.Send(command, ct);
 
         return result.Match(
-            onSuccess: successResult => CreatedAtAction(nameof(Get), new { successResult.Id },
+            onSuccess: successResult => CreatedAtAction(nameof(GetSale), new { successResult.Id },
                 _mapper.Map<SaleResponse>(successResult)),
             onFailure: HandleKnownError);
     }
+    
+    [HttpGet("{id:guid}")]
+    [ProducesResponseType(typeof(SaleResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetSale(
+        [FromRoute] Guid id,
+        [FromServices] IValidator<GetSaleRequest> requestValidator,
+        CancellationToken ct)
+    {
+        GetSaleRequest request = new GetSaleRequest(id);
+        ValidationResult? validationResult = await requestValidator.ValidateAsync(request, ct);
+        if (!validationResult.IsValid) return HandleKnownError(validationResult.Errors);
 
+        var result = await _mediator.Send(_mapper.Map<GetSaleQuery>(request), ct);
+
+        return result.Match(
+            onSuccess: successResult => Ok(_mapper.Map<SaleResponse>(successResult)),
+            onFailure: HandleKnownError);
+    }
 }
