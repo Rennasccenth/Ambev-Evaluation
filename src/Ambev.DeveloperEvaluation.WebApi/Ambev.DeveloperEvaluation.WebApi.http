@@ -44,14 +44,16 @@ Accept: application/json
     client.global.set("user_location", response.headers.valueOf("Location"));
 %}
 
-### Get User by ID
-GET {{host}}/api/users/{{user_id}}
+
+### Get User by ID via location header
+GET {{user_location}}
 Content-Type: application/json
 Accept: application/json
 
 > {%
     client.global.set("user_id", response.body.id);
 %}
+
 
 ### Authentication Request
 POST {{host}}/api/auth
@@ -196,6 +198,6 @@ Authorization: Bearer {{auth_token}}
   "branch": "{{$random.company.name}}"
 }
 
-##### Delete User by ID
-#DELETE {{host}}/api/Users/{{user_id}}
-#Authorization: Bearer {{auth_token}}
+#### Delete User by ID
+DELETE {{host}}/api/Users/{{user_id}}
+Authorization: Bearer {{auth_token}}
