@@ -42,14 +42,14 @@ public sealed class SalesService : ISalesService
         Cart cart,
         string branch,
         IProductPriceResolver productPriceResolver,
-        ISpecification<Cart> specification,
+        ISpecification<Cart>? specification = null,
         CancellationToken ct = default)
     {
         _logger.LogInformation("Creating sale for customer {CustomerId}", cart.CustomerId);
         
         var productsUnitPrices = await productPriceResolver.ResolveProductsUnitPriceAsync(cart.Products.Select(p => p.ProductId), ct);
 
-        if (!specification.IsSatisfiedBy(cart))
+        if (specification is not null && !specification.IsSatisfiedBy(cart))
         {
             throw new CartValidationException("Cart is invalid.");
         }
