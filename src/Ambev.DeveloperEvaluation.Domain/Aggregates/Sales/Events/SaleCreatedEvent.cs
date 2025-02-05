@@ -2,7 +2,7 @@ using Ambev.DeveloperEvaluation.Domain.Events;
 
 namespace Ambev.DeveloperEvaluation.Domain.Aggregates.Sales.Events;
 
-public sealed class SaleModifiedDomainEvent : IEvent
+public sealed class SaleCreatedEvent : IEvent
 {
     public Guid Id { get; }
     public DateTime DateOccurred { get; }
@@ -10,7 +10,7 @@ public sealed class SaleModifiedDomainEvent : IEvent
     public IReadOnlyList<SaleProduct> Products { get; }
     public decimal TotalAmount { get; }
 
-    private SaleModifiedDomainEvent(Sale sale, TimeProvider timeProvider)
+    private SaleCreatedEvent(Sale sale, TimeProvider timeProvider)
     {
         Id = Guid.NewGuid();
         SaleId = sale.Id;
@@ -18,5 +18,6 @@ public sealed class SaleModifiedDomainEvent : IEvent
         Products = sale.Products;
         TotalAmount = sale.TotalAmount;
     }
-    public static SaleModifiedDomainEvent Create(Sale sale, TimeProvider timeProvider) => new(sale, timeProvider);
+    
+    public static SaleCreatedEvent Create(Sale sale, TimeProvider timeProvider) => new(sale, timeProvider);
 }
