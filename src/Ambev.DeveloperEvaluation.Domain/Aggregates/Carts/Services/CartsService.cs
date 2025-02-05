@@ -19,26 +19,23 @@ public sealed class CartsService : ICartsService
         _productRegistryRepository = productRegistryRepository;
     }
 
-    public async Task<Cart> AddCartProductsAsync(Guid userId, Dictionary<Guid, uint> productQuantitiesDictionary, CancellationToken ct = default)
+    public async Task<Cart> UpsertCartProductsAsync(Guid userId, Dictionary<Guid, uint> productQuantitiesDictionary, CancellationToken ct = default)
     {
         var allProductsExists = await _productRegistryRepository.ExistsAllAsync(productQuantitiesDictionary.Keys, ct);
         if (!allProductsExists)
         {
-            throw new CartValidationException("Not every product in the cart exists.");
+            throw new CartValidationException("Not every product in the list exists.");
         }
 
-        Cart? userCart = await _cartRepository.FindByUserIdAsync(userId, ct);
-        if (userCart is null)
-        {
-            userCart = new Cart(userId, _timeProvider.GetUtcNow().DateTime);
-            userCart = await _cartRepository.UpsertAsync(userCart, ct);
-        }
+        Cart userCart = await _cartRepository.FindByUserIdAsync(userId, ct) 
+                         ?? new Cart(userId, _timeProvider.GetUtcNow().DateTime);
 
         foreach ((Guid productId, var productQuantity) in productQuantitiesDictionary)
         {
             userCart.AddProduct(productId, (int)productQuantity);
         }
 
+        userCart = await _cartRepository.UpsertAsync(userCart, ct);
         return userCart;
     }
 
