@@ -1,52 +1,83 @@
-version: '3.8'
-
+name: ambev.developer.evaluation 
 services:
-  ambev.developer.evaluation.webapi:
+  ambev-developer-evaluation-webapi:
     container_name: ambev_developer_evaluation_webapi
-    image: ${DOCKER_REGISTRY-}ambevdeveloperevaluationwebapi
+    image: ambev-developer-evaluation-webapi-nullnes.sh
     build:
       context: .
       dockerfile: src/Ambev.DeveloperEvaluation.WebApi/Dockerfile
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_HTTP_PORTS=8080
-      - ASPNETCORE_HTTPS_PORTS=8081
-      - CONNECTIONSTRINGS
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ASPNETCORE_HTTP_PORTS: "8080"
+      Postgresql__ConnectionString: "Server=ambev_developer_evaluation_postgres;Port=5432;Database=developer_evaluation;Username=developer-eval-application;Password=evaluAt!0n;TrustServerCertificate=True"
+      Postgresql__MaxRetryCount: "3"
+      Postgresql__RetryDelayInSeconds: "2"
+      Postgresql__CommandTimeoutInSeconds: "15"
+      Postgresql__EnableDetailedErrors: "true"
+      Postgresql__EnableSensitiveDataLogging: "true"
+      MongoDb__ConnectionString: "mongodb://developer-eval-application:evaluAt!0n@ambev_developer_evaluation_mongodb:27017/DeveloperEvaluationMongoDbDatabase?authSource=admin&connect=replicaSet"
+      MongoDb__DatabaseName: "DeveloperEvaluationMongoDbDatabase"
+      Jwt__SecretKey: "YourSuperSecretKeyForJwtTokenGenerationThatShouldBeAtLeast32BytesLong"
+      Jwt__Issuer: "YourIssuer"
+      Jwt__Audiences__0: "YourAudience"
+      Redis__ConnectionString: "redis://:evaluAt!0n@ambev_developer_evaluation_cache:6379"
+      Redis__RetryDaleyInMilliseconds: "30"
+      Redis__CommandTimeoutInSeconds: "10"
+      Redis__SyncTimeout: "60"
     ports:
-      - "8080"
-      - "8081"
+      - "8080:8080"
+      - "8081:8081"
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+      - ./src/Ambev.DeveloperEvaluation.PostgreSQL/Bundles/EFBundle:/app/EFBundle:ro 
+    depends_on:
+      - ambev-developer-evaluation-postgres
+      - ambev-developer-evaluation-mongodb
+      - ambev-developer-evaluation-cache
+    entrypoint: >
+      sh -c "/app/EFBundle --connection 'Host=ambev_developer_evaluation_postgres;Port=5432;Database=developer_evaluation;Username=developer-eval-application;Password=evaluAt!0n' &&
+      dotnet Ambev.DeveloperEvaluation.WebApi.dll"
+    networks:
+      - ambev_network
 
-  ambev.developer.evaluation.postgres:
+
+  ambev-developer-evaluation-postgres:
     container_name: ambev_developer_evaluation_postgres
     image: postgres:13
-
     environment:
       POSTGRES_DB: developer_evaluation
-      POSTGRES_USER: developer
-      POSTGRES_PASSWORD: ev@luAt10n
+      POSTGRES_USER: developer-eval-application
+      POSTGRES_PASSWORD: evaluAt!0n
     ports:
-      - "5432"
+      - "5432:5432"
     restart: unless-stopped
-  
-  ambev.developer.evaluation.mongodb:
+    networks:
+      - ambev_network
+
+
+  ambev-developer-evaluation-mongodb:
     container_name: ambev_developer_evaluation_mongodb
-    image: mongo:latest 
+    image: mongo:latest
     environment:
-        MONGO_INITDB_ROOT_USERNAME: developer
-        MONGO_INITDB_ROOT_PASSWORD: ev@luAt10n
-        MONGO_INITDB_DATABASE: DeveloperEvaluationMongoDbDatabase
+      MONGO_INITDB_ROOT_USERNAME: developer-eval-application
+      MONGO_INITDB_ROOT_PASSWORD: evaluAt!0n
+      MONGO_INITDB_DATABASE: admin
     ports:
       - "27017:27017"
+    networks:
+      - ambev_network
 
-#  ambev.developer.evaluation.cache:
-#    container_name: ambev_developer_evaluation_cache 
-#    image: redis:7.4.1-alpine     
-#    command: redis-server --requirepass ev@luAt10n
-#    environment:
-#       MONGO_INITDB_ROOT_USERNAME: developer
-#       MONGO_INITDB_ROOT_PASSWORD: ev@luAt10n
-#    ports:
-#       - "6379"
+
+  ambev-developer-evaluation-cache:
+    container_name: ambev_developer_evaluation_cache
+    image: redis:7.4.1-alpine
+    command: ["redis-server"]
+    ports:
+      - "6379:6379"
+    networks:
+      - ambev_network
+
+networks:
+  ambev_network: 
+    driver: bridge
