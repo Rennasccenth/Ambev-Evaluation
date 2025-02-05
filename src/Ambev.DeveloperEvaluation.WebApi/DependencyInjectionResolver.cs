@@ -3,6 +3,7 @@ using Ambev.DeveloperEvaluation.Common.ExceptionHandlers;
 using Ambev.DeveloperEvaluation.Common.HealthChecks;
 using Ambev.DeveloperEvaluation.Common.Security;
 using Ambev.DeveloperEvaluation.Domain.ValueObjects.JsonConverters;
+using Ambev.DeveloperEvaluation.WebApi.Common;
 using FluentValidation;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -60,7 +61,11 @@ internal static class DependencyInjectionResolver
         // See GlobalExceptionHandler docs for more info.
         serviceCollection.AddExceptionHandler<GlobalExceptionHandler>();
 
+        // Allow us to track the owner of the current request for every layer down bellow
+        // (bcs we rely in IUserContext interface)
+        serviceCollection
+            .AddHttpContextAccessor()
+            .AddScoped<IUserContext, UserContext>();
         return serviceCollection;
-        
     }
 }
