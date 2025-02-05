@@ -19,6 +19,8 @@ public sealed class ProductsTests : BaseTest
     public async Task CreateProduct_WhenDataIsValid_ShouldCreateProduct()
     {
         // Arrange
+        await ActAsAuthenticatedUserAsync();
+
         IServiceScope serviceScope = WebApplicationFactory.Services.CreateScope();
         var createProductRequestValidator = serviceScope.ServiceProvider.GetRequiredService<IValidator<CreateProductRequest>>();
         CreateProductRequest createProductRequest = ProductTestData.GetProductRequest();
@@ -36,6 +38,8 @@ public sealed class ProductsTests : BaseTest
     public async Task CreateProduct_WhenDataIsInvalid_ShouldReturnBadRequest()
     {
         // Arrange
+        await ActAsAuthenticatedUserAsync();
+        
         IServiceScope serviceScope = WebApplicationFactory.Services.CreateScope();
         var createProductRequestValidator = serviceScope.ServiceProvider.GetRequiredService<IValidator<CreateProductRequest>>();
 
@@ -64,6 +68,8 @@ public sealed class ProductsTests : BaseTest
     {
         // Arrange
         // First create a product
+        await ActAsAuthenticatedUserAsync();
+
         CreateProductRequest createProductRequest = ProductTestData.GetProductRequest();
         var createResponse = await TestServerHttpClient.PostAsJsonAsync("/api/products", createProductRequest);
         createResponse.EnsureSuccessStatusCode();
