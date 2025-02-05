@@ -23,6 +23,7 @@ public sealed class Program
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
+                app.UseOpenApiDocumentation();
             }
 
             app.UseExceptionHandler();
