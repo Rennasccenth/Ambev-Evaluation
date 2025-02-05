@@ -23,6 +23,14 @@ internal sealed class ProductRegistryRepository : IProductRegistryRepository
         return await _dbContext.Products.FirstAsync(product => product.Id == id, cancellationToken: ct);
     }
 
+    public Task<List<Product>> GetAllByIds(IEnumerable<Guid> productsId, CancellationToken ct)
+    {
+        return _dbContext.Products
+            .AsNoTracking()
+            .Where(product => productsId.Contains(product.Id))
+            .ToListAsync(cancellationToken: ct);
+    }
+
     public async Task<PaginatedList<Product>> GetByFilterAsync(GetRegisteredProductsQueryFilter queryFilter, CancellationToken ct)
     {
         IQueryable<Product> query = _dbContext.Set<Product>()
