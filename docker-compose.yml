@@ -21,7 +21,7 @@ services:
       Jwt__Issuer: "YourIssuer"
       Jwt__Audiences__0: "YourAudience"
       Redis__ConnectionString: "redis://:evaluAt!0n@ambev_developer_evaluation_cache:6379"
-      Redis__RetryDaleyInMilliseconds: "30"
+      Redis__RetryDelayInMilliseconds: "30"
       Redis__CommandTimeoutInSeconds: "10"
       Redis__SyncTimeout: "60"
     ports:
