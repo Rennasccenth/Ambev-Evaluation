@@ -8,6 +8,9 @@ using Ambev.DeveloperEvaluation.Domain.Aggregates.Sales.Repositories;
 using Ambev.DeveloperEvaluation.MongoDB.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 
 namespace Ambev.DeveloperEvaluation.MongoDB;
@@ -16,6 +19,8 @@ public static class DependencyInjectionResolver
 {
     public static IServiceCollection InstallMongoDbInfrastructure(this IServiceCollection serviceCollection)
     {
+        BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
+
         serviceCollection.RegisterOption<MongoDbSettings>(MongoDbSettings.SectionName);
         serviceCollection.AddSingleton<IMongoClient>(serviceProvider => 
         {
@@ -32,6 +37,7 @@ public static class DependencyInjectionResolver
         });
 
         serviceCollection.AddMongoDbCollections();
+        
         serviceCollection.AddHostedService<MongoIndexInitializer>();
         
         serviceCollection.AddTransient<IProductInventoryRepository, ProductInventoryRepository>();

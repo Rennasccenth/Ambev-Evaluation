@@ -16,7 +16,7 @@ public sealed class CartRepository : ICartRepository
 
     public async Task<Cart?> FindByUserIdAsync(Guid userId, CancellationToken ct)
     {
-        var filter = Builders<Cart>.Filter.Eq(cart => cart.Id, userId);
+        var filter = Builders<Cart>.Filter.Eq(cart => cart.CustomerId, userId);
         
         Cart? foundCart = await _cartCollection.Find(filter).FirstOrDefaultAsync(ct);
 
@@ -30,19 +30,19 @@ public sealed class CartRepository : ICartRepository
     
     public async Task<bool> DeleteAsync(Guid userId, CancellationToken ct)
     {
-        var filter = Builders<Cart>.Filter.Eq(cart => cart.Id, userId);
+        var filter = Builders<Cart>.Filter.Eq(cart => cart.CustomerId, userId);
         DeleteResult deleteResult = await _cartCollection.DeleteOneAsync(filter, ct);
         return deleteResult.DeletedCount == 1;
     }
 
     public async Task<Cart> UpsertAsync(Cart upsertingCart, CancellationToken ct)
     {
-        var filter = Builders<Cart>.Filter.Eq(cart => cart.Id, upsertingCart.Id);
+        var filter = Builders<Cart>.Filter.Eq(cart => cart.CustomerId, upsertingCart.Id);
         await _cartCollection.ReplaceOneAsync(filter, upsertingCart, new ReplaceOptions
         {
             IsUpsert = true
         }, ct);
-
+        
         return upsertingCart;
     }
 }

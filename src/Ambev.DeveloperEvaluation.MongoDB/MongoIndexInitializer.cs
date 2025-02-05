@@ -41,45 +41,55 @@ internal sealed class MongoIndexInitializer : IHostedService
     {
         var collection = _database.GetCollection<Cart>(GetCollectionName(typeof(Cart)));
         
-        var userIdIndex = Builders<Cart>
-            .IndexKeys
-            .Hashed(x => x.Id);
+        var userIdIndex = Builders<Cart>.IndexKeys.Ascending(x => x.CustomerId);
 
-        await collection.Indexes.CreateOneAsync(
-            new CreateIndexModel<Cart>(userIdIndex),
-            cancellationToken: ct);
+        CreateIndexOptions indexOptions = new()
+        {
+            Unique = true,
+            Name = "Unique_CustomerId"
+        };
+        
+        var indexModel = new CreateIndexModel<Cart>(userIdIndex, indexOptions);
+        await collection.Indexes.CreateOneAsync(indexModel, cancellationToken: ct);
     }
 
     private async Task CreateSaleIndexes(CancellationToken ct)
     {
         var collection = _database.GetCollection<Sale>(GetCollectionName(typeof(Sale)));
         
-        var saleDateIndex = Builders<Sale>
-            .IndexKeys
-            .Hashed(x => x.Id);
+        var saleIndex = Builders<Sale>.IndexKeys.Ascending(x => x.Id);
 
-        await collection.Indexes.CreateOneAsync(
-            new CreateIndexModel<Sale>(saleDateIndex),
-            cancellationToken: ct);
+        CreateIndexOptions indexOptions = new()
+        {
+            Unique = true,
+            Name = "Unique_SaleId"
+        };
+
+        var indexModel = new CreateIndexModel<Sale>(saleIndex, indexOptions);
+        await collection.Indexes.CreateOneAsync(indexModel, cancellationToken: ct);
     }
     
     private async Task CreateProductInventoryIndexes(CancellationToken ct)
     {
         var collection = _database.GetCollection<ProductInventory>(GetCollectionName(typeof(ProductInventory)));
 
-        var productInventoryIndex = Builders<ProductInventory>
-            .IndexKeys
-            .Ascending(x => x.Id);
+        var productInventoryIndex = Builders<ProductInventory>.IndexKeys.Ascending(x => x.ProductId);
+        CreateIndexOptions indexOptions = new()
+        {
+            Unique = true,
+            Name = "Unique_ProductId"
+        };
+        var indexModel = new CreateIndexModel<ProductInventory>(productInventoryIndex, indexOptions);
 
-        await collection.Indexes.CreateOneAsync(
-            new CreateIndexModel<ProductInventory>(productInventoryIndex),
-            cancellationToken: ct);
+        await collection.Indexes.CreateOneAsync(indexModel, cancellationToken: ct);
     }
 
     private static string GetCollectionName(Type type) => 
-        type.Name.ToLowerInvariant().EndsWith('s') 
-            ? type.Name.ToLowerInvariant() 
-            : type.Name.ToLowerInvariant() + "s";
+        type.Name.ToLowerInvariant().EndsWith('y') 
+            ? type.Name.ToLowerInvariant().TrimEnd('y') + "ies" 
+            : type.Name.ToLowerInvariant().EndsWith('s') 
+                ? type.Name.ToLowerInvariant() 
+                : type.Name.ToLowerInvariant() + "s";
 
     public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 }
