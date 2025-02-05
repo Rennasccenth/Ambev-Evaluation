@@ -1,4 +1,4 @@
-@host = http://localhost:5119
+@host = http://localhost:8080
 @email = {{$random.internet.safeEmailAddress}}
 @password = TestPassword@2025
 

@@ -5,7 +5,7 @@ namespace Ambev.DeveloperEvaluation.Domain.Aggregates.Sales;
 
 public sealed class Sale : BaseEntity
 {
-    public Guid CustomerId { get; set; }
+    public Guid CustomerId { get; init; }
     public int Number { get; set; }
     public DateTime? CreatedDate { get; private set; }
     public DateTime? TerminationDate { get; private set; }

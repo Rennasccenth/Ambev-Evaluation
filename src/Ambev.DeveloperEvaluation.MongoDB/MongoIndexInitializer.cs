@@ -56,16 +56,15 @@ internal sealed class MongoIndexInitializer : IHostedService
     private async Task CreateSaleIndexes(CancellationToken ct)
     {
         var collection = _database.GetCollection<Sale>(GetCollectionName(typeof(Sale)));
-        
-        var saleIndex = Builders<Sale>.IndexKeys.Ascending(x => x.Id);
 
-        CreateIndexOptions indexOptions = new()
-        {
-            Unique = true,
-            Name = "Unique_SaleId"
-        };
+        var compoundIndex = Builders<Sale>.IndexKeys
+            .Ascending(x => x.CustomerId)
+            .Ascending(x => x.Id);
 
-        var indexModel = new CreateIndexModel<Sale>(saleIndex, indexOptions);
+        var indexOptions = new CreateIndexOptions { Unique = true };
+
+        var indexModel = new CreateIndexModel<Sale>(compoundIndex, indexOptions);
+
         await collection.Indexes.CreateOneAsync(indexModel, cancellationToken: ct);
     }
     

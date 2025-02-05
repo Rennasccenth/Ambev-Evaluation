@@ -9,7 +9,8 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Ambev.DeveloperEvaluation.Application\Ambev.DeveloperEvaluation.Application.csproj" />
 		<ProjectReference Include="..\Ambev.DeveloperEvaluation.MongoDB\Ambev.DeveloperEvaluation.MongoDB.csproj" />
-		<ProjectReference Include="..\Ambev.DeveloperEvaluation.ORM\Ambev.DeveloperEvaluation.ORM.csproj" />
+		<ProjectReference Include="..\Ambev.DeveloperEvaluation.PostgreSQL\Ambev.DeveloperEvaluation.PostgreSQL.csproj" />
+		<ProjectReference Include="..\Ambev.DeveloperEvaluation.Redis\Ambev.DeveloperEvaluation.Redis.csproj" />
 	</ItemGroup>
 
 </Project>
