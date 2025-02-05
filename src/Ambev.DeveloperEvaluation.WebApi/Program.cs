@@ -11,12 +11,6 @@ public sealed class Program
         try
         {
             WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-            builder.Configuration
-                .SetBasePath(builder.Environment.ContentRootPath)
-                .AddJsonFile(path: "appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile(path: $"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
-                .AddEnvironmentVariables();
-
             builder.AddDefaultLogging();
 
             builder.Services
