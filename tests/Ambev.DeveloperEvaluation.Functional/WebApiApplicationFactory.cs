@@ -14,6 +14,7 @@ using MongoDB.Driver;
 using Respawn;
 using Testcontainers.MongoDb;
 using Testcontainers.PostgreSql;
+using Testcontainers.Redis;
 using Xunit;
 
 namespace Ambev.DeveloperEvaluation.Functional;
@@ -45,6 +46,10 @@ public sealed class DeveloperEvaluationWebApplicationFactory
         .WithPassword("YourStrong@Passw0rd")
         .Build();
 
+    private readonly RedisContainer _redisContainer = new RedisBuilder()
+        .WithImage("redis:latest")
+        .Build();
+
     private Respawner _respawner = null!; 
     private DbConnection _postgreSqlDbConnection = null!;
     private IMongoClient _mongoDbClient = null!;
@@ -59,7 +64,8 @@ public sealed class DeveloperEvaluationWebApplicationFactory
                 .AddSingleton<TimeProvider>(new FakeTimeProvider(DateTimeOffset.UtcNow));
 
             // Replace the current Context by pointing it to a PostgreSQL Container instance.
-            collection.RemoveAll<DbContextOptions<DefaultContext>>()
+            collection
+                .RemoveAll<DbContextOptions<DefaultContext>>()
                 .AddDbContext<DefaultContext>(optionsBuilder =>
                 {
                     optionsBuilder.UseNpgsql(_postgreSqlContainer.GetConnectionString(), psqlOptions =>
@@ -70,6 +76,11 @@ public sealed class DeveloperEvaluationWebApplicationFactory
                     optionsBuilder.EnableDetailedErrors();
                     optionsBuilder.EnableSensitiveDataLogging();
                 }, contextLifetime: ServiceLifetime.Transient);
+
+            // Remove actual client and points mongo to test container instance
+            collection
+                .RemoveAll<IMongoClient>()
+                .AddSingleton<IMongoClient>(_ => new MongoClient(_mongoDbContainer.GetConnectionString()));
         });
     }
 
@@ -148,9 +159,9 @@ public sealed class DeveloperEvaluationWebApplicationFactory
     /// <summary>
     /// Ensure Entity Framework created all mapped tables.
     /// </summary>
-    private Task EnsureAllTablesExists(DbContext dbContext)
+    private async Task EnsureAllTablesExists(DbContext dbContext)
     {
-        return dbContext.Database.EnsureCreatedAsync();
+        await dbContext.Database.EnsureCreatedAsync();
     }
 
     /// <summary>
