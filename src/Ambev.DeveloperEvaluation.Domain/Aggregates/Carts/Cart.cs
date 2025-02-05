@@ -4,10 +4,12 @@ namespace Ambev.DeveloperEvaluation.Domain.Aggregates.Carts;
 
 public sealed class Cart : BaseEntity
 {
-    public required DateTime Date { get; init; }
-    public required List<CartProduct> Products { get; init; } = [];
+    public DateTime Date { get; init; }
+    public List<CartProduct> Products { get; init; } = [];
+    public Guid CustomerId => Id;
 
     internal Cart() { }
+
     public Cart(Guid userId, DateTime date)
     {
         Id = userId;
@@ -21,11 +23,9 @@ public sealed class Cart : BaseEntity
         Products = products;
     }
 
-    public int CountProducts(Guid productId)
+    public int CountProducts(Func<CartProduct, bool> predicate)
     {
-        CartProduct? product = Products.FirstOrDefault(p => p.ProductId == productId);
-
-        return product?.Quantity ?? 0;
+        return Products.Count(predicate);
     }
 
     public Cart AddProduct(Guid productId, int quantity)
