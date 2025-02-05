@@ -27,7 +27,9 @@ services:
       Redis__SyncTimeout: "60"
       OpenApiDocumentation__Title: "Ambev Developer Evaluation Sales System"
       OpenApiDocumentation__Description: "API that exposes endpoints that handles Sales."
-
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://ambev-developer-evaluation-aspire-dashboard:18889"
+      OTEL_TRACES_EXPORTER: "http://ambev-developer-evaluation-aspire-dashboard:18889"
+      OTEL_METRICS_EXPORTER: "http://ambev-developer-evaluation-aspire-dashboard:18889"      
     ports:
       - "8080:8080"
       - "8081:8081"
@@ -39,6 +41,7 @@ services:
       - ambev-developer-evaluation-postgres
       - ambev-developer-evaluation-mongodb
       - ambev-developer-evaluation-cache
+      - ambev-developer-evaluation-aspire-dashboard
     entrypoint: >
       sh -c "/app/EFBundle --connection 'Host=ambev_developer_evaluation_postgres;Port=5432;Database=developer_evaluation;Username=developer-eval-application;Password=evaluAt!0n' &&
       dotnet Ambev.DeveloperEvaluation.WebApi.dll"
@@ -80,8 +83,17 @@ services:
     ports:
       - "6379:6379"
     networks:
-      - ambev_network
+      - ambev_network 
 
+  ambev-developer-evaluation-aspire-dashboard:
+    image: mcr.microsoft.com/dotnet/aspire-dashboard:9.0
+    container_name: ambev-developer-evaluation-aspire-dashboard
+    ports:
+      - "18888:18888"   # Dashboard UI
+      - "4317:18889"    # OTLP/gRPC endpoint
+    networks:
+      - ambev_network
+    
 networks:
   ambev_network: 
     driver: bridge
