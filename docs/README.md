@@ -1,74 +1,91 @@
-# Developer Evaluation Project
+# Project Setup and Run Instructions
 
-`READ CAREFULLY`
+This project uses Docker Compose for local development. Follow the steps below to get the application running.
 
-## Instructions
-**The test below will have up to 7 calendar days to be delivered from the date of receipt of this manual.**
+## Prerequisites
 
-- The code must be versioned in a public Github repository and a link must be sent for evaluation once completed
-- Upload this template to your repository and start working from it
-- Read the instructions carefully and make sure all requirements are being addressed
-- The repository must provide instructions on how to configure, execute and test the project
-- Documentation and overall organization will also be taken into consideration
+- [Docker](https://www.docker.com/get-started) installed on your machine.
+- [Docker Compose](https://docs.docker.com/compose/install/) installed (usually bundled with Docker).
 
-## Use Case
-**You are a developer on the DeveloperStore team. Now we need to implement the API prototypes.**
+## Running the Project
 
-As we work with `DDD`, to reference entities from other domains, we use the `External Identities` pattern with denormalization of entity descriptions.
+1. **Clone the Repository**
 
-Therefore, you will write an API (complete CRUD) that handles sales records. The API needs to be able to inform:
+   ```bash
+   git clone <repository-url>
+   cd <repository-directory>
+   ```
 
-* Sale number
-* Date when the sale was made
-* Customer
-* Total sale amount
-* Branch where the sale was made
-* Products
-* Quantities
-* Unit prices
-* Discounts
-* Total amount for each item
-* Cancelled/Not Cancelled
+2. **Start the Services**
 
-It's not mandatory, but it would be a differential to build code for publishing events of:
-* SaleCreated
-* SaleModified
-* SaleCancelled
-* ItemCancelled
+   Use Docker Compose to build and run all services:
 
-If you write the code, **it's not required** to actually publish to any Message Broker. You can log a message in the application log or however you find most convenient.
+   ```bash
+   docker-compose up --build
+   ```
 
-### Business Rules
+   This command will:
+   - Build the images for all services.
+   - Start containers for the application, databases, and other dependencies.
 
-* Purchases above 4 identical items have a 10% discount
-* Purchases between 10 and 20 identical items have a 20% discount
-* It's not possible to sell above 20 identical items
-* Purchases below 4 items cannot have a discount
+3. **Access the Application**
 
-These business rules define quantity-based discounting tiers and limitations:
+   Once the containers are up, you can access the application at:
 
-1. Discount Tiers:
-   - 4+ items: 10% discount
-   - 10-20 items: 20% discount
+   - **HTTP Endpoints:** localhost:8080/swagger for the old and good one or localhost:8080/docs for ScalarUI
 
-2. Restrictions:
-   - Maximum limit: 20 items per product
-   - No discounts allowed for quantities below 4 items
+4. **Stopping the Services**
+
+   To stop and remove the containers, run:
+
+   ```bash
+   docker-compose down
+   ```
+
+### What was developed?
+- [x] User management endpoints, CRUD + GetAll built with the requested dynamic filtering and sorting. -Note: I've added the properties in the Request object just to make it explicit the accepted properties, but the filter will emerge from parsing the query string. Once user was created, we emit a UserRegisteredEvent, which is just logged by his respective handler.
+
+- [x] Product management endpoints, some of them are protected, like create the product. But theres no validation over who can add a product, like the role of the user, (RBAC), but it could be so easily added by getting the user role stored in the jwt token, just like I did in the IUserContext implementation. On GetProducts endpoint, we also accepts the dynamic filter and sorting.
+
+- [x] Auth Endpoint for token generation.
+
+- [x] Carts Creation and retrieval. Theres a interesting security validation here, you can't access the cart that you don't own. Which means that to operate over a cart, you need to be the owner of if (We can check from the UserId stored in your token, just like we could do for any interesting information related to the logged user. This feature can alse be used on inner layers due abstraction.)
+
+- [x] Sales creation and retrieval. You can create a sale, which basically means "convert all products stored in my cart to a sale." by doing this, we validate a few things like if all products in the creating sale exists, verify the requested business rules, the ownership of the cart and them after all this we apply any discount and create the sale. Once created, the domain events of if are dispatched.
+
+- [x] Test suit. Theres a robust test suit for the project, that runs a mirror application. Basically we run the app withot expose any port, so we can execute any request while access internal components of the running app (like all services registered in the DI!).
+
+- [x] Database Respawning. To ensure every test runs isolated from others, we reset the databases (mongo and psql for now) to a known state every time a test runs.  
+
+
+<img width="299" alt="image" src="https://github.com/user-attachments/assets/2cf2f991-b975-4b6d-877c-bbeece741cef" />
+
+
+## Additional Notes
+
+- **Environment Variables:**  
+  You can customize configurations using environment variables. Check the `docker-compose.yml` file for default settings and adjust as needed.
+  
+- **Database Migrations:**  
+  In any case a migration was needed, you can perform it by creating a EFBundle. There is a updated Bundle in the PostgreSQL project and there is no need for mongo or redis.
+
+Enjoy exploring the application!
+
 
 ## Overview
 This section provides a high-level overview of the project and the various skills and competencies it aims to assess for developer candidates. 
 
-See [Overview](/.doc/overview.md)
+See [Overview](/.docs/overview.md)
 
 ## Tech Stack
 This section lists the key technologies used in the project, including the backend, testing, frontend, and database components. 
 
-See [Tech Stack](/.doc/tech-stack.md)
+See [Tech Stack](/.docs/tech-stack.md)
 
 ## Frameworks
 This section outlines the frameworks and libraries that are leveraged in the project to enhance development productivity and maintainability. 
 
-See [Frameworks](/.doc/frameworks.md)
+See [Frameworks](/.docs/frameworks.md)
 
 <!-- 
 ## API Structure
@@ -83,4 +100,4 @@ This section includes links to the detailed documentation for the different API 
 ## Project Structure
 This section describes the overall structure and organization of the project files and directories. 
 
-See [Project Structure](/.doc/project-structure.md)
+See [Project Structure](/.docs/project-structure.md)
