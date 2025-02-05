@@ -37,7 +37,6 @@ public static class DependencyInjectionResolver
         serviceCollection.AddTransient<IProductInventoryRepository, ProductInventoryRepository>();
         serviceCollection.AddTransient<ICartRepository, CartRepository>();
         serviceCollection.AddTransient<ISaleRepository, SaleRepository>();
-        serviceCollection.AddTransient<ISaleProductRepository, SaleProductRepository>();
 
         return serviceCollection;
     }
