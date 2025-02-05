@@ -19,13 +19,26 @@ public sealed class Sale : BaseEntity
     
     internal Sale() { }
 
-    private Sale(Guid customerId, string branch, DateTime createdDate, List<SaleProduct> products)
+    private Sale(Guid customerId, string branch, DateTime createdDate)
     {
         Id = Guid.NewGuid();
         CreatedDate = createdDate;
-        Products = products;
         CustomerId = customerId;
         Branch = branch;
+    }
+
+    public Sale AddProduct(SaleProduct addingProduct, TimeProvider timeProvider)
+    {
+        if (Products.Any(prod => prod.ProductId == addingProduct.ProductId))
+        {
+            SaleProduct product = Products.First(prod => prod.ProductId == addingProduct.ProductId);
+            product.IncreaseQuantity((uint)addingProduct.Quantity);
+            AddDomainEvent(SaleModifiedDomainEvent.Create(this, timeProvider));
+            return this;
+        }
+
+        Products.Add(addingProduct);
+        return this;
     }
 
     public Sale Sell(TimeProvider timeProvider)
@@ -35,9 +48,9 @@ public sealed class Sale : BaseEntity
         return this;
     }
 
-    public static Sale Create(Guid customerId,List<SaleProduct> products, string branch, TimeProvider timeProvider)
+    public static Sale Create(Guid customerId, string branch, TimeProvider timeProvider)
     {
-        Sale creatingSale = new Sale(customerId, branch, timeProvider.GetUtcNow().DateTime, products);
+        Sale creatingSale = new Sale(customerId, branch, timeProvider.GetUtcNow().DateTime);
         creatingSale.AddDomainEvent(SaleCreatedDomainEvent.Create(creatingSale, timeProvider));
         return creatingSale;
     }

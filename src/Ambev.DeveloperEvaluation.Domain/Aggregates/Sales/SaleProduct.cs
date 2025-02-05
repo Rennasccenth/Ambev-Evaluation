@@ -4,7 +4,6 @@ namespace Ambev.DeveloperEvaluation.Domain.Aggregates.Sales;
 
 public sealed class SaleProduct
 {
-    // public Guid Id { get; set; }
     public Guid ProductId { get; set; }
     public decimal UnitPrice { get; set; }
     public int Quantity { get; set; }
@@ -23,6 +22,21 @@ public sealed class SaleProduct
         // Id = Guid.NewGuid();
     }
 
+    public SaleProduct IncreaseQuantity(uint quantity)
+    {
+        Quantity += (int)quantity;
+        return this;
+    }
+    
+    public SaleProduct DecreaseQuantity(uint quantity)
+    {
+        Quantity -= (int)quantity;
+        if (Quantity < 0)
+        {
+            Quantity = 0;
+        }
+        return this;
+    }
     public void Cancel(TimeProvider timeProvider)
     {
         CanceledAt = timeProvider.GetUtcNow().DateTime;
@@ -37,6 +51,7 @@ public sealed class SaleProduct
         var percentDiscountValue = UnitPrice * Quantity * (discount / 100);
         Discounts = percentDiscountValue;
     }
+
     public void ApplyFixedDiscount(decimal discount)
     {
         if (discount < 0)
