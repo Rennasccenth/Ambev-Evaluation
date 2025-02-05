@@ -1,8 +1,7 @@
-using Ambev.DeveloperEvaluation.Domain.Entities;
-using Ambev.DeveloperEvaluation.Domain.Events.Abstractions;
+using Ambev.DeveloperEvaluation.Domain.Events;
 using Ambev.DeveloperEvaluation.Domain.ValueObjects;
 
-namespace Ambev.DeveloperEvaluation.Domain.Events.Users;
+namespace Ambev.DeveloperEvaluation.Domain.Aggregates.Users.Events;
 
 public sealed record UserRegisteredEvent : IEvent
 {

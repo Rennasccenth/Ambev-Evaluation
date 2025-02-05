@@ -1,6 +1,6 @@
 using Ambev.DeveloperEvaluation.Domain.Aggregates.Carts.Exceptions;
-using Ambev.DeveloperEvaluation.Domain.Repositories.Carts;
-using Ambev.DeveloperEvaluation.Domain.Repositories.Products;
+using Ambev.DeveloperEvaluation.Domain.Aggregates.Carts.Repositories;
+using Ambev.DeveloperEvaluation.Domain.Aggregates.Products.Repositories;
 
 namespace Ambev.DeveloperEvaluation.Domain.Aggregates.Carts.Services;
 

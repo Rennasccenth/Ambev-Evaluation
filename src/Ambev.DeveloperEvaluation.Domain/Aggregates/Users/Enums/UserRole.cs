@@ -1,4 +1,4 @@
-namespace Ambev.DeveloperEvaluation.Domain.Enums;
+namespace Ambev.DeveloperEvaluation.Domain.Aggregates.Users.Enums;
 
 public enum UserRole
 {

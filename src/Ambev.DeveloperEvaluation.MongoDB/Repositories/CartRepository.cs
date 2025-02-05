@@ -1,6 +1,6 @@
 using Ambev.DeveloperEvaluation.Domain.Aggregates.Carts;
+using Ambev.DeveloperEvaluation.Domain.Aggregates.Carts.Repositories;
 using Ambev.DeveloperEvaluation.Domain.Common;
-using Ambev.DeveloperEvaluation.Domain.Repositories.Carts;
 using MongoDB.Driver;
 
 namespace Ambev.DeveloperEvaluation.MongoDB.Repositories;

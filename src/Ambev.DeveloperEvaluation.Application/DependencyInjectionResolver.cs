@@ -2,7 +2,7 @@ using System.Reflection;
 using Ambev.DeveloperEvaluation.Application.Events;
 using Ambev.DeveloperEvaluation.Common.Security;
 using Ambev.DeveloperEvaluation.Common.Validation;
-using Ambev.DeveloperEvaluation.Domain.Events.Abstractions;
+using Ambev.DeveloperEvaluation.Domain.Events;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;

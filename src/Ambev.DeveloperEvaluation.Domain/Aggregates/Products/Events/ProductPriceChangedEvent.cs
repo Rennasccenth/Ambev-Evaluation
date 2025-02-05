@@ -1,7 +1,6 @@
-using Ambev.DeveloperEvaluation.Domain.Entities;
-using Ambev.DeveloperEvaluation.Domain.Events.Abstractions;
+using Ambev.DeveloperEvaluation.Domain.Events;
 
-namespace Ambev.DeveloperEvaluation.Domain.Events.Products;
+namespace Ambev.DeveloperEvaluation.Domain.Aggregates.Products.Events;
 
 public sealed class ProductPriceChangedEvent : IEvent
 {

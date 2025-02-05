@@ -1,5 +1,5 @@
 using System.Reflection;
-using Ambev.DeveloperEvaluation.Domain.Events.Abstractions;
+using Ambev.DeveloperEvaluation.Domain.Events;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 

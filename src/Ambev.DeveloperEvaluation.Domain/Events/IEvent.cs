@@ -1,4 +1,4 @@
-namespace Ambev.DeveloperEvaluation.Domain.Events.Abstractions;
+namespace Ambev.DeveloperEvaluation.Domain.Events;
 
 /// <summary>
 /// Marker interface for Domain Events.

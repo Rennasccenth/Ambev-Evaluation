@@ -1,4 +1,4 @@
-namespace Ambev.DeveloperEvaluation.Domain.Repositories.User;
+namespace Ambev.DeveloperEvaluation.Domain.Aggregates.Users.Repositories;
 
 public sealed class GetUsersQueryFilter
 {

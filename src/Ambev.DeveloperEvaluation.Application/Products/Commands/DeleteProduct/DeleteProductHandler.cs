@@ -1,6 +1,6 @@
 using Ambev.DeveloperEvaluation.Common.Errors;
 using Ambev.DeveloperEvaluation.Common.Results;
-using Ambev.DeveloperEvaluation.Domain.Repositories.Products;
+using Ambev.DeveloperEvaluation.Domain.Aggregates.Products.Repositories;
 using MediatR;
 using Microsoft.Extensions.Logging;
 

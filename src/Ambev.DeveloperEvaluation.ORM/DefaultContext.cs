@@ -1,7 +1,8 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System.Reflection;
-using Ambev.DeveloperEvaluation.Domain.Events.Abstractions;
+using Ambev.DeveloperEvaluation.Domain.Aggregates.Products;
+using Ambev.DeveloperEvaluation.Domain.Aggregates.Users;
+using Ambev.DeveloperEvaluation.Domain.Events;
 using Ambev.DeveloperEvaluation.ORM.Interceptors;
 
 namespace Ambev.DeveloperEvaluation.ORM;

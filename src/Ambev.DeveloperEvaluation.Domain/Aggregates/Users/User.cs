@@ -1,12 +1,12 @@
 using Ambev.DeveloperEvaluation.Common.Security;
+using Ambev.DeveloperEvaluation.Domain.Aggregates.Users.Enums;
+using Ambev.DeveloperEvaluation.Domain.Aggregates.Users.Events;
 using Ambev.DeveloperEvaluation.Domain.Common;
-using Ambev.DeveloperEvaluation.Domain.Enums;
-using Ambev.DeveloperEvaluation.Domain.Events.Users;
 using Ambev.DeveloperEvaluation.Domain.ValueObjects;
 using FluentValidation;
 using FluentValidation.Results;
 
-namespace Ambev.DeveloperEvaluation.Domain.Entities;
+namespace Ambev.DeveloperEvaluation.Domain.Aggregates.Users;
 
 /// <summary>
 /// Represents a user in the system.

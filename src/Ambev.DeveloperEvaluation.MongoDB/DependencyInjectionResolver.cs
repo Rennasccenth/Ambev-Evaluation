@@ -1,11 +1,10 @@
 using Ambev.DeveloperEvaluation.Common.Options;
 using Ambev.DeveloperEvaluation.Domain.Aggregates.Carts;
+using Ambev.DeveloperEvaluation.Domain.Aggregates.Carts.Repositories;
 using Ambev.DeveloperEvaluation.Domain.Aggregates.Inventories;
+using Ambev.DeveloperEvaluation.Domain.Aggregates.Inventories.Repositories;
 using Ambev.DeveloperEvaluation.Domain.Aggregates.Sales;
 using Ambev.DeveloperEvaluation.Domain.Aggregates.Sales.Repositories;
-using Ambev.DeveloperEvaluation.Domain.Repositories.Carts;
-using Ambev.DeveloperEvaluation.Domain.Repositories.Products;
-using Ambev.DeveloperEvaluation.Domain.Repositories.Sales;
 using Ambev.DeveloperEvaluation.MongoDB.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;

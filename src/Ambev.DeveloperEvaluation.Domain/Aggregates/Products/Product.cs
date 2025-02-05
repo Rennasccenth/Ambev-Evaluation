@@ -1,9 +1,9 @@
+using Ambev.DeveloperEvaluation.Domain.Aggregates.Products.Events;
 using Ambev.DeveloperEvaluation.Domain.Common;
-using Ambev.DeveloperEvaluation.Domain.Events.Products;
 using Ambev.DeveloperEvaluation.Domain.Exceptions;
 using Ambev.DeveloperEvaluation.Domain.ValueObjects;
 
-namespace Ambev.DeveloperEvaluation.Domain.Entities;
+namespace Ambev.DeveloperEvaluation.Domain.Aggregates.Products;
 
 public sealed class Product : BaseEntity
 {

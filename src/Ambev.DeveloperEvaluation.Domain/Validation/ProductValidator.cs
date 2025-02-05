@@ -1,4 +1,4 @@
-using Ambev.DeveloperEvaluation.Domain.Entities;
+using Ambev.DeveloperEvaluation.Domain.Aggregates.Products;
 using Ambev.DeveloperEvaluation.Domain.ValueObjects;
 using FluentValidation;
 

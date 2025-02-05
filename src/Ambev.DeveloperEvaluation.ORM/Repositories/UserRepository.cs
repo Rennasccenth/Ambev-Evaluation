@@ -1,8 +1,8 @@
 ﻿using System.Linq.Expressions;
 using Ambev.DeveloperEvaluation.Common.Results;
+using Ambev.DeveloperEvaluation.Domain.Aggregates.Users;
+using Ambev.DeveloperEvaluation.Domain.Aggregates.Users.Repositories;
 using Ambev.DeveloperEvaluation.Domain.Common;
-using Ambev.DeveloperEvaluation.Domain.Entities;
-using Ambev.DeveloperEvaluation.Domain.Repositories.User;
 using Microsoft.EntityFrameworkCore;
 
 namespace Ambev.DeveloperEvaluation.ORM.Repositories;

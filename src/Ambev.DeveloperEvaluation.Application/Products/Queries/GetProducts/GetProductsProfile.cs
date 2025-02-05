@@ -1,6 +1,6 @@
+using Ambev.DeveloperEvaluation.Domain.Aggregates.Products;
+using Ambev.DeveloperEvaluation.Domain.Aggregates.Products.Repositories;
 using Ambev.DeveloperEvaluation.Domain.Common;
-using Ambev.DeveloperEvaluation.Domain.Entities;
-using Ambev.DeveloperEvaluation.Domain.Repositories.Products;
 using AutoMapper;
 
 namespace Ambev.DeveloperEvaluation.Application.Products.Queries.GetProducts;

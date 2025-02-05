@@ -2,8 +2,8 @@ using Ambev.DeveloperEvaluation.Domain.Aggregates.Carts;
 using Ambev.DeveloperEvaluation.Domain.Aggregates.Carts.Exceptions;
 using Ambev.DeveloperEvaluation.Domain.Aggregates.Carts.Strategies;
 using Ambev.DeveloperEvaluation.Domain.Aggregates.Sales.Exceptions;
-using Ambev.DeveloperEvaluation.Domain.Events.Abstractions;
-using Ambev.DeveloperEvaluation.Domain.Repositories.Sales;
+using Ambev.DeveloperEvaluation.Domain.Aggregates.Sales.Repositories;
+using Ambev.DeveloperEvaluation.Domain.Events;
 using Ambev.DeveloperEvaluation.Domain.Specifications;
 using Microsoft.Extensions.Logging;
 
@@ -48,22 +48,16 @@ public sealed class SalesService : ISalesService
             throw new CartValidationException("Cart is invalid.");
         }
 
+        Sale creatingSale = Sale.Create(cart.CustomerId, branch, _timeProvider);
         // Convert all products in the cart to sale products.
         foreach ((Guid productId, var unitPrice) in productsUnitPrices)
         {
+            // Calculates per product discounts
             int productCount = cart.CountProducts(p => p.ProductId == productId);
-
             decimal discount = _discountStrategy.GetDiscountPercentage(productCount);
             decimal discountedPrice = unitPrice * (1 - discount);
 
-            sellingProducts.Add(new SaleProduct(productId, discountedPrice, productCount));
-        }
-
-        // Initialize products for the creating sale. 
-        var creatingSale = Sale.Create(cart.CustomerId, branch, _timeProvider);
-        foreach (SaleProduct saleProduct in sellingProducts)
-        {
-            creatingSale.AddProduct(saleProduct, _timeProvider);
+            creatingSale.AddProduct(new SaleProduct(creatingSale.Id, productId, discountedPrice, productCount), _timeProvider);
         }
 
         Sale createdSale = await _saleRepository.CreateAsync(creatingSale, ct);

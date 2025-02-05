@@ -1,4 +1,4 @@
-using Ambev.DeveloperEvaluation.Domain.Entities;
+using Ambev.DeveloperEvaluation.Domain.Aggregates.Users;
 using FluentValidation;
 using FluentValidation.TestHelper;
 using Microsoft.Extensions.DependencyInjection;

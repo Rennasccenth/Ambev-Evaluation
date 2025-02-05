@@ -1,4 +1,4 @@
-using Ambev.DeveloperEvaluation.Domain.Entities;
+using Ambev.DeveloperEvaluation.Domain.Aggregates.Users;
 using AutoMapper;
 
 namespace Ambev.DeveloperEvaluation.Application.Users.Queries.GetUser;

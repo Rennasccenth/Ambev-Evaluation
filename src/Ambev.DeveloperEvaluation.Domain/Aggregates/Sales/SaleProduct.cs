@@ -4,6 +4,7 @@ namespace Ambev.DeveloperEvaluation.Domain.Aggregates.Sales;
 
 public sealed class SaleProduct
 {
+    public Guid SaleId { get; }
     public Guid ProductId { get; set; }
     public decimal UnitPrice { get; set; }
     public int Quantity { get; set; }
@@ -14,12 +15,12 @@ public sealed class SaleProduct
     public decimal TotalPrice => UnitPrice * Quantity - Discounts;
     // public decimal TotalDiscounts => Discounts * Quantity;
 
-    public SaleProduct(Guid productId, decimal unitPrice, int quantity)
+    public SaleProduct(Guid saleId, Guid productId, decimal unitPrice, int quantity)
     {
+        SaleId = saleId;
         ProductId = productId;
         UnitPrice = unitPrice;
         Quantity = quantity;
-        // Id = Guid.NewGuid();
     }
 
     public SaleProduct IncreaseQuantity(uint quantity)

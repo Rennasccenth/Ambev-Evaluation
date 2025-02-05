@@ -1,8 +1,8 @@
 using Ambev.DeveloperEvaluation.Common.Errors;
 using Ambev.DeveloperEvaluation.Common.Results;
 using Ambev.DeveloperEvaluation.Common.Security;
-using Ambev.DeveloperEvaluation.Domain.Entities;
-using Ambev.DeveloperEvaluation.Domain.Repositories.User;
+using Ambev.DeveloperEvaluation.Domain.Aggregates.Users;
+using Ambev.DeveloperEvaluation.Domain.Aggregates.Users.Repositories;
 using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Logging;

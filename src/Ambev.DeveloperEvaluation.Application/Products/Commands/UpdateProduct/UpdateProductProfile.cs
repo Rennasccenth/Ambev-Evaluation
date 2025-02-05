@@ -1,5 +1,5 @@
+using Ambev.DeveloperEvaluation.Domain.Aggregates.Products;
 using AutoMapper;
-using Ambev.DeveloperEvaluation.Domain.Entities;
 
 namespace Ambev.DeveloperEvaluation.Application.Products.Commands.UpdateProduct;
 

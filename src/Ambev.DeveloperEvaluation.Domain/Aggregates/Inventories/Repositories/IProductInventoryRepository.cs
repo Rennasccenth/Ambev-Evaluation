@@ -1,6 +1,4 @@
-using Ambev.DeveloperEvaluation.Domain.Aggregates.Inventories;
-
-namespace Ambev.DeveloperEvaluation.Domain.Repositories.Products;
+namespace Ambev.DeveloperEvaluation.Domain.Aggregates.Inventories.Repositories;
 
 public interface IProductInventoryRepository
 {

@@ -1,5 +1,5 @@
 using Ambev.DeveloperEvaluation.Domain.Aggregates.Inventories;
-using Ambev.DeveloperEvaluation.Domain.Repositories.Products;
+using Ambev.DeveloperEvaluation.Domain.Aggregates.Inventories.Repositories;
 using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 

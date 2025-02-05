@@ -1,7 +1,6 @@
 using Ambev.DeveloperEvaluation.Domain.Common;
-using Ambev.DeveloperEvaluation.Domain.Entities;
 
-namespace Ambev.DeveloperEvaluation.Domain.Repositories.Products;
+namespace Ambev.DeveloperEvaluation.Domain.Aggregates.Products.Repositories;
 
 public interface IProductRegistryRepository
 {

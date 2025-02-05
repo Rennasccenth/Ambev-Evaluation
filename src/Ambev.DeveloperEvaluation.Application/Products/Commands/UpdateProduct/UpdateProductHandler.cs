@@ -3,8 +3,8 @@ using AutoMapper;
 using MediatR;
 using Ambev.DeveloperEvaluation.Common.Results;
 using Ambev.DeveloperEvaluation.Common.Errors;
-using Ambev.DeveloperEvaluation.Domain.Entities;
-using Ambev.DeveloperEvaluation.Domain.Repositories.Products;
+using Ambev.DeveloperEvaluation.Domain.Aggregates.Products;
+using Ambev.DeveloperEvaluation.Domain.Aggregates.Products.Repositories;
 using Microsoft.Extensions.Logging;
 
 namespace Ambev.DeveloperEvaluation.Application.Products.Commands.UpdateProduct;

@@ -1,6 +1,6 @@
 using Ambev.DeveloperEvaluation.Common.Options;
-using Ambev.DeveloperEvaluation.Domain.Repositories.Products;
-using Ambev.DeveloperEvaluation.Domain.Repositories.User;
+using Ambev.DeveloperEvaluation.Domain.Aggregates.Products.Repositories;
+using Ambev.DeveloperEvaluation.Domain.Aggregates.Users.Repositories;
 using Ambev.DeveloperEvaluation.ORM.Repositories;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;

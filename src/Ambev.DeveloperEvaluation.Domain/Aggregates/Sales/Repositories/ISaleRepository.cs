@@ -1,7 +1,6 @@
-using Ambev.DeveloperEvaluation.Domain.Aggregates.Sales;
 using Ambev.DeveloperEvaluation.Domain.Common;
 
-namespace Ambev.DeveloperEvaluation.Domain.Repositories.Sales;
+namespace Ambev.DeveloperEvaluation.Domain.Aggregates.Sales.Repositories;
 
 public interface ISaleRepository
 {

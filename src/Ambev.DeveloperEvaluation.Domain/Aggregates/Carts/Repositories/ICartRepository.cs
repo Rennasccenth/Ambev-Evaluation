@@ -1,7 +1,6 @@
-using Ambev.DeveloperEvaluation.Domain.Aggregates.Carts;
 using Ambev.DeveloperEvaluation.Domain.Common;
 
-namespace Ambev.DeveloperEvaluation.Domain.Repositories.Carts;
+namespace Ambev.DeveloperEvaluation.Domain.Aggregates.Carts.Repositories;
 
 public interface ICartRepository
 {

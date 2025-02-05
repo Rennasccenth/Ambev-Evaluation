@@ -1,9 +1,9 @@
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Ambev.DeveloperEvaluation.Domain.Events.Abstractions;
+namespace Ambev.DeveloperEvaluation.Domain.Events;
 
-public static class DependencyInjectionResolver
+public static class EventHandlerIOCResolver
 {
     public static IServiceCollection AddEventHandlers(this IServiceCollection services, params Assembly[] assemblies)
     {

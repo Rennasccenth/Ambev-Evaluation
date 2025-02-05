@@ -1,5 +1,5 @@
-using Ambev.DeveloperEvaluation.Domain.Events.Abstractions;
-using Ambev.DeveloperEvaluation.Domain.Events.Users;
+using Ambev.DeveloperEvaluation.Domain.Aggregates.Users.Events;
+using Ambev.DeveloperEvaluation.Domain.Events;
 using Microsoft.Extensions.Logging;
 
 namespace Ambev.DeveloperEvaluation.Application.Users.Events;

@@ -1,6 +1,6 @@
 using System.Collections;
 using System.Net.Http.Json;
-using Ambev.DeveloperEvaluation.Domain.Enums;
+using Ambev.DeveloperEvaluation.Domain.Aggregates.Users.Enums;
 using Ambev.DeveloperEvaluation.Functional.TestData;
 using Ambev.DeveloperEvaluation.WebApi.Features.Users.Queries.GetUsers;
 using Bogus;

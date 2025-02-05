@@ -1,9 +1,9 @@
 using System.Linq.Expressions;
 using Ambev.DeveloperEvaluation.Application.Products.Exceptions;
 using Ambev.DeveloperEvaluation.Common.Results;
+using Ambev.DeveloperEvaluation.Domain.Aggregates.Products;
+using Ambev.DeveloperEvaluation.Domain.Aggregates.Products.Repositories;
 using Ambev.DeveloperEvaluation.Domain.Common;
-using Ambev.DeveloperEvaluation.Domain.Entities;
-using Ambev.DeveloperEvaluation.Domain.Repositories.Products;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 
