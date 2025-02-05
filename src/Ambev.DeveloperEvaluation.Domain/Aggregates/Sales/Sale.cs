@@ -34,7 +34,7 @@ public sealed class Sale : BaseEntity
         {
             SaleProduct product = Products.First(prod => prod.ProductId == addingProduct.ProductId);
             product.IncreaseQuantity((uint)addingProduct.Quantity);
-            AddDomainEvent(SaleModifiedDomainEvent.Create(this, timeProvider));
+            AddDomainEvent(SaleModifiedEvent.Create(this, timeProvider));
             return this;
         }
 
@@ -44,7 +44,7 @@ public sealed class Sale : BaseEntity
 
     public Sale Sell(TimeProvider timeProvider)
     {
-        AddDomainEvent(SaleTerminatedDomainEvent.Create(this, timeProvider));
+        AddDomainEvent(SaleTerminatedEvent.Create(this, timeProvider));
         TerminationDate = timeProvider.GetUtcNow().DateTime;
         return this;
     }
@@ -52,7 +52,7 @@ public sealed class Sale : BaseEntity
     public static Sale Create(Guid customerId, long saleNumber, string branch, TimeProvider timeProvider)
     {
         Sale creatingSale = new Sale(customerId, saleNumber, branch, timeProvider.GetUtcNow().DateTime);
-        creatingSale.AddDomainEvent(SaleCreatedDomainEvent.Create(creatingSale, timeProvider));
+        creatingSale.AddDomainEvent(SaleCreatedEvent.Create(creatingSale, timeProvider));
         return creatingSale;
     }
 
@@ -69,7 +69,7 @@ public sealed class Sale : BaseEntity
 
         if (anyProductWasCanceled)
         {
-            AddDomainEvent(SaleModifiedDomainEvent.Create(this, timeProvider));
+            AddDomainEvent(SaleModifiedEvent.Create(this, timeProvider));
         }
         // if (products.Count is 0) // The predicate canceled all products! We should cancel the sale? This is a business question
         // {
@@ -87,7 +87,7 @@ public sealed class Sale : BaseEntity
     {
         CanceledDate = timeProvider.GetUtcNow().DateTime;
         CancelProducts(_ => true, timeProvider);
-        AddDomainEvent(SaleCanceledDomainEvent.Create(Id, timeProvider));
+        AddDomainEvent(SaleCanceledEvent.Create(Id, timeProvider));
         return this;
     }
 
@@ -96,7 +96,7 @@ public sealed class Sale : BaseEntity
         if (branch == Branch) return false;
         
         Branch = branch;
-        AddDomainEvent(SaleModifiedDomainEvent.Create(this, timeProvider));
+        AddDomainEvent(SaleModifiedEvent.Create(this, timeProvider));
         return true;
     }
 }
