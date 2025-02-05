@@ -1,5 +1,6 @@
 using Ambev.DeveloperEvaluation.Domain.Aggregates.Carts;
 using Ambev.DeveloperEvaluation.Domain.Aggregates.Carts.Exceptions;
+using Ambev.DeveloperEvaluation.Domain.Aggregates.Carts.Services;
 using Ambev.DeveloperEvaluation.Domain.Aggregates.Carts.Strategies;
 using Ambev.DeveloperEvaluation.Domain.Aggregates.Sales.Exceptions;
 using Ambev.DeveloperEvaluation.Domain.Aggregates.Sales.Repositories;
@@ -15,6 +16,7 @@ public sealed class SalesService : ISalesService
     private readonly ISaleRepository _saleRepository;
     private readonly IDiscountStrategy _discountStrategy;
     private readonly IDomainEventDispatcher _domainEventDispatcher;
+    private readonly ICartsService _cartsService;
     private readonly ILogger<SalesService> _logger;
 
     public SalesService(
@@ -22,12 +24,14 @@ public sealed class SalesService : ISalesService
         ISaleRepository saleRepository,
         IDiscountStrategy discountStrategy,
         IDomainEventDispatcher domainEventDispatcher,
+        ICartsService cartsService,
         ILogger<SalesService> logger)
     {
         _timeProvider = timeProvider;
         _saleRepository = saleRepository;
         _discountStrategy = discountStrategy;
         _domainEventDispatcher = domainEventDispatcher;
+        _cartsService = cartsService;
         _logger = logger;
     }
 
@@ -61,8 +65,7 @@ public sealed class SalesService : ISalesService
         }
 
         Sale createdSale = await _saleRepository.CreateAsync(creatingSale, ct);
-
-        // Dispatch any events
+        await _cartsService.RemoveCartAsync(createdSale.CustomerId, ct);
         await _domainEventDispatcher.DispatchAndClearEventsAsync(createdSale);
 
         _logger.LogInformation("Sale created for customer {CustomerId}", cart.CustomerId);
@@ -95,7 +98,7 @@ public sealed class SalesService : ISalesService
             throw new SaleNotFoundException($"SaleId {saleId} wasn't found.");
         }
         
-        var concludedSale = sale.Cancel(_timeProvider);
+        Sale concludedSale = sale.Sell(_timeProvider);
         await _domainEventDispatcher.DispatchAndClearEventsAsync(concludedSale);
         
         _logger.LogInformation("Sale {SaleId} concluded", saleId);
