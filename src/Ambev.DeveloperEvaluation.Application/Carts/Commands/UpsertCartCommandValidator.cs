@@ -4,9 +4,9 @@ using FluentValidation;
 
 namespace Ambev.DeveloperEvaluation.Application.Carts.Commands;
 
-public sealed class CreateCartCommandValidator : AbstractValidator<CreateCartCommand>
+public sealed class UpsertCartCommandValidator : AbstractValidator<UpsertCartCommand>
 {
-    public CreateCartCommandValidator(IValidator<ProductSummary> productSummaryValidator, IUserContext userContext)
+    public UpsertCartCommandValidator(IValidator<ProductSummary> productSummaryValidator, IUserContext userContext)
     {
         if (userContext.IsAuthenticated)
         {

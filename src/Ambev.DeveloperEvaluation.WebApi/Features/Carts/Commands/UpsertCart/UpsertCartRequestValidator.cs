@@ -2,11 +2,11 @@ using Ambev.DeveloperEvaluation.Common.Security;
 using Ambev.DeveloperEvaluation.WebApi.Features.Carts.Common;
 using FluentValidation;
 
-namespace Ambev.DeveloperEvaluation.WebApi.Features.Carts.Commands.CreateCart;
+namespace Ambev.DeveloperEvaluation.WebApi.Features.Carts.Commands.UpsertCart;
 
-public sealed class CreateCartRequestValidator : AbstractValidator<CreateCartRequest>
+public sealed class UpsertCartRequestValidator : AbstractValidator<UpsertCartRequest>
 {
-    public CreateCartRequestValidator(
+    public UpsertCartRequestValidator(
         IValidator<ProductQuantifier> childValidator,
         IUserContext userContext)
     {

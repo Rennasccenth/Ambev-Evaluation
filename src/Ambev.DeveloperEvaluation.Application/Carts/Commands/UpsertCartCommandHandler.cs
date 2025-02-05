@@ -8,28 +8,28 @@ using Microsoft.Extensions.Logging;
 
 namespace Ambev.DeveloperEvaluation.Application.Carts.Commands;
 
-public sealed class CreateCartCommandHandler : IRequestHandler<CreateCartCommand, ApplicationResult<CartResult>>
+public sealed class UpsertCartCommandHandler : IRequestHandler<UpsertCartCommand, ApplicationResult<CartResult>>
 {
     private readonly ICartsService _cartService;
     private readonly IMapper _mapper;
-    private readonly ILogger<CreateCartCommandHandler> _logger;
+    private readonly ILogger<UpsertCartCommandHandler> _logger;
 
-    public CreateCartCommandHandler(ICartsService cartService, IMapper mapper, ILogger<CreateCartCommandHandler> logger)
+    public UpsertCartCommandHandler(ICartsService cartService, IMapper mapper, ILogger<UpsertCartCommandHandler> logger)
     {
         _cartService = cartService;
         _mapper = mapper;
         _logger = logger;
     }
 
-    public async Task<ApplicationResult<CartResult>> Handle(CreateCartCommand request, CancellationToken cancellationToken)
+    public async Task<ApplicationResult<CartResult>> Handle(UpsertCartCommand request, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Creating cart for user {UserId}", request.UserId);
+        _logger.LogInformation("Upserting cart for user {UserId}", request.UserId);
         
         var productQuantityRelation = request.Products.Select(p => new { p.ProductId, p.Quantity})
             .ToDictionary(p => p.ProductId, p => (uint)p.Quantity);
         Cart updatedCart = await _cartService.UpsertCartProductsAsync(request.UserId, productQuantityRelation, cancellationToken);
 
-        _logger.LogInformation("Cart created for user {UserId}", request.UserId);
+        _logger.LogInformation("Cart upserted for user {UserId}", request.UserId);
         return _mapper.Map<CartResult>(updatedCart);
     }
 }

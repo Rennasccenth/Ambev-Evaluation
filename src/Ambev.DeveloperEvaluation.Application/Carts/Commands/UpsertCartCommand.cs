@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Ambev.DeveloperEvaluation.Application.Carts.Commands;
 
-public sealed class CreateCartCommand : IRequest<ApplicationResult<CartResult>>
+public sealed class UpsertCartCommand : IRequest<ApplicationResult<CartResult>>
 {
     public required Guid UserId { get; init; }
     public required string Date { get; init; }
