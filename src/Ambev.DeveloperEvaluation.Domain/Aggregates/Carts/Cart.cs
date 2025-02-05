@@ -4,21 +4,23 @@ namespace Ambev.DeveloperEvaluation.Domain.Aggregates.Carts;
 
 public sealed class Cart : BaseEntity
 {
+    public Guid CustomerId { get; init; }
     public DateTime Date { get; init; }
     public List<CartProduct> Products { get; init; } = [];
-    public Guid CustomerId => Id;
 
     internal Cart() { }
 
     public Cart(Guid userId, DateTime date)
     {
-        Id = userId;
+        Id = Guid.NewGuid();
+        CustomerId = userId;
         Date = date;
     }
 
     public Cart(Guid userId, DateTime date, List<CartProduct> products)
     {
-        Id = userId;
+        Id = Guid.NewGuid();
+        CustomerId = userId;
         Date = date;
         Products = products;
     }
