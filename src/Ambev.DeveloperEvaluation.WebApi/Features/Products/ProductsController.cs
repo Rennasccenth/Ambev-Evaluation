@@ -17,6 +17,7 @@ using AutoMapper;
 using FluentValidation;
 using FluentValidation.Results;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Products;
@@ -76,6 +77,7 @@ public class ProductsController : BaseController
     }
 
     [HttpPost]
+    [Authorize]
     [ProducesResponseType(typeof(CreateProductResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
@@ -96,6 +98,7 @@ public class ProductsController : BaseController
             onFailure: HandleKnownError);
     }
 
+    [Authorize]
     [HttpPut("{id:guid}")]
     [ProducesResponseType(typeof(UpdateProductResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
@@ -116,6 +119,7 @@ public class ProductsController : BaseController
             onFailure: HandleKnownError);
     }
 
+    [Authorize]
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
