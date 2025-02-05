@@ -70,4 +70,4 @@ Accept: application/json
 
 ### Delete User by ID
 DELETE {{host}}/api/Users/{{user_id}}
-#Authorization: Bearer {{auth_token}}
+Authorization: Bearer {{auth_token}}
