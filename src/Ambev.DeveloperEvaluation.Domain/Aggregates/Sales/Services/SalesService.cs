@@ -17,6 +17,7 @@ public sealed class SalesService : ISalesService
     private readonly IDiscountStrategy _discountStrategy;
     private readonly IDomainEventDispatcher _domainEventDispatcher;
     private readonly ICartsService _cartsService;
+    private readonly ISalesCounter _salesCounter;
     private readonly ILogger<SalesService> _logger;
 
     public SalesService(
@@ -25,6 +26,7 @@ public sealed class SalesService : ISalesService
         IDiscountStrategy discountStrategy,
         IDomainEventDispatcher domainEventDispatcher,
         ICartsService cartsService,
+        ISalesCounter salesCounter,
         ILogger<SalesService> logger)
     {
         _timeProvider = timeProvider;
@@ -32,6 +34,7 @@ public sealed class SalesService : ISalesService
         _discountStrategy = discountStrategy;
         _domainEventDispatcher = domainEventDispatcher;
         _cartsService = cartsService;
+        _salesCounter = salesCounter;
         _logger = logger;
     }
 
@@ -45,14 +48,15 @@ public sealed class SalesService : ISalesService
         _logger.LogInformation("Creating sale for customer {CustomerId}", cart.CustomerId);
         
         var productsUnitPrices = await productPriceResolver.ResolveProductsUnitPriceAsync(cart.Products.Select(p => p.ProductId), ct);
-        List<SaleProduct> sellingProducts = [];
 
         if (!specification.IsSatisfiedBy(cart))
         {
             throw new CartValidationException("Cart is invalid.");
         }
 
-        Sale creatingSale = Sale.Create(cart.CustomerId, branch, _timeProvider);
+        long salesCounter = await _salesCounter.GetNextSaleNumberAsync(ct);
+        Sale creatingSale = Sale.Create(cart.CustomerId, salesCounter, branch, _timeProvider);
+
         // Convert all products in the cart to sale products.
         foreach ((Guid productId, var unitPrice) in productsUnitPrices)
         {

@@ -6,7 +6,7 @@ namespace Ambev.DeveloperEvaluation.Domain.Aggregates.Sales;
 public sealed class Sale : BaseEntity
 {
     public Guid CustomerId { get; init; }
-    public int Number { get; set; }
+    public long Number { get; set; }
     public DateTime? CreatedDate { get; private set; }
     public DateTime? TerminationDate { get; private set; }
     public DateTime? CanceledDate { get; private set; }
@@ -19,8 +19,9 @@ public sealed class Sale : BaseEntity
     
     internal Sale() { }
 
-    private Sale(Guid customerId, string branch, DateTime createdDate)
+    private Sale(Guid customerId, long saleNumber, string branch, DateTime createdDate)
     {
+        Number = saleNumber;
         Id = Guid.NewGuid();
         CreatedDate = createdDate;
         CustomerId = customerId;
@@ -48,9 +49,9 @@ public sealed class Sale : BaseEntity
         return this;
     }
 
-    public static Sale Create(Guid customerId, string branch, TimeProvider timeProvider)
+    public static Sale Create(Guid customerId, long saleNumber, string branch, TimeProvider timeProvider)
     {
-        Sale creatingSale = new Sale(customerId, branch, timeProvider.GetUtcNow().DateTime);
+        Sale creatingSale = new Sale(customerId, saleNumber, branch, timeProvider.GetUtcNow().DateTime);
         creatingSale.AddDomainEvent(SaleCreatedDomainEvent.Create(creatingSale, timeProvider));
         return creatingSale;
     }
