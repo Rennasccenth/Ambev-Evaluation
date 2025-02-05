@@ -1,4 +1,4 @@
-using Ambev.DeveloperEvaluation.Domain.Entities;
+using Ambev.DeveloperEvaluation.Domain.Aggregates.Products;
 using Ambev.DeveloperEvaluation.Domain.ValueObjects;
 using Ambev.DeveloperEvaluation.Functional.TestCollections;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.Commands.CreateProduct;

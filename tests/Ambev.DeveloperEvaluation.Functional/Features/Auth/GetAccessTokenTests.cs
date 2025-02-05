@@ -1,6 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
-using Ambev.DeveloperEvaluation.Domain.Enums;
+using Ambev.DeveloperEvaluation.Domain.Aggregates.Users.Enums;
 using Ambev.DeveloperEvaluation.Functional.Features.Users;
 using Ambev.DeveloperEvaluation.WebApi.Features.Auth.AuthenticateUser;
 using Ambev.DeveloperEvaluation.WebApi.Features.Users.Commands.CreateUser;

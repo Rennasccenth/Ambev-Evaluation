@@ -1,8 +1,8 @@
 using Ambev.DeveloperEvaluation.Application.Products.Exceptions;
 using Ambev.DeveloperEvaluation.Common.Errors;
 using Ambev.DeveloperEvaluation.Common.Results;
-using Ambev.DeveloperEvaluation.Domain.Entities;
-using Ambev.DeveloperEvaluation.Domain.Repositories.Products;
+using Ambev.DeveloperEvaluation.Domain.Aggregates.Products;
+using Ambev.DeveloperEvaluation.Domain.Aggregates.Products.Repositories;
 using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -11,13 +11,13 @@ namespace Ambev.DeveloperEvaluation.Application.Products.Commands.CreateProduct;
 
 public sealed class CreateProductCommandHandler : IRequestHandler<CreateProductCommand, ApplicationResult<CreateProductCommandResult>>
 {
-    private readonly IProductRepository _productRepository;
+    private readonly IProductRegistryRepository _productRegistryRepository;
     private readonly IMapper _mapper;
     private readonly ILogger<CreateProductCommandHandler> _logger;
 
-    public CreateProductCommandHandler(IProductRepository productRepository, IMapper mapper, ILogger<CreateProductCommandHandler> logger)
+    public CreateProductCommandHandler(IProductRegistryRepository productRegistryRepository, IMapper mapper, ILogger<CreateProductCommandHandler> logger)
     {
-        _productRepository = productRepository;
+        _productRegistryRepository = productRegistryRepository;
         _mapper = mapper;
         _logger = logger;
     }
@@ -29,7 +29,7 @@ public sealed class CreateProductCommandHandler : IRequestHandler<CreateProductC
         Product storedProduct;
         try
         {
-             storedProduct = await _productRepository.CreateAsync(creatingProduct, cancellationToken);
+             storedProduct = await _productRegistryRepository.CreateAsync(creatingProduct, cancellationToken);
         }
         catch (DuplicatedProductException e)
         {

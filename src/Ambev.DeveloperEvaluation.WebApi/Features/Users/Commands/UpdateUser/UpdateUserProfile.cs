@@ -1,6 +1,6 @@
 using System.ComponentModel;
 using Ambev.DeveloperEvaluation.Application.Users.Commands.UpdateUser;
-using Ambev.DeveloperEvaluation.Domain.Enums;
+using Ambev.DeveloperEvaluation.Domain.Aggregates.Users.Enums;
 using Ambev.DeveloperEvaluation.Domain.ValueObjects;
 using AutoMapper;
 

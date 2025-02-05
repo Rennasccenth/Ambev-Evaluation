@@ -1,6 +1,6 @@
 using System.Text.Json;
-using Ambev.DeveloperEvaluation.Domain.Events.Abstractions;
-using Ambev.DeveloperEvaluation.Domain.Events.Products;
+using Ambev.DeveloperEvaluation.Domain.Aggregates.Products.Events;
+using Ambev.DeveloperEvaluation.Domain.Events;
 using Microsoft.Extensions.Logging;
 
 namespace Ambev.DeveloperEvaluation.Application.Products.Events;

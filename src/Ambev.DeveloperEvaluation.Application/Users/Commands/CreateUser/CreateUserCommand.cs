@@ -1,5 +1,5 @@
 ﻿using Ambev.DeveloperEvaluation.Common.Results;
-using Ambev.DeveloperEvaluation.Domain.Enums;
+using Ambev.DeveloperEvaluation.Domain.Aggregates.Users.Enums;
 using Ambev.DeveloperEvaluation.Domain.ValueObjects;
 using MediatR;
 

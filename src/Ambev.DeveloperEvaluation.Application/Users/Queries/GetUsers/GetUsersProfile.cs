@@ -1,6 +1,6 @@
+using Ambev.DeveloperEvaluation.Domain.Aggregates.Users;
+using Ambev.DeveloperEvaluation.Domain.Aggregates.Users.Repositories;
 using Ambev.DeveloperEvaluation.Domain.Common;
-using Ambev.DeveloperEvaluation.Domain.Entities;
-using Ambev.DeveloperEvaluation.Domain.Repositories.User;
 using AutoMapper;
 
 namespace Ambev.DeveloperEvaluation.Application.Users.Queries.GetUsers;

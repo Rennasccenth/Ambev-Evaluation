@@ -1,4 +1,4 @@
-using Ambev.DeveloperEvaluation.Domain.Enums;
+using Ambev.DeveloperEvaluation.Domain.Aggregates.Users.Enums;
 using FluentValidation;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Users.Queries.GetUsers;

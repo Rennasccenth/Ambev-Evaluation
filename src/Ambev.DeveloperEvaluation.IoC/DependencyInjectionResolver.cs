@@ -1,6 +1,8 @@
 ﻿using Ambev.DeveloperEvaluation.Application;
 using Ambev.DeveloperEvaluation.Domain;
+using Ambev.DeveloperEvaluation.MongoDB;
 using Ambev.DeveloperEvaluation.ORM;
+using Ambev.DeveloperEvaluation.Redis;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Ambev.DeveloperEvaluation.IoC;
@@ -13,7 +15,9 @@ public static class DependencyInjectionResolver
     public static void RegisterDependenciesServices(this IServiceCollection serviceCollection)
     {
         serviceCollection
-            .InstallInfrastructureLayer()
+            .InstallRedisInfrastructure()
+            .InstallMongoDbInfrastructure()
+            .InstallPostgreSqlInfrastructure()
             .InstallApplicationLayer()
             .InstallDomainServices();
     }

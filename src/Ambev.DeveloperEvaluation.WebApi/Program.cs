@@ -1,5 +1,6 @@
 using Ambev.DeveloperEvaluation.Common.HealthChecks;
 using Ambev.DeveloperEvaluation.Common.Logging;
+using Ambev.DeveloperEvaluation.Common.Monitoring;
 using Ambev.DeveloperEvaluation.IoC;
 
 namespace Ambev.DeveloperEvaluation.WebApi;
@@ -11,10 +12,12 @@ public sealed class Program
         try
         {
             WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-            builder.AddDefaultLogging();
+            builder
+                .ConfigureSerilog()
+                .ConfigureOpenTelemetry();
 
             builder.Services
-                .InstallApiDependencies()
+                .InstallApiDependencies(builder.Configuration)
                 .RegisterDependenciesServices();
 
             WebApplication app = builder.Build();
@@ -23,6 +26,7 @@ public sealed class Program
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
+                app.UseOpenApiDocumentation();
             }
 
             app.UseExceptionHandler();

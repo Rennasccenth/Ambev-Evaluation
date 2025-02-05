@@ -1,5 +1,5 @@
 using Ambev.DeveloperEvaluation.Common.Results;
-using Ambev.DeveloperEvaluation.Domain.Repositories.User;
+using Ambev.DeveloperEvaluation.Domain.Aggregates.Users.Repositories;
 using AutoMapper;
 using MediatR;
 

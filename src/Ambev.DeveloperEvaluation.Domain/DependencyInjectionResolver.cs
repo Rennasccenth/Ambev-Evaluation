@@ -1,4 +1,7 @@
 using System.Reflection;
+using Ambev.DeveloperEvaluation.Domain.Aggregates.Carts.Services;
+using Ambev.DeveloperEvaluation.Domain.Aggregates.Carts.Strategies;
+using Ambev.DeveloperEvaluation.Domain.Aggregates.Sales.Services;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -11,6 +14,11 @@ public static class DependencyInjectionResolver
         serviceCollection.AddValidatorsFromAssembly(
             assembly: Assembly.GetExecutingAssembly(),
             includeInternalTypes: true);
+
+        serviceCollection.AddScoped<ISalesService, SalesService>();
+        serviceCollection.AddScoped<ICartsService, CartsService>();
+        serviceCollection.AddScoped<IProductPriceResolver, ProductPriceResolver>();
+        serviceCollection.AddScoped<IDiscountStrategy, ItemQuantity>();
 
         return serviceCollection;
     }

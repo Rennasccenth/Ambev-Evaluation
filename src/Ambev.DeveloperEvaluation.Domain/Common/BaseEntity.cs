@@ -1,6 +1,5 @@
 ﻿using Ambev.DeveloperEvaluation.Common.Validation;
 using Ambev.DeveloperEvaluation.Domain.Events;
-using Ambev.DeveloperEvaluation.Domain.Events.Abstractions;
 
 namespace Ambev.DeveloperEvaluation.Domain.Common;
 

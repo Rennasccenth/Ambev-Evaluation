@@ -1,6 +1,6 @@
 using System.ComponentModel;
 using Ambev.DeveloperEvaluation.Application.Users.Queries.GetUser;
-using Ambev.DeveloperEvaluation.Domain.Enums;
+using Ambev.DeveloperEvaluation.Domain.Aggregates.Users.Enums;
 using AutoMapper;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Users.Queries.GetUser;
