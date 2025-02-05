@@ -56,6 +56,7 @@ This project uses Docker Compose for local development. Follow the steps below t
 - [x] Test suit. Theres a robust test suit for the project, that runs a mirror application. Basically we run the app withot expose any port, so we can execute any request while access internal components of the running app (like all services registered in the DI!).
 
 - [x] Database Respawning. To ensure every test runs isolated from others, we reset the databases (mongo and psql for now) to a known state every time a test runs.  
+- [x] Handle Sale events. Even that for now not all them are being fired. (Cancelation and termination are also related to Inventory, which I didn't manage to implement)
 - [x] Added Open Telemetry support. Currently we have a initial setup for OTEL. The Aspire dashboard can be acessed at localhost:18888, assuming you ran the docker compose.
 
 <img width="299" alt="image" src="https://github.com/user-attachments/assets/2cf2f991-b975-4b6d-877c-bbeece741cef" />
