@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Ambev.DeveloperEvaluation.ORM.Migrations
+namespace Ambev.DeveloperEvaluation.PostgreSQL.Migrations
 {
     /// <inheritdoc />
     public partial class ChangeUpdatedAtSQLType : Migration

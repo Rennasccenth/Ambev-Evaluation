@@ -5,7 +5,7 @@ using Ambev.DeveloperEvaluation.Domain.Aggregates.Users.Repositories;
 using Ambev.DeveloperEvaluation.Domain.Common;
 using Microsoft.EntityFrameworkCore;
 
-namespace Ambev.DeveloperEvaluation.ORM.Repositories;
+namespace Ambev.DeveloperEvaluation.PostgreSQL.Repositories;
 
 public class UserRepository : IUserRepository
 {

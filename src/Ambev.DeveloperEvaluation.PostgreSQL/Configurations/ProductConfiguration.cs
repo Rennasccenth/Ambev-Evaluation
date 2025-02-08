@@ -2,7 +2,7 @@ using Ambev.DeveloperEvaluation.Domain.Aggregates.Products;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Ambev.DeveloperEvaluation.ORM.Configurations;
+namespace Ambev.DeveloperEvaluation.PostgreSQL.Configurations;
 
 public sealed class ProductConfiguration : IEntityTypeConfiguration<Product>
 {

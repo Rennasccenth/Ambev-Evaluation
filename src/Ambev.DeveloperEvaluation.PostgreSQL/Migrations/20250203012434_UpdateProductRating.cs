@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace Ambev.DeveloperEvaluation.ORM.Migrations
+namespace Ambev.DeveloperEvaluation.PostgreSQL.Migrations
 {
     /// <inheritdoc />
     public partial class UpdateProductRating : Migration

@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace Ambev.DeveloperEvaluation.ORM.Configurations.ValueConverters;
+namespace Ambev.DeveloperEvaluation.PostgreSQL.Configurations.ValueConverters;
 
 public sealed class DateTimeValueConverter : ValueConverter<DateTime, DateTime>
 {

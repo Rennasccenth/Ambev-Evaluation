@@ -1,6 +1,6 @@
 using System.Data.Common;
 using Ambev.DeveloperEvaluation.MongoDB;
-using Ambev.DeveloperEvaluation.ORM;
+using Ambev.DeveloperEvaluation.PostgreSQL;
 using Ambev.DeveloperEvaluation.WebApi;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;

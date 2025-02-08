@@ -1,7 +1,7 @@
 using Ambev.DeveloperEvaluation.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace Ambev.DeveloperEvaluation.ORM.Configurations.ValueConverters;
+namespace Ambev.DeveloperEvaluation.PostgreSQL.Configurations.ValueConverters;
 
 internal sealed class PhoneConverter : ValueConverter<Phone, string>
 {

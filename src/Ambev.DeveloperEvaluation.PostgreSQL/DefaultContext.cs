@@ -1,11 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.Reflection;
+﻿using System.Reflection;
 using Ambev.DeveloperEvaluation.Domain.Aggregates.Products;
 using Ambev.DeveloperEvaluation.Domain.Aggregates.Users;
 using Ambev.DeveloperEvaluation.Domain.Events;
-using Ambev.DeveloperEvaluation.ORM.Interceptors;
+using Ambev.DeveloperEvaluation.PostgreSQL.Interceptors;
+using Microsoft.EntityFrameworkCore;
 
-namespace Ambev.DeveloperEvaluation.ORM;
+namespace Ambev.DeveloperEvaluation.PostgreSQL;
 
 public class DefaultContext : DbContext
 {

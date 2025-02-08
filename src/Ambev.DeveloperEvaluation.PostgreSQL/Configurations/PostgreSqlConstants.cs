@@ -1,4 +1,4 @@
-namespace Ambev.DeveloperEvaluation.ORM.Configurations;
+namespace Ambev.DeveloperEvaluation.PostgreSQL.Configurations;
 
 internal static class PostgreSqlConstants
 {

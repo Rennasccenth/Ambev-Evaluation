@@ -7,7 +7,7 @@ using Ambev.DeveloperEvaluation.Domain.Common;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 
-namespace Ambev.DeveloperEvaluation.ORM.Repositories;
+namespace Ambev.DeveloperEvaluation.PostgreSQL.Repositories;
 
 internal sealed class ProductRegistryRepository : IProductRegistryRepository
 {
