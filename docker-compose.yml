@@ -79,30 +79,12 @@ services:
     networks:
       - ambev_network
 
-#  ambev-developer-evaluation-otel-collector:
-#    image: otel/opentelemetry-collector-contrib:latest
-#    container_name: ambev-developer-evaluation-otel-collector
-#    restart: unless-stopped
-#    command: [ "--config=/etc/ambev-developer-evaluation-otel-collector-config.yaml" ]
-#    volumes:
-#      - ./ambev-developer-evaluation-otel-collector-config.yaml:/etc/otel-collector-config.yaml
-#    ports:
-#      - "4317:4317" # OTLP gRPC
-#      - "4318:4318" # OTLP HTTP
-#    networks:
-#      - ambev_network
-#    depends_on:
-#      - ambev-developer-evaluation-seq
-
   ambev-developer-evaluation-seq:
     image: datalust/seq:latest
     container_name: ambev-developer-evaluation-seq
     ports:
-#      - "18888:18888"
-      - "5555:80" 
-      - "5454:5341"      # Web UI/API
-#      - "4317:4317"      # OTLP/gRPC
-#      - "4318:4318"      # OTLP/HTTP
+      - "5555:80"
+      - "5454:5341"
     environment:
       ACCEPT_EULA: Y
       SEQ_FEATURES_OPENTELEMETRYINGEST: Enabled
