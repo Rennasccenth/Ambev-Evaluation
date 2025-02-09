@@ -1,5 +1,9 @@
+using Ambev.DeveloperEvaluation.Common.Errors;
+using Ambev.DeveloperEvaluation.Common.Results;
+using Ambev.DeveloperEvaluation.Common.Security;
 using Ambev.DeveloperEvaluation.Domain.Aggregates.Carts;
 using Ambev.DeveloperEvaluation.Domain.Aggregates.Carts.Exceptions;
+using Ambev.DeveloperEvaluation.Domain.Aggregates.Carts.Repositories;
 using Ambev.DeveloperEvaluation.Domain.Aggregates.Carts.Services;
 using Ambev.DeveloperEvaluation.Domain.Aggregates.Carts.Strategies;
 using Ambev.DeveloperEvaluation.Domain.Aggregates.Sales.Exceptions;
@@ -16,7 +20,8 @@ public sealed class SalesService : ISalesService
     private readonly ISaleRepository _saleRepository;
     private readonly IDiscountStrategy _discountStrategy;
     private readonly IDomainEventDispatcher _domainEventDispatcher;
-    private readonly ICartsService _cartsService;
+    private readonly ICartRepository _cartRepository;
+    private readonly IUserContext _userContext;
     private readonly ISalesCounter _salesCounter;
     private readonly ILogger<SalesService> _logger;
 
@@ -25,37 +30,60 @@ public sealed class SalesService : ISalesService
         ISaleRepository saleRepository,
         IDiscountStrategy discountStrategy,
         IDomainEventDispatcher domainEventDispatcher,
-        ICartsService cartsService,
         ISalesCounter salesCounter,
-        ILogger<SalesService> logger)
+        ILogger<SalesService> logger,
+        ICartRepository cartRepository,
+        IUserContext userContext)
     {
         _timeProvider = timeProvider;
         _saleRepository = saleRepository;
         _discountStrategy = discountStrategy;
         _domainEventDispatcher = domainEventDispatcher;
-        _cartsService = cartsService;
         _salesCounter = salesCounter;
         _logger = logger;
+        _cartRepository = cartRepository;
+        _userContext = userContext;
     }
 
-    public async Task<Sale> CreateSaleAsync(
+    public async Task<ApplicationResult<Sale>> CreateSaleAsync(
         Cart cart,
         string branch,
         IProductPriceResolver productPriceResolver,
         ISpecification<Cart>? specification = null,
         CancellationToken ct = default)
     {
-        _logger.LogInformation("Creating sale for customer {CustomerId}", cart.CustomerId);
+        _logger.LogInformation("Creating sale for customer {CustomerId}", cart.UserId);
         
-        var productsUnitPrices = await productPriceResolver.ResolveProductsUnitPriceAsync(cart.Products.Select(p => p.ProductId), ct);
+        var productsUnitPrices = await productPriceResolver
+            .ResolveProductsUnitPriceAsync(cart.Products.Select(p => p.ProductId), ct);
 
         if (specification is not null && !specification.IsSatisfiedBy(cart))
         {
-            throw new CartValidationException("Cart is invalid.");
+            return ApplicationError.UnprocessableError("Cart item limit was exceeded.");
+        }
+
+        if (_userContext.IsAuthenticated is false)
+        {
+            return ApplicationError.UnprocessableError("Cannot create a sale for a non logged user.");
+        }
+
+        if(_userContext.UserId != cart.UserId)
+        {
+            return ApplicationError.UnprocessableError("User must be the owner of the cart used to create the sale.");
+        }
+
+        if (cart.Products.Count == 0)
+        {
+            return ApplicationError.UnprocessableError("Cannot create a sale with no products.");
+        }
+
+        if (cart.UserId is null)
+        {
+            return ApplicationError.UnprocessableError("The cart must have a user associated with.");
         }
 
         long salesCounter = await _salesCounter.GetNextSaleNumberAsync(ct);
-        Sale creatingSale = Sale.Create(cart.CustomerId, salesCounter, branch, _timeProvider);
+        Sale creatingSale = Sale.Create(cart.UserId.Value, salesCounter, branch, _timeProvider);
 
         // Convert all products in the cart to sale products.
         foreach ((Guid productId, var unitPrice) in productsUnitPrices)
@@ -69,10 +97,10 @@ public sealed class SalesService : ISalesService
         }
 
         Sale createdSale = await _saleRepository.CreateAsync(creatingSale, ct);
-        await _cartsService.RemoveCartAsync(createdSale.CustomerId, ct);
+        await _cartRepository.DeleteAsync(cart.Id, ct);
         await _domainEventDispatcher.DispatchAndClearEventsAsync(createdSale);
 
-        _logger.LogInformation("Sale created for customer {CustomerId}", cart.CustomerId);
+        _logger.LogInformation("Sale created for customer {CustomerId}", cart.UserId);
         return createdSale;
     }
 

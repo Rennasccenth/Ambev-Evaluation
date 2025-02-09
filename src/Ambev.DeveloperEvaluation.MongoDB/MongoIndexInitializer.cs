@@ -41,7 +41,7 @@ internal sealed class MongoIndexInitializer : IHostedService
     {
         var collection = _database.GetCollection<Cart>(GetCollectionName(typeof(Cart)));
         
-        var userIdIndex = Builders<Cart>.IndexKeys.Ascending(x => x.CustomerId);
+        var userIdIndex = Builders<Cart>.IndexKeys.Ascending(x => x.UserId);
 
         CreateIndexOptions indexOptions = new()
         {

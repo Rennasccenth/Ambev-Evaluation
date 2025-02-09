@@ -1,6 +1,8 @@
 using Ambev.DeveloperEvaluation.Domain.Aggregates.Carts;
+using Ambev.DeveloperEvaluation.Domain.Aggregates.Carts.Exceptions;
 using Ambev.DeveloperEvaluation.Domain.Aggregates.Carts.Repositories;
 using Ambev.DeveloperEvaluation.Domain.Common;
+using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 
 namespace Ambev.DeveloperEvaluation.MongoDB.Repositories;
@@ -8,15 +10,26 @@ namespace Ambev.DeveloperEvaluation.MongoDB.Repositories;
 public sealed class CartRepository : ICartRepository
 {
     private readonly IMongoCollection<Cart> _cartCollection;
+    private readonly ILogger<CartRepository> _logger;
 
-    public CartRepository(IMongoCollection<Cart> cartCollection)
+    public CartRepository(IMongoCollection<Cart> cartCollection, ILogger<CartRepository> logger)
     {
         _cartCollection = cartCollection;
+        _logger = logger;
     }
 
     public async Task<Cart?> FindByUserIdAsync(Guid userId, CancellationToken ct)
     {
-        var filter = Builders<Cart>.Filter.Eq(cart => cart.CustomerId, userId);
+        var filter = Builders<Cart>.Filter.Eq(cart => cart.UserId, userId);
+        
+        Cart? foundCart = await _cartCollection.Find(filter).FirstOrDefaultAsync(ct);
+
+        return foundCart;
+    }
+
+    public async Task<Cart?> FindByCartIdAsync(Guid cartId, CancellationToken ct)
+    {
+        var filter = Builders<Cart>.Filter.Eq(cart => cart.Id, cartId);
         
         Cart? foundCart = await _cartCollection.Find(filter).FirstOrDefaultAsync(ct);
 
@@ -30,7 +43,7 @@ public sealed class CartRepository : ICartRepository
     
     public async Task<bool> DeleteAsync(Guid userId, CancellationToken ct)
     {
-        var filter = Builders<Cart>.Filter.Eq(cart => cart.CustomerId, userId);
+        var filter = Builders<Cart>.Filter.Eq(cart => cart.UserId, userId);
         DeleteResult deleteResult = await _cartCollection.DeleteOneAsync(filter, ct);
         return deleteResult.DeletedCount == 1;
     }
@@ -44,7 +57,7 @@ public sealed class CartRepository : ICartRepository
 
         var filter = Builders<Cart>.Filter.Eq(cart => cart.Id, upsertingCart.Id);
         var update = Builders<Cart>.Update
-            .Set(cart => cart.CustomerId, upsertingCart.CustomerId)
+            .Set(cart => cart.UserId, upsertingCart.UserId)
             .Set(cart => cart.Products, upsertingCart.Products)
             .Set(cart => cart.Date, upsertingCart.Date);
 
@@ -53,5 +66,25 @@ public sealed class CartRepository : ICartRepository
         await _cartCollection.UpdateOneAsync(filter, update, options, ct);
 
         return upsertingCart;
+    }
+
+    public async Task<Cart> CreateAsync(Cart newCart, CancellationToken ct = default)
+    {
+        var insertOptions = new InsertOneOptions
+        {
+            BypassDocumentValidation = true
+        };
+
+        try
+        {
+            await _cartCollection.InsertOneAsync(newCart, insertOptions, ct);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError("Exception occurred when inserting a Cart: {ExceptionName} with message {ExceptionMessage}", e.GetType().Name, e.Message);
+            throw new DuplicatedCartException($"CartId {newCart.Id} already exists.", e);
+        }
+        
+        return newCart;
     }
 }
