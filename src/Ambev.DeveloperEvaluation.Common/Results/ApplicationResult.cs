@@ -37,7 +37,20 @@ public class ApplicationResult<T> : IApplicationResult
             return onFailure(Error);
 
         // This should never occur due class design construction.
-        throw new InvalidOperationException("CommandResult is neither success nor failure");
+        throw new InvalidOperationException("Result is neither success nor failure");
+    }
+
+    public Task<TResult> MatchAsync<TResult>(
+        Func<T, Task<TResult>> onSuccess,
+        Func<ApplicationError, TResult> onFailure)
+    {
+        if (Data is not null)
+            return onSuccess(Data);
+        if (Error is not null)
+            return Task.FromResult(onFailure(Error));
+
+        // This should never occur due class design construction.
+        throw new InvalidOperationException("Result is neither success nor failure");
     }
 }
 

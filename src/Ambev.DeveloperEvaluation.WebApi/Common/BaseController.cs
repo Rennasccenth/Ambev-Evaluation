@@ -66,6 +66,12 @@ public class BaseController : ControllerBase
                 title: ReasonPhrases.GetReasonPhrase(StatusCodes.Status401Unauthorized),
                 type: nameof(UnauthorizedAccessError)
             ),
+            UnprocessableError unprocessableError => Problem(
+                detail: unprocessableError.Message,
+                statusCode: StatusCodes.Status422UnprocessableEntity,
+                title: ReasonPhrases.GetReasonPhrase(StatusCodes.Status422UnprocessableEntity),
+                type: nameof(UnprocessableError)
+            ),
             _ => Problem(
                 detail: applicationError.Message,
                 statusCode: StatusCodes.Status500InternalServerError,
