@@ -1,6 +1,7 @@
 using System.Data.Common;
 using Ambev.DeveloperEvaluation.MongoDB;
 using Ambev.DeveloperEvaluation.PostgreSQL;
+using Ambev.DeveloperEvaluation.Redis;
 using Ambev.DeveloperEvaluation.WebApi;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -12,6 +13,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Time.Testing;
 using MongoDB.Driver;
 using Respawn;
+using StackExchange.Redis;
 using Testcontainers.MongoDb;
 using Testcontainers.PostgreSql;
 using Testcontainers.Redis;
@@ -82,7 +84,15 @@ public sealed class DeveloperEvaluationWebApplicationFactory
                 .RemoveAll<IMongoClient>()
                 .AddSingleton<IMongoClient>(_ => new MongoClient(_mongoDbContainer.GetConnectionString()));
 
-            collection.AddTransient<HttpClient>(_ => CreateClient());
+            // Remove the actual Redis client.
+            collection
+                .RemoveAll<IConnectionMultiplexer>()
+                .AddSingleton<IConnectionMultiplexer>(_ =>
+                {
+                    var connectionString = _redisContainer.GetConnectionString();
+                    var configurationOptions = ConfigurationOptions.Parse(connectionString);
+                    return ConnectionMultiplexer.Connect(configurationOptions);
+                });
         });
     }
 
@@ -90,7 +100,8 @@ public sealed class DeveloperEvaluationWebApplicationFactory
     {
         List<Task> containerSpinUpTasks = [
             _postgreSqlContainer.StartAsync(),
-            _mongoDbContainer.StartAsync()
+            _mongoDbContainer.StartAsync(),
+            _redisContainer.StartAsync()
         ];
 
         await Task.WhenAll(containerSpinUpTasks);
@@ -105,7 +116,8 @@ public sealed class DeveloperEvaluationWebApplicationFactory
     {
         List<Task> databaseResetTasks = [
             ResetRespawnerDatabasesAsync(),
-            ResetMongoDbDatabaseAsync()
+            ResetMongoDbDatabaseAsync(),
+            ResetRedisDatabaseAsync()
         ];
 
         await Task.WhenAll(databaseResetTasks);
@@ -143,6 +155,14 @@ public sealed class DeveloperEvaluationWebApplicationFactory
         IServiceScope scope = Services.CreateScope();
         DefaultContext dbContext = scope.ServiceProvider.GetRequiredService<DefaultContext>();
         await dbContext.Database.EnsureCreatedAsync();
+    }
+
+    private async Task ResetRedisDatabaseAsync()
+    {
+        IServiceScope scope = Services.CreateScope();
+        IConnectionMultiplexer connectionMultiplexer = scope.ServiceProvider.GetRequiredService<IConnectionMultiplexer>();
+        IDatabase database = connectionMultiplexer.GetDatabase();
+        await database.ExecuteAsync("FLUSHDB");
     }
 
     /// <summary>
