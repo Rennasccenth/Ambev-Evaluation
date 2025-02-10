@@ -4,9 +4,10 @@ using AutoMapper;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.Application.Auth.AuthenticateUser;
 using Ambev.DeveloperEvaluation.Common.Results;
-using Ambev.DeveloperEvaluation.WebApi.Features.Auth.AuthenticateUser;
+using Ambev.DeveloperEvaluation.WebApi.Features.Auth.Commands.AuthenticateUser;
 using FluentValidation;
 using FluentValidation.Results;
+using NSwag.Annotations;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Auth;
 
@@ -23,11 +24,14 @@ public class AuthController : BaseController
         _mapper = mapper;
     }
 
-    [HttpPost]
+    [HttpPost("login")]
     [ProducesResponseType(typeof(AuthenticateUserResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
+    [EndpointSummary("Authenticate a User - [Public Access]")]
+    [EndpointDescription("Authenticate a User, if their credential matches.")]
+    [OpenApiOperation("Authenticate a User", "Authenticate a User, if their credential matches.")]
     public async Task<IActionResult> AuthenticateUser(
         [FromBody] AuthenticateUserRequest request,
         [FromServices] IValidator<AuthenticateUserRequest> requestValidator,

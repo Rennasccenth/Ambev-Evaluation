@@ -46,7 +46,10 @@ public static class DependencyInjectionResolver
         serviceCollection.AddTransient<IUserRepository, UserRepository>();
         serviceCollection.AddTransient<IProductRegistryRepository, ProductRegistryRepository>();
 
-        serviceCollection.AddHostedService<EnsureDatabaseCreatedHostService>();        
+        serviceCollection
+            .AddHostedService<EnsureDatabaseCreatedHostService>() // Ensure tables exists
+            .AddHostedService<EnsureBootstrapAdminUserIsCreated>(); // Seed the starting user of application
+
         return serviceCollection;
     }
 }

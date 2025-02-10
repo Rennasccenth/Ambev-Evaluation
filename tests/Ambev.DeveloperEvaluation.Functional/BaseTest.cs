@@ -1,9 +1,10 @@
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using Ambev.DeveloperEvaluation.Domain.Aggregates.Users.Enums;
 using Ambev.DeveloperEvaluation.Functional.Features.Users;
 using Ambev.DeveloperEvaluation.Functional.TestCollections;
 using Ambev.DeveloperEvaluation.Functional.TestData;
-using Ambev.DeveloperEvaluation.WebApi.Features.Auth.AuthenticateUser;
+using Ambev.DeveloperEvaluation.WebApi.Features.Auth.Commands.AuthenticateUser;
 using Ambev.DeveloperEvaluation.WebApi.Features.Users.Commands.CreateUser;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Time.Testing;
@@ -43,39 +44,54 @@ public class BaseTest : IAsyncLifetime
     protected readonly UserTestData UserTestData;
     protected readonly ProductsTestData ProductTestData;
 
-    protected async Task AuthenticateAsync(string email, string password, Guid? userId = null)
+    private static HttpClient? _adminAuthenticatedHttpClient;
+    protected async Task<HttpClient> AuthenticateAsAdminAsync(HttpClient? client = null)
     {
-        HttpResponseMessage authenticateUserHttpResponse = await TestServerHttpClient.PostAsJsonAsync(
-            requestUri: "api/auth",
+        if (_adminAuthenticatedHttpClient is not null)
+        {
+            return _adminAuthenticatedHttpClient;
+        }
+        
+        const string adminUserEmail = "Admin@stubmail.com";
+        const string adminUserPassword = "AdminPassword@5000";
+        
+        HttpClient authenticatedClient = client ?? WebApplicationFactory.CreateClient();
+        HttpResponseMessage authenticateUserHttpResponse = await authenticatedClient.PostAsJsonAsync(
+            requestUri: "api/auth/login",
             value: new AuthenticateUserRequest
             {
-                Email = email,
-                Password = password
+                Email = adminUserEmail,
+                Password = adminUserPassword
             });
         authenticateUserHttpResponse.EnsureSuccessStatusCode();
         var authenticateUserResponse = await authenticateUserHttpResponse.Content.ReadFromJsonAsync<AuthenticateUserResponse>();
         
-        TestServerHttpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {authenticateUserResponse?.Token}");
-        TestServerHttpClient.DefaultRequestHeaders.Add("UserId", userId.ToString());
+        authenticatedClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authenticateUserResponse?.Token);
+        _adminAuthenticatedHttpClient = authenticatedClient;
+        return authenticatedClient;
     }
 
-    /// <summary>
-    /// Acts as a Authenticated User.
-    /// </summary>
-    protected async Task ActAsAuthenticatedUserAsync()
+    private static HttpClient? _customerAuthenticatedHttpClient;
+    protected async Task<HttpClient> AuthenticateAsCustomerAsync(string? email = null, string? password = null, Guid? userId = null)
     {
-        if (TestServerHttpClient.DefaultRequestHeaders.Contains("Authorization")) return;
+        if (_customerAuthenticatedHttpClient is not null)
+        {
+            return _customerAuthenticatedHttpClient;
+        }
         
-        var authenticatingUser = UserTestData.DumpUser(status: UserStatus.Active);
-        string email = authenticatingUser.Email;
-        string password = authenticatingUser.Password;
+        HttpClient authenticatedClient = WebApplicationFactory.CreateClient();
+        HttpResponseMessage authenticateUserHttpResponse = await authenticatedClient.PostAsJsonAsync(
+            requestUri: "api/auth/login",
+            value: new AuthenticateUserRequest
+            {
+                Email = email ?? "testing_customer@mmail.com",
+                Password = password ?? "test!ng_Cust0mer"
+            });
+        authenticateUserHttpResponse.EnsureSuccessStatusCode();
+        var authenticateUserResponse = await authenticateUserHttpResponse.Content.ReadFromJsonAsync<AuthenticateUserResponse>();
         
-        HttpResponseMessage createUserHttpResponse = await TestServerHttpClient.PostAsJsonAsync(
-            requestUri: "api/users",
-            value: TestUserBuilder.CreateUserRequest(authenticatingUser));
-        createUserHttpResponse.EnsureSuccessStatusCode();
-
-        var createUserResponse = await createUserHttpResponse.Content.ReadFromJsonAsync<CreateUserResponse>();
-        await AuthenticateAsync(email, password, createUserResponse?.Id);
+        authenticatedClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {authenticateUserResponse?.Token}");
+        _customerAuthenticatedHttpClient = authenticatedClient;
+        return authenticatedClient;
     }
 }

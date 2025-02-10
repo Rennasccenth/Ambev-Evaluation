@@ -18,6 +18,6 @@ public sealed class CreateUserCartRequest
 
 public sealed class CreateUserCartRequestSummary
 {
-    public required DateTime Date { get; set; }
-    public required List<ProductQuantifier> Products { get; init; }
+    public DateTime Date { get; init; }
+    public List<ProductQuantifier> Products { get; init; }
 }

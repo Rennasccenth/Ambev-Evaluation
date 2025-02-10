@@ -2,6 +2,8 @@ using Ambev.DeveloperEvaluation.Common.HealthChecks;
 using Ambev.DeveloperEvaluation.Common.Logging;
 using Ambev.DeveloperEvaluation.Common.Monitoring;
 using Ambev.DeveloperEvaluation.IoC;
+using Scalar.AspNetCore;
+using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace Ambev.DeveloperEvaluation.WebApi;
 
@@ -17,7 +19,7 @@ public sealed class Program
                 .ConfigureOpenTelemetry();
 
             builder.Services
-                .InstallApiDependencies(builder.Configuration)
+                .InstallApiDependencies(builder.Configuration, builder.Environment)
                 .RegisterDependenciesServices();
 
             WebApplication app = builder.Build();

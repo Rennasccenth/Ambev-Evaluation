@@ -50,7 +50,12 @@ public sealed class Cart : BaseEntity
         Products = products;
     }
 
-    public int CountProducts(Func<CartProduct, bool> predicate) => Products.Count(predicate);
+    public int CountProducts(Func<CartProduct, bool> predicate)
+    {
+        return Products.Where(predicate)
+            .Sum(p => p.Quantity);
+    }
+        
 
     public Cart UpsertProduct(Guid productId, int quantity)
     {

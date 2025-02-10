@@ -41,11 +41,21 @@ public sealed class CartRepository : ICartRepository
         throw new NotImplementedException();
     }
     
-    public async Task<bool> DeleteAsync(Guid userId, CancellationToken ct)
+    public async Task<bool> DeleteAsync(Guid cartId, CancellationToken ct)
     {
-        var filter = Builders<Cart>.Filter.Eq(cart => cart.UserId, userId);
+        var filter = Builders<Cart>.Filter.Eq(cart => cart.Id, cartId);
         DeleteResult deleteResult = await _cartCollection.DeleteOneAsync(filter, ct);
         return deleteResult.DeletedCount == 1;
+    }
+
+    public async Task<bool> UpdateAsync(Cart updatingCart, CancellationToken ct)
+    {
+        var filter = Builders<Cart>.Filter.Eq(c => c.Id, updatingCart.Id);
+
+        ReplaceOneResult? replaceResult = await _cartCollection
+            .ReplaceOneAsync(filter, updatingCart, new ReplaceOptions { IsUpsert = false }, ct);
+
+        return replaceResult.ModifiedCount > 0;
     }
 
     public async Task<Cart> UpsertAsync(Cart upsertingCart, CancellationToken ct)

@@ -13,8 +13,3 @@ public sealed class UpdateUserCartRequest
         Products = products;
     }
 }
-
-public sealed class UpdateCartProductsRequest
-{
-    public required IEnumerable<ProductQuantifier> Products { get; init; }
-}

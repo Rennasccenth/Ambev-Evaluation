@@ -1,4 +1,5 @@
 using Ambev.DeveloperEvaluation.Common.Security;
+using Ambev.DeveloperEvaluation.Domain.Abstractions;
 using Ambev.DeveloperEvaluation.WebApi.Features.Carts.Common;
 using FluentValidation;
 

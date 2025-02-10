@@ -5,6 +5,7 @@ using Ambev.DeveloperEvaluation.Common.Security;
 using Ambev.DeveloperEvaluation.Domain.Aggregates.Carts.Exceptions;
 using Ambev.DeveloperEvaluation.Domain.Aggregates.Carts.Repositories;
 using Ambev.DeveloperEvaluation.Domain.Aggregates.Products.Repositories;
+using IUserContext = Ambev.DeveloperEvaluation.Domain.Abstractions.IUserContext;
 
 namespace Ambev.DeveloperEvaluation.Domain.Aggregates.Carts.Services;
 
@@ -53,32 +54,22 @@ public sealed class CartsService : ICartsService
         return foundCart;
     }
 
-    public Task<ApplicationResult<Cart>> UpdateCartAsync(Cart cart, CancellationToken ct = default)
+    public async Task<ApplicationResult<Cart>> UpdateCartAsync(Cart cart, CancellationToken ct = default)
     {
-        throw new NotImplementedException();
-    }
-
-    public async Task<ApplicationResult<Cart>> RemoveCartProductsAsync(Guid cartId, Dictionary<Guid, uint> productQuantitiesDictionary, CancellationToken ct)
-    {
-        Cart? userCart = await _cartRepository.FindByCartIdAsync(cartId, ct);
-        if (userCart is null)
+        var updatingProductsExists = await  _productRegistryRepository
+            .ExistsAllAsync(cart.Products.Select(prod => prod.ProductId), ct);
+        if (!updatingProductsExists)
         {
-            return ApplicationError.NotFoundError($"Cart ID {cartId} wasn't found.");
+            return ApplicationError.UnprocessableError("One or more products in the updating cart doesn't exists in the product registry.");
         }
 
-        if (userCart.UserId is not null)
+        var cartWasUpdated = await _cartRepository.UpdateAsync(cart, ct);
+        if (!cartWasUpdated)
         {
-            ApplicationError? ownershipError = EnsureResourceOwnership(userCart.UserId.Value);
-            if (ownershipError is not null) return ownershipError;
+            return ApplicationError.UnprocessableError("Cart wasn't updated.");
         }
 
-        foreach ((Guid productId, var productQuantity) in productQuantitiesDictionary)
-        {
-            userCart.RemoveProduct(productId, (int)productQuantity);
-        }
-
-        await _cartRepository.UpsertAsync(userCart, ct);
-        return userCart;
+        return cart;
     }
 
     public async Task<ApplicationResult<Cart>> DeleteCartAsync(Guid cartId, CancellationToken ct = default)
@@ -117,7 +108,8 @@ public sealed class CartsService : ICartsService
             ApplicationError? ownershipError = EnsureResourceOwnership(userId);
             if (ownershipError is not null) return ownershipError;
 
-            var allProductsExists = await _productRegistryRepository.ExistsAllAsync(cartProducts.Select(cp => cp.ProductId), ct);
+            List<CartProduct> enumeratedCartProducts = cartProducts.ToList();
+            var allProductsExists = await _productRegistryRepository.ExistsAllAsync(enumeratedCartProducts.Select(cp => cp.ProductId), ct);
             if (allProductsExists is false)
             {
                 return ApplicationError.NotFoundError("One or more products in the creating cart doesn't exists in the system.");
@@ -129,7 +121,8 @@ public sealed class CartsService : ICartsService
                 return ApplicationError.DuplicatedResourceError("User already has a Cart."); 
             }
 
-            Cart userCart = await _cartRepository.CreateAsync(new Cart(userId, _timeProvider.GetUtcNow().DateTime), ct);
+            Cart userCart = await _cartRepository.CreateAsync(new Cart(userId, _timeProvider.GetUtcNow().DateTime, enumeratedCartProducts), ct);
+            
             return userCart;
         }
         catch (DuplicatedCartException duplicatedCartException)
@@ -178,7 +171,6 @@ public sealed class CartsService : ICartsService
         try
         {
             List<CartProduct> enumeratedCarts = cartProducts.ToList();
-
             var allProductsExists = await _productRegistryRepository.ExistsAllAsync(enumeratedCarts.Select(cp => cp.ProductId), ct);
             if (allProductsExists is false)
             {

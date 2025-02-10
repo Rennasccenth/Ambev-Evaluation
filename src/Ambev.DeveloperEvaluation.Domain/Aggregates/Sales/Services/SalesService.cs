@@ -1,16 +1,14 @@
 using Ambev.DeveloperEvaluation.Common.Errors;
 using Ambev.DeveloperEvaluation.Common.Results;
-using Ambev.DeveloperEvaluation.Common.Security;
 using Ambev.DeveloperEvaluation.Domain.Aggregates.Carts;
-using Ambev.DeveloperEvaluation.Domain.Aggregates.Carts.Exceptions;
 using Ambev.DeveloperEvaluation.Domain.Aggregates.Carts.Repositories;
-using Ambev.DeveloperEvaluation.Domain.Aggregates.Carts.Services;
 using Ambev.DeveloperEvaluation.Domain.Aggregates.Carts.Strategies;
 using Ambev.DeveloperEvaluation.Domain.Aggregates.Sales.Exceptions;
 using Ambev.DeveloperEvaluation.Domain.Aggregates.Sales.Repositories;
 using Ambev.DeveloperEvaluation.Domain.Events;
 using Ambev.DeveloperEvaluation.Domain.Specifications;
 using Microsoft.Extensions.Logging;
+using IUserContext = Ambev.DeveloperEvaluation.Domain.Abstractions.IUserContext;
 
 namespace Ambev.DeveloperEvaluation.Domain.Aggregates.Sales.Services;
 
@@ -93,7 +91,7 @@ public sealed class SalesService : ISalesService
             decimal discount = _discountStrategy.GetDiscountPercentage(productCount);
             decimal discountedPrice = unitPrice * (1 - discount);
 
-            creatingSale.AddProduct(new SaleProduct(creatingSale.Id, productId, discountedPrice, productCount), _timeProvider);
+            creatingSale.AddProduct(new SaleProduct(creatingSale.Id, productId, discountedPrice, productCount, discount), _timeProvider);
         }
 
         Sale createdSale = await _saleRepository.CreateAsync(creatingSale, ct);

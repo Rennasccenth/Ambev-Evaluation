@@ -25,7 +25,8 @@ public class UserTestData : ICollectionFixture<DeveloperEvaluationWebApplication
         _timeProvider = serviceScope.ServiceProvider.GetRequiredService<TimeProvider>();
         _userValidator = serviceScope.ServiceProvider.GetRequiredService<IValidator<User>>();
     }
-
+    
+    
     private User.UserBuilder GetUserBuilder => User.GetBuilder(_passwordHasher, _timeProvider, _userValidator);
 
     internal string Email => _faker.Internet.Email(uniqueSuffix: _faker.UniqueIndex.ToString());

@@ -5,22 +5,22 @@ namespace Ambev.DeveloperEvaluation.Domain.Aggregates.Sales;
 public sealed class SaleProduct
 {
     public Guid SaleId { get; }
-    public Guid ProductId { get; set; }
-    public decimal UnitPrice { get; set; }
-    public int Quantity { get; set; }
-    public decimal Discounts { get; private set; }
-
-    public bool IsCanceled => CanceledAt is null;
+    public Guid ProductId { get; init; }
+    public decimal UnitPrice { get; init; }
+    public int Quantity { get; private set; }
+    public decimal Discounts { get; set; }
+    public bool IsCanceled => CanceledAt is not null;
     public DateTime? CanceledAt { get; set; }
     public decimal TotalPrice => UnitPrice * Quantity - Discounts;
     // public decimal TotalDiscounts => Discounts * Quantity;
 
-    public SaleProduct(Guid saleId, Guid productId, decimal unitPrice, int quantity)
+    public SaleProduct(Guid saleId, Guid productId, decimal unitPrice, int quantity, decimal discounts)
     {
         SaleId = saleId;
         ProductId = productId;
         UnitPrice = unitPrice;
         Quantity = quantity;
+        Discounts = discounts;
     }
 
     public SaleProduct IncreaseQuantity(uint quantity)

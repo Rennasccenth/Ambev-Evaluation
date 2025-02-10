@@ -81,6 +81,8 @@ public sealed class DeveloperEvaluationWebApplicationFactory
             collection
                 .RemoveAll<IMongoClient>()
                 .AddSingleton<IMongoClient>(_ => new MongoClient(_mongoDbContainer.GetConnectionString()));
+
+            collection.AddTransient<HttpClient>(_ => CreateClient());
         });
     }
 

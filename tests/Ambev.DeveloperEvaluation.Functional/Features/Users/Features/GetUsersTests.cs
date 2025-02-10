@@ -21,7 +21,7 @@ public sealed class GetUsersTests : BaseTest
         IServiceScope serviceScope = webApplicationFactory.Services.CreateScope();
     }
 
-    [Theory(DisplayName = "Get users when filter properties are provided, should return filtered users.")]
+    [Theory(DisplayName = "GET api/users when filter properties are provided, should return filtered users.")]
     [ClassData(typeof(GetUsersTestData))]
     public async Task GetUsers_ShouldFilterUsers_BasedOnGetUserQuery(
         uint userMatchingCount, 
@@ -30,6 +30,7 @@ public sealed class GetUsersTests : BaseTest
         string? username)
     {
         // Arrange
+        HttpClient adminAuthenticatedClient = await AuthenticateAsAdminAsync();
 
         // Generates multiple users matching the following criteria
         List<Task> creatingUsersTasks = [];
@@ -40,7 +41,7 @@ public sealed class GetUsersTests : BaseTest
                     status: status,
                     role: role,
                     username: username),
-                httpClient: TestServerHttpClient));
+                httpClient: adminAuthenticatedClient));
         }
 
         await Task.WhenAll(creatingUsersTasks.ToArray());
@@ -48,10 +49,10 @@ public sealed class GetUsersTests : BaseTest
         // Create another users with different data than provided just to add randomness.
         await TestUserBuilder.CreateUserAsync(userEntity: UserTestData.DumpUser(
                 password: _faker.Internet.Password(length: 12, prefix: "T3s!T")),
-            httpClient: TestServerHttpClient);
+            httpClient: adminAuthenticatedClient);
         await TestUserBuilder.CreateUserAsync(userEntity: UserTestData.DumpUser(
                 email: _faker.Internet.Email("randommin.com", uniqueSuffix: _faker.UniqueIndex.ToString())),
-            httpClient: TestServerHttpClient);
+            httpClient: adminAuthenticatedClient);
 
         
         GetUsersRequest getUsersRequest = new GetUsersRequest
@@ -66,7 +67,7 @@ public sealed class GetUsersTests : BaseTest
         // Act
         string queryStringObject = QueryStringHelper.ToQueryString(getUsersRequest);
 
-        var getUsersResponse = await TestServerHttpClient.GetFromJsonAsync<GetUsersResponse>($"api/users{queryStringObject}");
+        var getUsersResponse = await adminAuthenticatedClient.GetFromJsonAsync<GetUsersResponse>($"api/users{queryStringObject}");
 
         // Assert
         using (var _ = new AssertionScope())

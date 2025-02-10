@@ -1,4 +1,5 @@
 using Ambev.DeveloperEvaluation.Common.Security;
+using Ambev.DeveloperEvaluation.Domain.Abstractions;
 using FluentValidation;
 
 namespace Ambev.DeveloperEvaluation.Application.Users.Queries.GetUserCart;

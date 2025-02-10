@@ -1,14 +1,30 @@
 @host = http://localhost:5000
-@email = testing@mail.com
-@password = TestPassword@2025
+@admin_email = Admin@stubmail.com
+@admin_password = AdminPassword@5000
+@email = test_user@stubmail.com
+@password = test_userPassword@5000
 
+
+### Authentication Request
+POST {{host}}/api/auth
+Content-Type: application/json
+Accept: application/json
+
+{
+    "email": "{{admin_email}}",
+    "password": "{{admin_password}}"
+}
+
+> {%
+    client.global.set("admin_auth_token", response.body.token);
+%}
 
 ### Create User Request
 
 < {%
     // ["Inactive", "Suspended"] -> Those ones might change the happy path due validations over emit JWT token
     const statuses = ["Active"];
-    const roles = ["Customer", "Manager", "Admin"];
+    const roles = ["Customer", "Admin", "Manager"];
     request.variables.set("status", statuses[Math.floor(Math.random() * statuses.length)])
     request.variables.set("role", roles[Math.floor(Math.random() * roles.length)])
 %}
@@ -16,6 +32,7 @@
 POST {{host}}/api/users
 Content-Type: application/json
 Accept: application/json
+Authorization: Bearer {{admin_auth_token}}
 
 {
     "email": "{{email}}",

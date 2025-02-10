@@ -6,5 +6,5 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.Queries;
 
 public class GetSaleQuery : IRequest<ApplicationResult<SaleResult>>
 {
-    public Guid SaleId { get; set; }
+    public required Guid SaleId { get; init; }
 }
