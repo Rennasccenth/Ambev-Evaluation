@@ -5,7 +5,7 @@ namespace Ambev.DeveloperEvaluation.Domain.Common;
 public abstract class PaginatedQuery
 {
     public int CurrentPage { get; set; }
-    public int PageSize { get; set; }
+    public int PageSize { get; set; } = 10;
     public string? OrderBy { get; set; }
     public Dictionary<string, string> FilterBy { get; set; } = [];
 }
