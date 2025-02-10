@@ -3,8 +3,8 @@ using Ambev.DeveloperEvaluation.Common.Results;
 using Ambev.DeveloperEvaluation.Domain.Aggregates.Carts;
 using Ambev.DeveloperEvaluation.Domain.Aggregates.Carts.Repositories;
 using Ambev.DeveloperEvaluation.Domain.Aggregates.Carts.Strategies;
-using Ambev.DeveloperEvaluation.Domain.Aggregates.Sales.Exceptions;
 using Ambev.DeveloperEvaluation.Domain.Aggregates.Sales.Repositories;
+using Ambev.DeveloperEvaluation.Domain.Aggregates.Users.Enums;
 using Ambev.DeveloperEvaluation.Domain.Events;
 using Ambev.DeveloperEvaluation.Domain.Specifications;
 using Microsoft.Extensions.Logging;
@@ -102,33 +102,45 @@ public sealed class SalesService : ISalesService
         return createdSale;
     }
 
-    public async Task<Sale?> CancelSaleAsync(Guid saleId, CancellationToken ct)
+    public async Task<ApplicationResult<Sale>> CancelSaleAsync(Guid saleId, CancellationToken ct)
     {
         _logger.LogInformation("Cancelling sale {SaleId}", saleId);
-        var sale = await _saleRepository.FindByIdAsync(saleId, ct);
+        Sale? sale = await _saleRepository.FindByIdAsync(saleId, ct);
         if (sale is null)
         {
-            throw new SaleNotFoundException($"SaleId {saleId} wasn't found.");
+            return ApplicationError.NotFoundError($"SaleId {saleId} wasn't found.");
         }
 
-        var canceledSale = sale.Cancel(_timeProvider);
+        if (_userContext.UserRole is UserRole.Customer && _userContext.UserId != sale.CustomerId)
+        {
+            return ApplicationError.UnprocessableError("Customer must be the owner of the sale.");
+        }
+
+        Sale canceledSale = sale.Cancel(_timeProvider);
+        await _saleRepository.UpdateAsync(canceledSale, ct);
         await _domainEventDispatcher.DispatchAndClearEventsAsync(canceledSale);
         
         _logger.LogInformation("Sale {SaleId} cancelled", saleId);
         return canceledSale;
     }
 
-    public async Task<Sale?> ConcludeSaleAsync(Guid saleId, CancellationToken ct)
+    public async Task<ApplicationResult<Sale>> ConcludeSaleAsync(Guid saleId, CancellationToken ct)
     {
         _logger.LogInformation("Concluding sale {SaleId}", saleId);
         
-        var sale = await _saleRepository.FindByIdAsync(saleId, ct);
+        Sale? sale = await _saleRepository.FindByIdAsync(saleId, ct);
         if (sale is null)
         {
-            throw new SaleNotFoundException($"SaleId {saleId} wasn't found.");
+            return ApplicationError.NotFoundError($"SaleId {saleId} wasn't found.");
         }
         
+        if (_userContext.UserRole is UserRole.Customer)
+        {
+            return ApplicationError.PermissionDeniedError("A Customer user cannot conclude a Sale.");
+        }
+
         Sale concludedSale = sale.Sell(_timeProvider);
+        await _saleRepository.UpdateAsync(concludedSale, ct);
         await _domainEventDispatcher.DispatchAndClearEventsAsync(concludedSale);
         
         _logger.LogInformation("Sale {SaleId} concluded", saleId);
