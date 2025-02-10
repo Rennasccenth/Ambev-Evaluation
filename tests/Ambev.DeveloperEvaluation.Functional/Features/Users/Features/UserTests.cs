@@ -9,9 +9,9 @@ using Xunit;
 
 namespace Ambev.DeveloperEvaluation.Functional.Features.Users.Features;
 
-public sealed class CreateUserTests : BaseTest
+public sealed class UserTests : BaseTest
 {
-    public CreateUserTests(DeveloperEvaluationWebApplicationFactory webApplicationFactory) 
+    public UserTests(DeveloperEvaluationWebApplicationFactory webApplicationFactory) 
         : base(webApplicationFactory) { }
 
     [Fact(DisplayName = "GET api/users/{userId} when user exists but you are an customer returns 403 Forbidden")]

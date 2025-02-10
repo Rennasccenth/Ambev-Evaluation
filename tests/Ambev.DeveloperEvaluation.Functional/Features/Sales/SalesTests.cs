@@ -15,9 +15,9 @@ using Xunit.Sdk;
 
 namespace Ambev.DeveloperEvaluation.Functional.Features.Sales;
 
-public sealed class CreateSaleTests : BaseTest
+public sealed class SalesTests : BaseTest
 {
-    public CreateSaleTests(DeveloperEvaluationWebApplicationFactory webApplicationFactory) : base(webApplicationFactory) { }
+    public SalesTests(DeveloperEvaluationWebApplicationFactory webApplicationFactory) : base(webApplicationFactory) { }
     
     [Fact(DisplayName = "POST api/users/me/cart/checkout should return 422 Unprocessable Entity when the User Cart is Empty.")]
     public async Task SellCartItems_WhenCartIsEmpty_Returns433UnprocessableEntity()

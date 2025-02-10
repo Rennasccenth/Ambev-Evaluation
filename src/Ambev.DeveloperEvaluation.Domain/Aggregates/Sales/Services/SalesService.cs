@@ -116,6 +116,15 @@ public sealed class SalesService : ISalesService
             return ApplicationError.UnprocessableError("Customer must be the owner of the sale.");
         }
 
+        if (sale.Canceled)
+        {
+            return ApplicationError.UnprocessableError("Cannot cancel a already canceled sale.");
+        }
+        if (sale.Terminated)
+        {
+            return ApplicationError.UnprocessableError("Cannot cancel a concluded sale.");
+        }
+
         Sale canceledSale = sale.Cancel(_timeProvider);
         await _saleRepository.UpdateAsync(canceledSale, ct);
         await _domainEventDispatcher.DispatchAndClearEventsAsync(canceledSale);
@@ -137,6 +146,15 @@ public sealed class SalesService : ISalesService
         if (_userContext.UserRole is UserRole.Customer)
         {
             return ApplicationError.PermissionDeniedError("A Customer user cannot conclude a Sale.");
+        }
+
+        if (sale.Canceled)
+        {
+            return ApplicationError.UnprocessableError("Cannot conclude a concluded sale.");
+        }
+        if (sale.Terminated)
+        {
+            return ApplicationError.UnprocessableError("Cannot conclude a already concluded sale.");
         }
 
         Sale concludedSale = sale.Sell(_timeProvider);

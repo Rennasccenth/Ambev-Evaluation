@@ -16,10 +16,7 @@ public sealed class GetUsersTests : BaseTest
     private readonly Faker _faker = new("pt_BR");
 
     public GetUsersTests(DeveloperEvaluationWebApplicationFactory webApplicationFactory)
-        : base(webApplicationFactory)
-    {
-        IServiceScope serviceScope = webApplicationFactory.Services.CreateScope();
-    }
+        : base(webApplicationFactory) { }
 
     [Theory(DisplayName = "GET api/users when filter properties are provided, should return filtered users.")]
     [ClassData(typeof(GetUsersTestData))]
