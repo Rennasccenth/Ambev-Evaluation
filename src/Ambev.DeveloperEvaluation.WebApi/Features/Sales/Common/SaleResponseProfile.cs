@@ -12,6 +12,7 @@ public class SaleResponseProfile : Profile
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.ProductId))
             .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
             .ForMember(dest => dest.UnitPrice, opt => opt.MapFrom(src => src.UnitPrice))
+            .ForMember(dest => dest.Discounts, opt => opt.MapFrom(src => src.Discounts))
             .ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => src.TotalPrice));
         
         CreateMap<SaleResult, SaleResponse>()

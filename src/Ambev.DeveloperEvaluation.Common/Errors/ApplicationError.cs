@@ -26,6 +26,11 @@ public record ApplicationError
     public static ValidationError ValidationError(ValidationResult[] validationResults) 
         => new(validationResults.SelectMany(validationResult => validationResult.Errors).ToList());
 
+    public static UnprocessableError UnprocessableError(string? message = null) =>
+        message is null
+            ? new UnprocessableError()
+            : new UnprocessableError(message);
+    
     public static BadRequestError BadRequestError(string? message = null) =>
         message is null
             ? new BadRequestError()

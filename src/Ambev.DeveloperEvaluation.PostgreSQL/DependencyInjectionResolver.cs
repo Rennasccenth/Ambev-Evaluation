@@ -1,14 +1,14 @@
 using Ambev.DeveloperEvaluation.Common.Options;
 using Ambev.DeveloperEvaluation.Domain.Aggregates.Products.Repositories;
 using Ambev.DeveloperEvaluation.Domain.Aggregates.Users.Repositories;
-using Ambev.DeveloperEvaluation.ORM.Repositories;
+using Ambev.DeveloperEvaluation.PostgreSQL.Repositories;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
-namespace Ambev.DeveloperEvaluation.ORM;
+namespace Ambev.DeveloperEvaluation.PostgreSQL;
 
 public static class DependencyInjectionResolver
 {
@@ -26,8 +26,10 @@ public static class DependencyInjectionResolver
                     maxRetryCount: (int)postgreSqlSettings.MaxRetryCount,
                     maxRetryDelay: TimeSpan.FromSeconds((int)postgreSqlSettings.RetryDelayInSeconds),
                     errorCodesToAdd: null);
-            });
 
+                builder.CommandTimeout((int)postgreSqlSettings.CommandTimeoutInSeconds);
+            });
+            
             IWebHostEnvironment webHostEnvironment = provider.GetRequiredService<IWebHostEnvironment>();
             if (webHostEnvironment.IsProduction()) return;
 
@@ -44,7 +46,10 @@ public static class DependencyInjectionResolver
         serviceCollection.AddTransient<IUserRepository, UserRepository>();
         serviceCollection.AddTransient<IProductRegistryRepository, ProductRegistryRepository>();
 
-        serviceCollection.AddHostedService<EnsureDatabaseCreatedHostService>();        
+        serviceCollection
+            .AddHostedService<EnsureDatabaseCreatedHostService>() // Ensure tables exists
+            .AddHostedService<EnsureBootstrapAdminUserIsCreated>(); // Seed the starting user of application
+
         return serviceCollection;
     }
 }

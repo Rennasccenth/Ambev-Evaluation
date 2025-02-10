@@ -4,28 +4,58 @@ namespace Ambev.DeveloperEvaluation.Domain.Aggregates.Carts;
 
 public sealed class Cart : BaseEntity
 {
-    public Guid CustomerId { get; init; }
+    public Guid? UserId { get; init; }
     public DateTime Date { get; init; }
     public List<CartProduct> Products { get; init; } = [];
 
     internal Cart() { }
 
-    public Cart(Guid userId, DateTime date)
+    /// <summary>
+    /// Creates a Empty cart without associating to a User
+    /// </summary>
+    public Cart(DateTime date)
     {
         Id = Guid.NewGuid();
-        CustomerId = userId;
         Date = date;
     }
 
+    /// <summary>
+    /// Creates a Non-Empty cart without associating to a User
+    /// </summary>
+    public Cart(DateTime date, IEnumerable<CartProduct> products)
+    {
+        Id = Guid.NewGuid();
+        Date = date;
+        Products = products.ToList();
+    }
+    
+    /// <summary>
+    /// Creates a Empty Cart associated to a User
+    /// </summary>
+    public Cart(Guid userId, DateTime date)
+    {
+        Id = Guid.NewGuid();
+        UserId = userId;
+        Date = date;
+    }
+
+    /// <summary>
+    /// Creates a Non-Empty Cart associated to a User
+    /// </summary>
     public Cart(Guid userId, DateTime date, List<CartProduct> products)
     {
         Id = Guid.NewGuid();
-        CustomerId = userId;
+        UserId = userId;
         Date = date;
         Products = products;
     }
 
-    public int CountProducts(Func<CartProduct, bool> predicate) => Products.Count(predicate);
+    public int CountProducts(Func<CartProduct, bool> predicate)
+    {
+        return Products.Where(predicate)
+            .Sum(p => p.Quantity);
+    }
+        
 
     public Cart UpsertProduct(Guid productId, int quantity)
     {

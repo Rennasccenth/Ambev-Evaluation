@@ -13,4 +13,5 @@ public sealed class SaleResult
     public bool Canceled => CanceledDate.HasValue;
     public bool Terminated => TerminationDate.HasValue;
     public decimal TotalAmount => Products.Sum(prod => prod.TotalPrice);
+    public decimal TotalDiscounts => Products.Sum(prod => prod.Discounts);
 }

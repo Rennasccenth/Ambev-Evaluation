@@ -1,6 +1,6 @@
 using System.Data.Common;
 using Ambev.DeveloperEvaluation.MongoDB;
-using Ambev.DeveloperEvaluation.ORM;
+using Ambev.DeveloperEvaluation.PostgreSQL;
 using Ambev.DeveloperEvaluation.WebApi;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -81,6 +81,8 @@ public sealed class DeveloperEvaluationWebApplicationFactory
             collection
                 .RemoveAll<IMongoClient>()
                 .AddSingleton<IMongoClient>(_ => new MongoClient(_mongoDbContainer.GetConnectionString()));
+
+            collection.AddTransient<HttpClient>(_ => CreateClient());
         });
     }
 

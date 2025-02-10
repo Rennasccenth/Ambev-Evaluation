@@ -8,5 +8,5 @@ public sealed class OpenApiDocumentation
 
     [Required] public required string Title { get; init; } = string.Empty;
 
-    [Required] public required string Description { get; init; } = string.Empty;
+    public required string Description { get; init; } = string.Empty;
 }

@@ -1,7 +1,7 @@
 using Ambev.DeveloperEvaluation.Domain.Events;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
-namespace Ambev.DeveloperEvaluation.ORM.Interceptors;
+namespace Ambev.DeveloperEvaluation.PostgreSQL.Interceptors;
 
 internal sealed class DomainEventInterceptor : SaveChangesInterceptor
 {

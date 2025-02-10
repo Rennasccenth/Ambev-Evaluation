@@ -2,7 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using Ambev.DeveloperEvaluation.Domain.Aggregates.Users.Enums;
 using Ambev.DeveloperEvaluation.Functional.Features.Users;
-using Ambev.DeveloperEvaluation.WebApi.Features.Auth.AuthenticateUser;
+using Ambev.DeveloperEvaluation.WebApi.Features.Auth.Commands.AuthenticateUser;
 using Ambev.DeveloperEvaluation.WebApi.Features.Users.Commands.CreateUser;
 using Ambev.DeveloperEvaluation.WebApi.Features.Users.Queries.GetUser;
 using FluentAssertions;
@@ -16,7 +16,7 @@ public sealed class GetAccessTokenTests : BaseTest
     public GetAccessTokenTests(DeveloperEvaluationWebApplicationFactory webApplicationFactory) 
         : base(webApplicationFactory) { }
     
-    [Fact(DisplayName = "Get Access Token when user doesn't exists in system, returns 401 Unauthorized")]
+    [Fact(DisplayName = "POST api/auth/login when user doesn't exists in system, returns 401 Unauthorized")]
     public async Task GetAccessToken_WhenUserDoesntExists_ReturnsUnauthorized()
     {
         // Arrange
@@ -24,7 +24,7 @@ public sealed class GetAccessTokenTests : BaseTest
 
         // Act
         HttpResponseMessage authenticateUserResponseMessage = await TestServerHttpClient.PostAsJsonAsync(
-            requestUri: "api/auth",
+            requestUri: "api/auth/login",
             value: new AuthenticateUserRequest
             {
                 Email = "asdasd@email.com",
@@ -40,36 +40,39 @@ public sealed class GetAccessTokenTests : BaseTest
         }
     }
 
-    [Fact(DisplayName = "Get Access Token when user is active, returns 200 Ok and the generated token.")]
+    [Fact(DisplayName = "POST api/auth/login when user is active, returns 200 Ok and the generated token.")]
     public async Task GetAccessToken_WhenUserExistsAndIsActive_ReturnsOk()
     {
         // Arrange
+        HttpClient adminAuthenticatedClient = await AuthenticateAsAdminAsync();
+        
         CancellationTokenSource cancellationTokenSource = new();
 
         var createUserRequest = TestUserBuilder.CreateUserRequest(UserTestData.DumpUser(status: UserStatus.Active));
         string preHashPassword = createUserRequest.Password;
 
-        // Create the user
-        HttpResponseMessage createUserHttpResponse = await TestServerHttpClient.PostAsJsonAsync(
+        // Create the user as an ADMIN user
+        HttpResponseMessage createUserHttpResponse = await adminAuthenticatedClient.PostAsJsonAsync(
             requestUri: "api/users",
             value: createUserRequest,
             cancellationToken: cancellationTokenSource.Token);
 
-        // Get the created user resource
-        var getUserResponse = await TestServerHttpClient
+        // Get the created user resource as ADMIN user
+        var getUserResponse = await adminAuthenticatedClient
             .GetFromJsonAsync<GetUserResponse>(
                 createUserHttpResponse.Headers.Location,
                 cancellationTokenSource.Token);
 
-        // Act
-        HttpResponseMessage authenticateUserResponseMessage = await TestServerHttpClient.PostAsJsonAsync(
-            requestUri: "api/auth",
-            value: new AuthenticateUserRequest
-            {
-                Email = getUserResponse!.Email,
-                Password = preHashPassword
-            },
-            cancellationToken: cancellationTokenSource.Token);
+        // Act as an Unauthenticated client
+        HttpResponseMessage authenticateUserResponseMessage = await WebApplicationFactory.CreateClient()
+            .PostAsJsonAsync(
+                requestUri: "api/auth/login",
+                value: new AuthenticateUserRequest
+                {
+                    Email = getUserResponse!.Email,
+                    Password = preHashPassword
+                },
+                cancellationToken: cancellationTokenSource.Token);
 
         // Assert
         using (var _ = new AssertionScope())
@@ -85,35 +88,37 @@ public sealed class GetAccessTokenTests : BaseTest
         }
     }
 
-    [Fact(DisplayName = "Get Access Token when user was previously created but is Inactive, returns 403 Forbidden.")]
+    [Fact(DisplayName = "POST api/auth/login when user was previously created but is Inactive, returns 403 Forbidden.")]
     public async Task GetAccessToken_WhenUserExistsAndIsInactive_ReturnsForbidden()
     {
         // Arrange
+        HttpClient adminAuthenticatedClient = await AuthenticateAsAdminAsync();
         CancellationTokenSource cancellationTokenSource = new();
 
         CreateUserRequest createUserRequest = TestUserBuilder.CreateUserRequest(UserTestData.DumpUser());
         createUserRequest.Status = Enum.GetName(UserStatus.Inactive)!;
         string preHashPassword = createUserRequest.Password;
 
-        // Create the user
-        HttpResponseMessage createUserHttpResponse = await TestServerHttpClient.PostAsJsonAsync(
+        // Create the user as ADMIN user
+        HttpResponseMessage createUserHttpResponse = await adminAuthenticatedClient.PostAsJsonAsync(
             requestUri: "api/users",
             value: createUserRequest,
             cancellationToken: cancellationTokenSource.Token);
 
-        // Get the created user resource
-        HttpResponseMessage getUserHttpResponse = await TestServerHttpClient.GetAsync(createUserHttpResponse.Headers.Location, cancellationTokenSource.Token);
+        // Get the created user resource as ADMIN user
+        HttpResponseMessage getUserHttpResponse = await adminAuthenticatedClient.GetAsync(createUserHttpResponse.Headers.Location, cancellationTokenSource.Token);
         var getUserResponse = await getUserHttpResponse.Content.ReadFromJsonAsync<GetUserResponse>(cancellationTokenSource.Token);
 
-        // Act
-        HttpResponseMessage authenticateUserResponseMessage = await TestServerHttpClient.PostAsJsonAsync(
-            requestUri: "api/auth",
-            value: new AuthenticateUserRequest
-            {
-                Email = getUserResponse!.Email,
-                Password = preHashPassword
-            },
-            cancellationToken: cancellationTokenSource.Token);
+        // Act as an Unauthenticated user
+        HttpResponseMessage authenticateUserResponseMessage = await WebApplicationFactory.CreateClient()
+            .PostAsJsonAsync(
+                requestUri: "api/auth/login",
+                value: new AuthenticateUserRequest
+                {
+                    Email = getUserResponse!.Email,
+                    Password = preHashPassword
+                },
+                cancellationToken: cancellationTokenSource.Token);
 
         // Assert
         using (var _ = new AssertionScope())

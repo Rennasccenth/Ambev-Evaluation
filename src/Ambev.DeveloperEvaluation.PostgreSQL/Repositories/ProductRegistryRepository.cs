@@ -7,7 +7,7 @@ using Ambev.DeveloperEvaluation.Domain.Common;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 
-namespace Ambev.DeveloperEvaluation.ORM.Repositories;
+namespace Ambev.DeveloperEvaluation.PostgreSQL.Repositories;
 
 internal sealed class ProductRegistryRepository : IProductRegistryRepository
 {
@@ -20,7 +20,7 @@ internal sealed class ProductRegistryRepository : IProductRegistryRepository
 
     public async Task<Product?> FindByIdAsync(Guid id, CancellationToken ct)
     {
-        return await _dbContext.Products.FirstAsync(product => product.Id == id, cancellationToken: ct);
+        return await _dbContext.Products.FirstOrDefaultAsync(product => product.Id == id, cancellationToken: ct);
     }
 
     public Task<List<Product>> GetAllByIds(IEnumerable<Guid> productsId, CancellationToken ct)

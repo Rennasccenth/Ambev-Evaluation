@@ -9,6 +9,7 @@ public sealed class ProductSummaryProfile : Profile
     {
         CreateMap<CartProduct, ProductSummary>()
             .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.ProductId))
-            .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity));
+            .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
+            .ReverseMap();
     }
 }

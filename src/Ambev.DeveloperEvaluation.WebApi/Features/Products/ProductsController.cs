@@ -19,6 +19,7 @@ using FluentValidation.Results;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NSwag.Annotations;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Products;
 
@@ -40,6 +41,9 @@ public class ProductsController : BaseController
     [HttpGet("")]
     [ProducesResponseType(typeof(GetProductsResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [EndpointSummary("Get all products by filter - [Public Access]")]
+    [EndpointDescription("Get all products that fulfill the dynamic filter.")]
+    [OpenApiOperation("Get all products by filter - [Public Access]", "Get all products that fulfill the dynamic filter.")]
     public async Task<IActionResult> GetAll(
         [FromQuery] GetProductsRequest request,
         [FromServices] IValidator<GetProductsRequest> requestValidator,
@@ -57,15 +61,18 @@ public class ProductsController : BaseController
             onFailure: HandleKnownError);
     }
 
-    [HttpGet("{id:guid}")]
+    [HttpGet("{productId:guid}")]
     [ProducesResponseType(typeof(GetProductResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Get(
-        [FromRoute] Guid id,
+    [EndpointSummary("Get product by id - [Public Access]")]
+    [EndpointDescription("Get a product by its unique identifier.")]
+    [OpenApiOperation("Get product by id - [Public Access]", "Get a product by its unique identifier.")]
+    public async Task<IActionResult> GetByProductId(
+        [FromRoute] Guid productId,
         [FromServices] IValidator<GetProductRequest> requestValidator,
         CancellationToken ct)
     {
-        GetProductRequest request = new GetProductRequest(id);
+        GetProductRequest request = new GetProductRequest(productId);
         ValidationResult? validationResult = await requestValidator.ValidateAsync(request, ct);
         if (!validationResult.IsValid) return HandleKnownError(validationResult.Errors);
 
@@ -77,10 +84,13 @@ public class ProductsController : BaseController
     }
 
     [HttpPost]
-    [Authorize]
+    [Authorize(Roles = "Manager, Admin")]
     [ProducesResponseType(typeof(CreateProductResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
+    [EndpointSummary("Create product - 🔐 [Only Managers or Admins allowed]")]
+    [EndpointDescription("Create a new product in the system.")]
+    [OpenApiOperation("Create product - 🔐 [Only Managers or Admins allowed]", "Create a new product in the system.")]
     public async Task<IActionResult> Create(
         [FromBody] CreateProductRequest request,
         [FromServices] IValidator<CreateProductRequest> createProductValidator,
@@ -93,23 +103,26 @@ public class ProductsController : BaseController
         var result = await _mediator.Send(command, ct);
 
         return result.Match(
-            onSuccess: successResult => CreatedAtAction(nameof(Get), new { successResult.Id },
+            onSuccess: successResult => CreatedAtAction(nameof(GetByProductId), new { ProductId = successResult.Id },
                 _mapper.Map<CreateProductResponse>(successResult)),
             onFailure: HandleKnownError);
     }
 
-    [Authorize]
-    [HttpPut("{id:guid}")]
+    [HttpPut("{productId:guid}")]
+    [Authorize(Roles = "Manager, Admin")]
     [ProducesResponseType(typeof(UpdateProductResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [EndpointSummary("Update product - 🔐 [Only Managers or Admins allowed]")]
+    [EndpointDescription("Update an existing product in the system.")]
+    [OpenApiOperation("Update product - 🔐 [Only Managers or Admins allowed]", "Update an existing product in the system.")]
     public async Task<IActionResult> Update(
-        [FromRoute] Guid id,
+        [FromRoute] Guid productId,
         [FromBody] UpdateProductRequest request,
         [FromServices] IValidator<UpdateProductRequest> requestValidator,
         CancellationToken cancellationToken)
     {
-        request.Id = id;
+        request.Id = productId;
         ValidationResult? validationResult = await requestValidator.ValidateAsync(request, cancellationToken);
         if (!validationResult.IsValid) return HandleKnownError(validationResult.Errors);
         var commandResult = await _mediator.Send(_mapper.Map<UpdateProductCommand>(request), cancellationToken);
@@ -119,16 +132,19 @@ public class ProductsController : BaseController
             onFailure: HandleKnownError);
     }
 
-    [Authorize]
-    [HttpDelete("{id:guid}")]
+    [HttpDelete("{productId:guid}")]
+    [Authorize(Roles = "Manager, Admin")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [EndpointSummary("Delete product - 🔐 [Only Managers or Admins allowed]")]
+    [EndpointDescription("Delete an existing product in the system.")]
+    [OpenApiOperation("Delete product - 🔐 [Only Managers or Admins allowed]", "Delete an existing product in the system.")]
     public async Task<IActionResult> Delete(
-        [FromRoute] Guid id,
+        [FromRoute] Guid productId,
         [FromServices] IValidator<DeleteProductRequest> requestValidator,
         CancellationToken ct)
     {
-        DeleteProductRequest request = new(id);
+        DeleteProductRequest request = new(productId);
         ValidationResult validationResult = await requestValidator.ValidateAsync(request, ct);
         if (!validationResult.IsValid) return HandleKnownError(validationResult.Errors);
 
@@ -142,6 +158,9 @@ public class ProductsController : BaseController
     [HttpGet("categories")]
     [ProducesResponseType(typeof(GetCategoriesResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [EndpointSummary("Get all product categories - [Public Access]")]
+    [EndpointDescription("Get all possible categories for current registered products.")]
+    [OpenApiOperation("Get all categories - [Public Access]", "Get all possible categories for current registered products.")]
     public async Task<IActionResult> GetAllCategories(CancellationToken ct)
     {
         ApplicationResult<GetCategoriesQueryResponse> queryResult = await _mediator.Send(new GetCategoriesQuery(), ct);
@@ -154,6 +173,9 @@ public class ProductsController : BaseController
     [HttpGet("categories/{category}")]
     [ProducesResponseType(typeof(GetProductsResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [EndpointSummary("Get all products by category - [Public Access]")]
+    [EndpointDescription("Get all products on a given category that fulfill the dynamic filter.")]
+    [OpenApiOperation("Get all products by category - [Public Access]", "Get all products on a given category that fulfill the dynamic filter.")]
     public async Task<IActionResult> GetFilteredByCategory(
         [FromRoute] string category,
         [FromServices] IValidator<GetProductsRequest> requestValidator,

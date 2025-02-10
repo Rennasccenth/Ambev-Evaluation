@@ -1,7 +1,7 @@
 ﻿using Ambev.DeveloperEvaluation.Application;
 using Ambev.DeveloperEvaluation.Domain;
 using Ambev.DeveloperEvaluation.MongoDB;
-using Ambev.DeveloperEvaluation.ORM;
+using Ambev.DeveloperEvaluation.PostgreSQL;
 using Ambev.DeveloperEvaluation.Redis;
 using Microsoft.Extensions.DependencyInjection;
 

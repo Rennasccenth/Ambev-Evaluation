@@ -127,7 +127,7 @@ public sealed class SaleRepository : ISaleRepository
         FilterDefinitionBuilder<Sale> builder,
         out FilterDefinition<Sale> filter)
     {
-        filter = null;
+        filter = FilterDefinition<Sale>.Empty;
         const string minPrefix = "_min";
         const string maxPrefix = "_max";
 

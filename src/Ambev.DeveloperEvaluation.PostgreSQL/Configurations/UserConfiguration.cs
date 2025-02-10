@@ -1,9 +1,9 @@
 ﻿using Ambev.DeveloperEvaluation.Domain.Aggregates.Users;
-using Ambev.DeveloperEvaluation.ORM.Configurations.ValueConverters;
+using Ambev.DeveloperEvaluation.PostgreSQL.Configurations.ValueConverters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Ambev.DeveloperEvaluation.ORM.Configurations;
+namespace Ambev.DeveloperEvaluation.PostgreSQL.Configurations;
 
 public class UserConfiguration : IEntityTypeConfiguration<User>
 {

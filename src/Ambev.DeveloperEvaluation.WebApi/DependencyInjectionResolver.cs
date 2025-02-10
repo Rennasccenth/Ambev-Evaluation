@@ -3,6 +3,7 @@ using Ambev.DeveloperEvaluation.Common.ExceptionHandlers;
 using Ambev.DeveloperEvaluation.Common.HealthChecks;
 using Ambev.DeveloperEvaluation.Common.Options;
 using Ambev.DeveloperEvaluation.Common.Security;
+using Ambev.DeveloperEvaluation.Domain.Abstractions;
 using Ambev.DeveloperEvaluation.Domain.ValueObjects.JsonConverters;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using FluentValidation;
@@ -16,7 +17,8 @@ namespace Ambev.DeveloperEvaluation.WebApi;
 
 internal static class DependencyInjectionResolver
 {
-    internal static IServiceCollection InstallApiDependencies(this IServiceCollection serviceCollection, IConfiguration configuration)
+    internal static IServiceCollection InstallApiDependencies(this IServiceCollection serviceCollection,
+        IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
     {
         serviceCollection.TryAddSingleton(TimeProvider.System);
 
@@ -53,6 +55,16 @@ internal static class DependencyInjectionResolver
                     },
                     Array.Empty<string>()
                 }
+            });
+
+            OpenApiDocumentation openApiDocumentation = new() { Title = "", Description = "" };
+            configuration.GetSection(OpenApiDocumentation.SectionName).Bind(openApiDocumentation);
+            var descriptionPath = Path.Combine(webHostEnvironment.ContentRootPath, "Docs/OpenApiDescription.md");
+            options.SwaggerDoc("v1", new OpenApiInfo
+            {
+                Version = "v1",
+                Title = openApiDocumentation.Title,
+                Description = File.ReadAllText(descriptionPath)
             });
         });
 
