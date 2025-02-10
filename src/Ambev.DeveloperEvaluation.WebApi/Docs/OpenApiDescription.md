@@ -1,4 +1,4 @@
-### Introduction
+## Introduction
  To make use of all features here presented, you must setup some initial data to enable you to test the system from all three user perspectives:
 - Customer
 - Admin
@@ -6,7 +6,7 @@
 
 Note: Since the application requires a starting admin user to enable the client (in such case you, dear reader) start interacting with many endpoints, I've bootstrapped a starting *Admin User*, so we can use it to create other ***users***, ***products*** or any necessary data before interacting with other endpoints.
 
-### First Steps
+## First Steps
 To setup the initial data, the first thing you should start doing is to get a fresh token from ***Auth Endpoint***.
 
 Assuming this is a fresh installation, get the first ***token*** by using the following credentials:
@@ -18,7 +18,7 @@ Assuming this is a fresh installation, get the first ***token*** by using the fo
 }
 ```
 
-### How to start?
+## How to start?
 Currently, the sale is one of the last processes that this system can achieve, which means that we need to build some data before achieving it.
 Creating a sale is a nice start, since we can go through some user Personas and application features.
 
@@ -35,6 +35,6 @@ Creating a sale is a nice start, since we can go through some user Personas and 
 
 Feel free to mess around, many other processes might be intended as a deviation from this one.
 
-##### Notes:
+#### Notes:
 - There's a possibility to create and interact with carts without the need to authenticate, this happens in the direction that in a sales system, you don't want to add friction over a user to populate its data and start buying. This can be added later, so the overall customer experience will be smooth.
 - Only carts from users are allowed to proceed into checkout. This just happened due fact we will need a lot of information regarding the 'buyer' to fulfill the Sale entity. This would be fixed by requiring unauthenticated users to fulfill such things in an 'invisible checkout' screen.  

@@ -81,9 +81,9 @@ public class SalesController : BaseController
     [Authorize(Roles = "Admin, Manager")]
     [ProducesResponseType(typeof(SaleResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-    [EndpointSummary("Conclude a Sale - 🔐 [Allowed for any authenticated User]")]
+    [EndpointSummary("Conclude a Sale - 🔐 [Only Managers or Admins allowed]")]
     [EndpointDescription("Conclude a Sale, which was once created when a Customer user decides to checkout his cart.[Requires a authenticated user]")]
-    [OpenApiOperation("Conclude a Sale - 🔐 [Allowed for any authenticated User]", "Conclude a Sale, which was once created when a Customer user decides to checkout his cart.[Requires a authenticated user]")]
+    [OpenApiOperation("Conclude a Sale - 🔐 [Only Managers or Admins allowed]", "Conclude a Sale, which was once created when a Customer user decides to checkout his cart.[Requires a authenticated user]")]
     public async Task<IActionResult> ConcludeSale(
         [FromRoute] Guid saleId,
         [FromServices] IValidator<ConcludeSaleRequest> requestValidator,
